@@ -73,7 +73,6 @@
                     <directory></directory>
                     <includes>
                         <include>.gitignore</include>
-                        <include>HELP.md</include>
                         <include>mvnw</include>
                         <include>mvnw.cmd</include>
                     </includes>
