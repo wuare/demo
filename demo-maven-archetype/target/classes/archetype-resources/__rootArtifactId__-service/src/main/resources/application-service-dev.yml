@@ -1,0 +1,37 @@
+logging:
+  level:
+    org.example.${rootArtifactId}.mapper.primary: debug
+
+spring:
+  datasource:
+    primary:
+      url: jdbc:mysql://127.0.0.1:3306/demo?useAffectedRows=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+      username: root
+      password: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+  redis:
+    primary:
+      cluster:
+        nodes: 127.0.0.1:6370,127.0.0.1:6371,127.0.0.1:6372
+      password:
+      timeout: 5000
+      maxTotal: 2
+
+
+#  As Spring Cloud Ribbon is in maintenance mode.
+#  We recommend switching to BlockingLoadBalancerClient instead.
+#  In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false`
+#  or remove spring-cloud-starter-netflix-ribbon from your project.
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${symbol_dollar}{spring.application.name}:${symbol_dollar}{spring.cloud.client.ip-address}:${symbol_dollar}{server.port}
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8751/eureka/,http://127.0.0.1:8752/eureka/

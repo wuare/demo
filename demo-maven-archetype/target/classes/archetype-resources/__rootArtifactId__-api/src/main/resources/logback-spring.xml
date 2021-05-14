@@ -1,0 +1,239 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <contextName>${symbol_dollar}{APP_NAME}</contextName>
+    <springProperty scope="context" name="localip" source="localip" />
+
+    <!-- 定义参数 -->
+	
+    <!-- 必填参数 -->
+    <property name="APP_NAME" value="${rootArtifactId}-api"/>
+    <property name="EMAIL_RECEIVER" value="${contact_email}"/>
+    <!-- 必填参数 -->
+    <property name="LOG_LEVEL" value="INFO"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${symbol_dollar}{localip} %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(${symbol_dollar}{LOG_LEVEL_PATTERN:-%5p}) ${symbol_dollar}{PID:- } --- %cyan([%t] %-40.40logger{39}) : %m%n"/>
+    <property name="FILE_LOG_PATTERN"
+              value="${symbol_dollar}{localip} %d{yyyy-MM-dd HH:mm:ss.SSS} ${symbol_dollar}{LOG_LEVEL_PATTERN:-%5p} ${symbol_dollar}{PID:- } --- [%t] %-40.40logger{39} : %m%n"/>
+
+    <!--  邮件 -->
+    <!-- SMTP server的地址，必需指定。如网易的SMTP服务器地址是： smtp.163.com -->
+    <property name="smtpHost" value="smtp.163.com"/>
+    <!-- SMTP server的端口地址。默认值：25 -->
+    <property name="smtpPort" value="25"/>
+    <!-- 发送邮件账号，默认为null -->
+    <property name="username" value="xxx@163.com"/><!--发件人账号-->
+    <!-- 发送邮件密码，默认为null -->
+    <property name="password" value="xxx"/><!--发件人密码-->
+    <!-- 如果设置为true，appender将会使用SSL连接到日志服务器。默认值：false -->
+    <property name="SSL" value="false"/>
+    <!-- 指定发送到那个邮箱，可设置多个<to>属性，指定多个目的邮箱 -->
+    <property name="email_to" value="${symbol_dollar}{EMAIL_RECEIVER}"/><!--
+    收件人账号多个可以逗号隔开-->
+    <!-- 指定发件人名称。如果设置成“&lt;ADMIN&gt; ”，则邮件发件人将会是“<ADMIN> ” -->
+    <property name="email_from" value="${symbol_dollar}{APP_NAME}_${symbol_dollar}{localip}"/>
+    <!-- 指定emial的标题，它需要满足PatternLayout中的格式要求。如果设置成“Log: %logger - %msg ”，就案例来讲，则发送邮件时，标题为“【Error】: com.foo.Bar - Hello World ”。 默认值："%logger{20} - %m". -->
+    <property name="email_subject" value="【Error】: %logger"/>
+    <!--  邮件结束 -->
+
+    <!-- 日志根目录-->
+    <springProperty scope="context" name="LOG_HOME" source="logging.path"
+                    defaultValue="/data/logs/demo/${symbol_dollar}{APP_NAME}"/>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder默认配置为PartternLayoutEncoder    -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${symbol_dollar}{CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <!-- 循环文件输出（基于时间戳的分文件，是实际项目中用途最广的一种情况） -->
+    <appender name="ROLLINGFILE_DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${symbol_dollar}{LOG_HOME}/debug/${symbol_dollar}{APP_NAME}.debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${symbol_dollar}{LOG_HOME}/debug/${symbol_dollar}{APP_NAME}_%d{yyyy-MM-dd}.debug.%i.log</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${symbol_dollar}{FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 异步输出 -->
+    <appender name="AROLLINGFILE_DEBUG" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="ROLLINGFILE_DEBUG"/>
+    </appender>
+
+    <!-- 循环文件输出（基于时间戳的分文件，是实际项目中用途最广的一种情况） -->
+    <appender name="ROLLINGFILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${symbol_dollar}{LOG_HOME}/info/${symbol_dollar}{APP_NAME}.info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${symbol_dollar}{LOG_HOME}/info/${symbol_dollar}{APP_NAME}_%d{yyyy-MM-dd}.info.%i.log</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${symbol_dollar}{FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 异步输出 -->
+    <appender name="AROLLINGFILE_INFO" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="ROLLINGFILE_INFO"/>
+    </appender>
+
+    <!-- 循环文件输出（基于时间戳的分文件，是实际项目中用途最广的一种情况） -->
+    <appender name="ROLLINGFILE_INFO_RESPONSE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${symbol_dollar}{LOG_HOME}/response/${symbol_dollar}{APP_NAME}.info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${symbol_dollar}{LOG_HOME}/response/${symbol_dollar}{APP_NAME}_%d{yyyy-MM-dd}.info.%i.log</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 异步输出 -->
+    <appender name="AROLLINGFILE_INFO_RESPONSE" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="ROLLINGFILE_INFO_RESPONSE"/>
+    </appender>
+
+    <!-- 循环文件输出（基于时间戳的分文件，是实际项目中用途最广的一种情况） -->
+    <appender name="ROLLINGFILE_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${symbol_dollar}{LOG_HOME}/warn/${symbol_dollar}{APP_NAME}.warn.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${symbol_dollar}{LOG_HOME}/warn/${symbol_dollar}{APP_NAME}_%d{yyyy-MM-dd}.warn.%i.log</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${symbol_dollar}{FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 异步输出 -->
+    <appender name="AROLLINGFILE_WARN" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>512</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="ROLLINGFILE_WARN"/>
+    </appender>
+
+    <!-- ERROR 循环文件输出（基于时间戳的分文件，是实际项目中用途最广的一种情况） -->
+    <appender name="ROLLINGFILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${symbol_dollar}{LOG_HOME}/error/${symbol_dollar}{APP_NAME}.error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${symbol_dollar}{LOG_HOME}/error/${symbol_dollar}{APP_NAME}_%d{yyyy-MM-dd}.error.%i.log</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${symbol_dollar}{FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- ERROR 异步输出 -->
+    <appender name="AROLLINGFILE_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>512</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="ROLLINGFILE_ERROR"/>
+    </appender>
+
+    <!-- ERROR邮件发送 -->
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>${symbol_dollar}{smtpHost}</smtpHost>
+        <smtpPort>${symbol_dollar}{smtpPort}</smtpPort>
+        <username>${symbol_dollar}{username}</username>
+        <password>${symbol_dollar}{password}</password>
+        <asynchronousSending>true</asynchronousSending>
+        <SSL>${symbol_dollar}{SSL}</SSL>
+        <to>${symbol_dollar}{email_to}</to>
+        <from>${symbol_dollar}{email_from}</from>
+        <subject>${symbol_dollar}{email_subject}</subject>
+        <!-- html格式-->
+        <layout class="ch.qos.logback.classic.html.HTMLLayout">
+            <Pattern>%date%level%thread%logger{0}%line%message</Pattern>
+        </layout>
+        <!-- 这里采用等级过滤器 指定等级相符才发送 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+            <!-- 每个电子邮件只发送一个日志条目 -->
+            <bufferSize>1</bufferSize>
+        </cyclicBufferTracker>
+    </appender>
+
+    <root level="${symbol_dollar}{LOG_LEVEL}">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="AROLLINGFILE_DEBUG"/>
+        <appender-ref ref="AROLLINGFILE_INFO"/>
+        <appender-ref ref="AROLLINGFILE_WARN"/>
+        <appender-ref ref="AROLLINGFILE_ERROR"/>
+        <!--<appender-ref ref="EMAIL"/>-->
+    </root>
+    <logger level="${symbol_dollar}{LOG_LEVEL}" name="response" additivity="false">
+        <appender-ref ref="AROLLINGFILE_INFO_RESPONSE"/>
+    </logger>
+</configuration>

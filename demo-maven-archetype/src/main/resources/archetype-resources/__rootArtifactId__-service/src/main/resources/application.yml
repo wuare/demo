@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: service-dev
+    include: service-dev
+  main:
+    allow-bean-definition-overriding: true
+
+debug: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
