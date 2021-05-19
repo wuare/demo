@@ -22,7 +22,7 @@
         <dependency>
             <groupId>${groupId}.${rootArtifactId}</groupId>
             <artifactId>service</artifactId>
-            <version>1.0.0</version>
+            <version>${version}</version>
         </dependency>
     </dependencies>
 
