@@ -21,7 +21,6 @@ public abstract class BaseJedisClusterConfig {
      */
     protected JedisCluster getJedisCluster(String clusterNodes, String password, int timeout, int maxTotal) {
 
-        //获取服务器数组(这里要相信自己的输入，所以没有考虑空指针问题)
         String[] serverArray = clusterNodes.split(",");
         Set<HostAndPort> nodes = new HashSet<>();
 

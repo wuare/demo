@@ -33,10 +33,6 @@ public class JedisPrimaryConfig extends BaseJedisClusterConfig {
     @Value("${spring.redis.primary.password}")
     private String password;
 
-    /**
-     * 注意：
-     * 这里返回的JedisCluster是单例的，并且可以直接注入到其他类中去使用
-     */
     @Bean(name = "primaryJedisCluster")
     @Primary
     public JedisCluster getJedisCluster() {
