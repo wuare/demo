@@ -13,11 +13,11 @@ import java.io.InputStream;
  */
 public class Scanner {
     private InputStream in;
-    private final byte[] buf = new byte[2];
+    private final byte[] buf = new byte[2048];
     private int pos;
     private int limit;
 
-    private int ch = 0;
+    private int ch;
 
     public void init() {
         this.pos = 0;
