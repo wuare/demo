@@ -198,12 +198,12 @@ public class Scanner {
                 }
                 return plainToken(26, "&");
             case '|':
-                // & &&
+                // | ||
                 ch = nextCh();
                 if (ch == '|') {
-                    return specToken(25, "||");
+                    return specToken(27, "||");
                 }
-                return plainToken(26, "|");
+                return plainToken(28, "|");
             case '\'':
                 StringBuilder cB = new StringBuilder();
                 cB.append((char) ch);
@@ -215,7 +215,7 @@ public class Scanner {
                 }
                 ch = nextCh();
                 cB.append((char) ch);
-                return specToken(27, cB.toString());
+                return specToken(29, cB.toString());
             default:
                 return singleToken(0, ch);
         }
