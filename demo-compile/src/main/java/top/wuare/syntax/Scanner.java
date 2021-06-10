@@ -119,6 +119,7 @@ public class Scanner {
                     for (; ; ) {
                         ch = nextCh();
                         if (ch != '\n') {
+                            // TODO check ch == -1
                             builder.append((char) ch);
                             continue;
                         }
@@ -130,6 +131,7 @@ public class Scanner {
                         int last = ch;
                         ch = nextCh();
                         builder.append((char) ch);
+                        // TODO check ch == -1
                         if (last == '*' && ch == '/') {
                             ch = nextCh(); // eat
                             break;
@@ -145,6 +147,7 @@ public class Scanner {
                     ch = nextCh();
                     strB.append((char) ch);
                     if (ch == '"') {
+                        // TODO check ch == -1
                         ch = nextCh();
                         break;
                     }
