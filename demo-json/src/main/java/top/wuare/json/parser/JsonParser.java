@@ -41,7 +41,6 @@ public class JsonParser {
             }
             eat(Token.COMMA);
         }
-        eat(Token.RBRACE);
     }
 
     private void parseArray() {
