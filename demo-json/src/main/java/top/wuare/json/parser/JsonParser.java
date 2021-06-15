@@ -18,18 +18,29 @@ public class JsonParser {
 
     public void parse(String text) {
         lexer = new JsonLexer(text);
+        curToken = lexer.nextToken();
         parseValue();
     }
 
     private void parseObject() {
         eat(Token.LBRACE);
-        if (curToken.getType() == Token.RBRACE) {
-            eat(Token.RBRACE);
-            return;
+        for (;;) {
+            if (curToken == null) {
+                throw new CommonException("parse object error");
+            }
+            if (curToken.getType() == Token.RBRACE) {
+                eat(Token.RBRACE);
+                break;
+            }
+            eat(Token.STRING);
+            eat(Token.COLON);
+            parseValue();
+            if (curToken.getType() == Token.RBRACE) {
+                eat(Token.RBRACE);
+                break;
+            }
+            eat(Token.COMMA);
         }
-        eat(Token.STRING);
-        eat(Token.COLON);
-        parseValue();
         eat(Token.RBRACE);
     }
 
@@ -64,6 +75,7 @@ public class JsonParser {
             case Token.LITERAL_FALSE:
             case Token.LITERAL_NULL:
                 next();
+                break;
             default:
                 throw new CommonException("unexpected token: " + curToken);
         }
@@ -78,7 +90,7 @@ public class JsonParser {
             next();
             return;
         }
-        throw new CommonException("expect token type: " + type + ", but get: " + curToken.getType());
+        throw new CommonException("expect token type: " + type + ", but get type: " + curToken.getType());
     }
 
 }

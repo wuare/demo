@@ -20,6 +20,7 @@ public class JsonLexer {
 
     public JsonLexer(String text) {
         this.reader = new StringReader(text);
+        nextCh();
     }
 
     protected void nextCh() {
@@ -32,7 +33,6 @@ public class JsonLexer {
     }
 
     public Token nextToken() {
-        nextCh();
         if (ch == -1) {
             return null;
         }
@@ -44,19 +44,32 @@ public class JsonLexer {
             return number();
         }
 
+        int type;
         switch (ch) {
             case '{':
-                return new Token(Token.LBRACE, Character.toString((char) ch));
+                Token token = new Token(Token.LBRACE, Character.toString((char) ch));
+                nextCh();
+                return token;
             case '}':
-                return new Token(Token.RBRACE, Character.toString((char) ch));
+                Token token1 = new Token(Token.RBRACE, Character.toString((char) ch));
+                nextCh();
+                return token1;
             case '[':
-                return new Token(Token.LBRACKET, Character.toString((char) ch));
+                Token token2 = new Token(Token.LBRACKET, Character.toString((char) ch));
+                nextCh();
+                return token2;
             case ']':
-                return new Token(Token.RBRACKET, Character.toString((char) ch));
+                Token token3 = new Token(Token.RBRACKET, Character.toString((char) ch));
+                nextCh();
+                return token3;
             case ':':
-                return new Token(Token.COLON, Character.toString((char) ch));
+                Token token4 = new Token(Token.COLON, Character.toString((char) ch));
+                nextCh();
+                return token4;
             case ',':
-                return new Token(Token.COMMA, Character.toString((char) ch));
+                Token token5 = new Token(Token.COMMA, Character.toString((char) ch));
+                nextCh();
+                return token5;
             case '"':
                 return string();
             case 't':
@@ -109,6 +122,7 @@ public class JsonLexer {
             // TODO \" Escape character handle?
             builder.append((char) ch);
             if (ch == '"') {
+                nextCh();
                 break;
             }
         }
