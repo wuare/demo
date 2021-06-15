@@ -89,7 +89,8 @@ public class JsonParser {
             next();
             return;
         }
-        throw new CommonException("expect token type: " + type + ", but get type: " + curToken.getType());
+        throw new CommonException("expect token type: " + type + ", but get type: "
+                + curToken.getType() + ", current token information: " + curToken);
     }
 
 }
