@@ -46,23 +46,28 @@ public class JsonLexer {
 
         switch (ch) {
             case '{':
+                return new Token(Token.LBRACE, Character.toString((char) ch));
             case '}':
+                return new Token(Token.RBRACE, Character.toString((char) ch));
             case '[':
+                return new Token(Token.LBRACKET, Character.toString((char) ch));
             case ']':
+                return new Token(Token.RBRACKET, Character.toString((char) ch));
             case ':':
+                return new Token(Token.COLON, Character.toString((char) ch));
             case ',':
-                return new Token(1, Character.toString((char) ch));
+                return new Token(Token.COMMA, Character.toString((char) ch));
             case '"':
                 return string();
             case 't':
                 // true
-                return literal(4, "true");
+                return literal(Token.LITERAL_TRUE, "true");
             case 'f':
                 // false
-                return literal(5, "false");
+                return literal(Token.LITERAL_FALSE, "false");
             case 'n':
                 // null
-                return literal(6, "null");
+                return literal(Token.LITERAL_NULL, "null");
             default:
                 throw new CommonException("the character '" + (char) ch + "' is unexpected, please check it");
         }
@@ -90,7 +95,7 @@ public class JsonLexer {
             }
             break;
         }
-        return new Token(2, builder.toString());
+        return new Token(Token.NUMBER, builder.toString());
     }
 
     private Token string() {
@@ -107,7 +112,7 @@ public class JsonLexer {
                 break;
             }
         }
-        return new Token(3, builder.toString());
+        return new Token(Token.STRING, builder.toString());
     }
 
     public int getCh() {
