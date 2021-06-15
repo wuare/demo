@@ -4,6 +4,12 @@ import top.wuare.json.exception.CommonException;
 import top.wuare.json.lexer.JsonLexer;
 import top.wuare.json.lexer.Token;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * JSON Parser
  *
@@ -16,13 +22,14 @@ public class JsonParser {
 
     private Token curToken;
 
-    public void parse(String text) {
+    public Object parse(String text) {
         lexer = new JsonLexer(text);
         curToken = lexer.nextToken();
-        parseValue();
+        return parseValue();
     }
 
-    private void parseObject() {
+    private Map<String, Object> parseObject() {
+        Map<String, Object> map = new HashMap<>();
         eat(Token.LBRACE);
         for (;;) {
             if (curToken == null) {
@@ -32,18 +39,22 @@ public class JsonParser {
                 eat(Token.RBRACE);
                 break;
             }
+            String key = curToken.getVal().substring(1, curToken.getVal().length() - 1);
             eat(Token.STRING);
             eat(Token.COLON);
-            parseValue();
+            Object value = parseValue();
+            map.put(key, value);
             if (curToken.getType() == Token.RBRACE) {
                 eat(Token.RBRACE);
                 break;
             }
             eat(Token.COMMA);
         }
+        return map;
     }
 
-    private void parseArray() {
+    private List<Object> parseArray() {
+        List<Object> list = new ArrayList<>();
         eat(Token.LBRACKET);
         for (;;) {
             if (curToken == null) {
@@ -53,38 +64,54 @@ public class JsonParser {
                 eat(Token.RBRACKET);
                 break;
             }
-            parseValue();
+            list.add(parseValue());
             if (curToken.getType() == Token.RBRACKET) {
                 eat(Token.RBRACKET);
                 break;
             }
             eat(Token.COMMA);
         }
+        return list;
     }
 
-    private void parseValue() {
+    private Object parseValue() {
         if (curToken == null) {
-            return;
+            return null;
         }
+        Object obj;
         switch (curToken.getType()) {
             case Token.LBRACE:
                 // object start
-                parseObject();
+                obj = parseObject();
                 break;
             case Token.LBRACKET:
                 // array start
-                parseArray();
+                obj = parseArray();
                 break;
             case Token.STRING:
+                obj = curToken.getVal().substring(1, curToken.getVal().length() - 1);
+                next();
+                break;
             case Token.NUMBER:
+                obj = new BigDecimal(curToken.getVal());
+                next();
+                break;
             case Token.LITERAL_TRUE:
+                obj = Boolean.TRUE;
+                next();
+                break;
             case Token.LITERAL_FALSE:
+                obj = Boolean.FALSE;
+                next();
+                break;
             case Token.LITERAL_NULL:
+                obj = null;
                 next();
                 break;
             default:
                 throw new CommonException("unexpected token: " + curToken);
         }
+        return obj;
     }
 
     private void next() {

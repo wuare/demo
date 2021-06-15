@@ -14,13 +14,15 @@ public class JsonParserTest {
     public void testParser() {
         String text = "{ \"orderCode\": \"C001\", \"type\": 1, \"pageNo\": 3 , \"amount\": -1.236 }";
         JsonParser parser = new JsonParser();
-        parser.parse(text);
+        Object obj = parser.parse(text);
+        System.out.println(obj);
     }
 
     @Test
     public void testParser0() {
         String t = "";
         JsonParser parser = new JsonParser();
-        parser.parse(t);
+        Object obj = parser.parse(t);
+        System.out.println(obj);
     }
 }
