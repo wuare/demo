@@ -45,14 +45,21 @@ public class JsonParser {
 
     private void parseArray() {
         eat(Token.LBRACKET);
-        do {
+        for (;;) {
             if (curToken == null) {
                 throw new CommonException("parse array error");
             }
+            if (curToken.getType() == Token.RBRACKET) {
+                eat(Token.RBRACKET);
+                break;
+            }
             parseValue();
+            if (curToken.getType() == Token.RBRACKET) {
+                eat(Token.RBRACKET);
+                break;
+            }
             eat(Token.COMMA);
-        } while (curToken.getType() != Token.RBRACKET);
-        eat(Token.RBRACKET);
+        }
     }
 
     private void parseValue() {

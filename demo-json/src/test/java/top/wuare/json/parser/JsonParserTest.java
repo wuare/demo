@@ -16,4 +16,11 @@ public class JsonParserTest {
         JsonParser parser = new JsonParser();
         parser.parse(text);
     }
+
+    @Test
+    public void testParser0() {
+        String t = "";
+        JsonParser parser = new JsonParser();
+        parser.parse(t);
+    }
 }
