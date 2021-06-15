@@ -39,7 +39,30 @@ public class JsonLexer {
         while (Character.isSpaceChar(ch)) {
             nextCh();
         }
-        return null;
+
+        if (ch == '-' || Character.isDigit(ch)) {
+            // number TODO
+            return null;
+        }
+
+        switch (ch) {
+            case '{':
+            case '}':
+            case '[':
+            case ']':
+            case ':':
+                return new Token(1, Character.toString((char) ch));
+            case '"':
+                // string TODO
+            case 't':
+                // true TODO
+            case 'f':
+                // false TODO
+            case 'n':
+                // null TODO
+            default:
+                throw new CommonException("the character '" + (char) ch + "' is unexpected, please check it");
+        }
     }
 
     public int getCh() {

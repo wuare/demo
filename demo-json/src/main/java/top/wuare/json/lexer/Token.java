@@ -9,12 +9,12 @@ package top.wuare.json.lexer;
 public class Token {
 
     private int type;
-    private byte[] val;
+    private String val;
 
     public Token() {
     }
 
-    public Token(int type, byte[] val) {
+    public Token(int type, String val) {
         this.type = type;
         this.val = val;
     }
@@ -27,11 +27,19 @@ public class Token {
         this.type = type;
     }
 
-    public byte[] getVal() {
+    public String getVal() {
         return val;
     }
 
-    public void setVal(byte[] val) {
+    public void setVal(String val) {
         this.val = val;
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "type=" + type +
+                ", val='" + val + '\'' +
+                '}';
     }
 }
