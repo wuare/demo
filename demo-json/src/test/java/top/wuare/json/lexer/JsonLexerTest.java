@@ -41,4 +41,37 @@ public class JsonLexerTest {
         Token token2 = lexer.nextToken();
         Assert.assertNull(token2);
     }
+
+    @Test
+    public void testNextTokenTrue() {
+        JsonLexer lexer = new JsonLexer("true");
+        Token token0 = lexer.nextToken();
+        Assert.assertNotNull(token0);
+        Assert.assertEquals("true", token0.getVal());
+    }
+
+    @Test
+    public void testNextTokenFalse() {
+        JsonLexer lexer = new JsonLexer("false");
+        Token token0 = lexer.nextToken();
+        Assert.assertNotNull(token0);
+        Assert.assertEquals("false", token0.getVal());
+    }
+
+    @Test
+    public void testNextTokenNull() {
+        JsonLexer lexer = new JsonLexer("null");
+        Token token0 = lexer.nextToken();
+        Assert.assertNotNull(token0);
+        Assert.assertEquals("null", token0.getVal());
+    }
+
+    @Test
+    public void testNextToken() {
+        JsonLexer lexer = new JsonLexer("{ \"orderCode\": \"C001\", \"type\": 1, \"pageNo\": 3 , \"amount\": -1.236 }");
+        Token token;
+        while ((token = lexer.nextToken()) != null) {
+            System.out.println(token);
+        }
+    }
 }

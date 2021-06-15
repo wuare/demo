@@ -41,8 +41,7 @@ public class JsonLexer {
         }
 
         if (ch == '-' || Character.isDigit(ch)) {
-            // number TODO
-            return null;
+            return number();
         }
 
         switch (ch) {
@@ -51,18 +50,64 @@ public class JsonLexer {
             case '[':
             case ']':
             case ':':
+            case ',':
                 return new Token(1, Character.toString((char) ch));
             case '"':
-                // string TODO
+                return string();
             case 't':
-                // true TODO
+                // true
+                return literal(4, "true");
             case 'f':
-                // false TODO
+                // false
+                return literal(5, "false");
             case 'n':
-                // null TODO
+                // null
+                return literal(6, "null");
             default:
                 throw new CommonException("the character '" + (char) ch + "' is unexpected, please check it");
         }
+    }
+
+    private Token literal(int type, String expect) {
+        for (int i = 0; i < expect.length(); i++) {
+            if (expect.charAt(i) == ch) {
+                nextCh();
+                continue;
+            }
+            throw new CommonException("the character '" + (char) ch + "' is unexpected, please check it");
+        }
+        return new Token(type, expect);
+    }
+
+    private Token number() {
+        StringBuilder builder = new StringBuilder();
+        builder.append((char) ch);
+        for (;;) {
+            nextCh();
+            if (ch == '.' || Character.isDigit(ch)) {
+                builder.append((char) ch);
+                continue;
+            }
+            break;
+        }
+        return new Token(2, builder.toString());
+    }
+
+    private Token string() {
+        StringBuilder builder = new StringBuilder();
+        builder.append((char) ch);
+        for (;;) {
+            nextCh();
+            if (ch == -1) {
+                break;
+            }
+            // TODO \" Escape character handle?
+            builder.append((char) ch);
+            if (ch == '"') {
+                break;
+            }
+        }
+        return new Token(3, builder.toString());
     }
 
     public int getCh() {
