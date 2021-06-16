@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Scanner
+ * Scanner of java source file
  *
  * @author wuare
  */
