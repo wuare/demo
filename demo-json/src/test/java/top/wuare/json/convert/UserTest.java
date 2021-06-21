@@ -9,6 +9,7 @@ package top.wuare.json.convert;
 public class UserTest {
     private int id;
     private String name;
+    private UserIdCardTest idCard;
 
     public int getId() {
         return id;
@@ -26,11 +27,20 @@ public class UserTest {
         this.name = name;
     }
 
+    public UserIdCardTest getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(UserIdCardTest idCard) {
+        this.idCard = idCard;
+    }
+
     @Override
     public String toString() {
         return "UserTest{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", idCard=" + idCard +
                 '}';
     }
 }
