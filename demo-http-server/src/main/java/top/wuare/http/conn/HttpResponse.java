@@ -8,10 +8,11 @@ import java.net.Socket;
  * @author wuare
  * @date 2021/6/21
  */
-public class Response {
+public class HttpResponse {
 
     private Socket socket;
     private OutputStream out;
+    private HttpMessage httpMessage;
 
     public Socket getSocket() {
         return socket;
@@ -27,5 +28,13 @@ public class Response {
 
     public void setOut(OutputStream out) {
         this.out = out;
+    }
+
+    public HttpMessage getHttpMessage() {
+        return httpMessage;
+    }
+
+    public void setHttpMessage(HttpMessage httpMessage) {
+        this.httpMessage = httpMessage;
     }
 }

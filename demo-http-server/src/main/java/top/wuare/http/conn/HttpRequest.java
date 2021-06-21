@@ -9,10 +9,11 @@ import java.net.Socket;
  * @author wuare
  * @date 2021/6/21
  */
-public class Request {
+public class HttpRequest {
 
     private Socket socket;
     private InputStream in;
+    private HttpMessage httpMessage;
 
     public Socket getSocket() {
         return socket;
@@ -28,5 +29,13 @@ public class Request {
 
     public void setIn(InputStream in) {
         this.in = in;
+    }
+
+    public HttpMessage getHttpMessage() {
+        return httpMessage;
+    }
+
+    public void setHttpMessage(HttpMessage httpMessage) {
+        this.httpMessage = httpMessage;
     }
 }
