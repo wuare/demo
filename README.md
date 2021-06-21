@@ -1,5 +1,5 @@
 ## Demo Projects
-[![Build status](https://github.com/wuare/demo/workflows/Java20%CI20%with20%Maven/badge.svg)](https://github.com/wuare/demo/actions) 
+[![Build status](https://github.com/wuare/demo/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/wuare/demo/actions) 
 
 for learn something
 - [x] [Lexer](https://github.com/wuare/demo/blob/master/demo-compile/src/main/java/top/wuare/syntax/Scanner.java)
