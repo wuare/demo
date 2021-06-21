@@ -2,7 +2,7 @@ package top.wuare.http.parser;
 
 import org.junit.Assert;
 import org.junit.Test;
-import top.wuare.http.conn.HttpRequestLine;
+import top.wuare.http.proto.HttpRequestLine;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

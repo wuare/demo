@@ -1,7 +1,7 @@
 package top.wuare.http.parser;
 
-import top.wuare.http.conn.HttpLine;
-import top.wuare.http.conn.HttpRequestLine;
+import top.wuare.http.proto.HttpLine;
+import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.exception.HttpParserException;
 
 import java.io.IOException;

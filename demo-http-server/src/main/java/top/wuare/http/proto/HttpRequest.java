@@ -1,4 +1,4 @@
-package top.wuare.http.conn;
+package top.wuare.http.proto;
 
 import java.io.InputStream;
 import java.net.Socket;
