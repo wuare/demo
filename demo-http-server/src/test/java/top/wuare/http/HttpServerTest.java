@@ -12,7 +12,9 @@ public class HttpServerTest {
 
     @Test
     public void testStart() {
-        HttpServer httpServer = new HttpServer();
-        httpServer.start();
+        HttpServer httpServer = new HttpServer(8082);
+        Thread t = new Thread(httpServer::start);
+        t.start();
+        httpServer.setRunning(false);
     }
 }
