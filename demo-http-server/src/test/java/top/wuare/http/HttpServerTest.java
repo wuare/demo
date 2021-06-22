@@ -14,10 +14,9 @@ public class HttpServerTest {
     public void testStart() {
         HttpServer httpServer = new HttpServer(8082);
         httpServer.addHandler((req, res) -> {
-            System.out.println(req.getBody());
             res.setBody("Hello HttpServer");
             res.flush();
-        }).start();
+        });
         Thread t = new Thread(httpServer::start);
         t.start();
         httpServer.setRunning(false);
