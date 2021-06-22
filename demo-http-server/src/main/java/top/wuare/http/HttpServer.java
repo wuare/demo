@@ -143,6 +143,7 @@ public class HttpServer {
         StackTraceElement[] stackTrace = e.getStackTrace();
         StringBuilder errorBuilder = new StringBuilder();
         errorBuilder.append("<h1>").append(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()).append("</h1><br/>");
+        errorBuilder.append(e).append("<br/>");
         Arrays.stream(stackTrace).forEach(v -> {
             errorBuilder.append(v.toString()).append("<br/>");
         });
