@@ -17,6 +17,8 @@ public class HttpServerTest {
             res.setBody("Hello HttpServer");
             res.flush();
         });
+        // WARN: do not call start method!!!
+        // use thread
         Thread t = new Thread(httpServer::start);
         t.start();
         httpServer.setRunning(false);
