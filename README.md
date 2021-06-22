@@ -6,6 +6,6 @@ for learn something
 - [x] [maven archetype](https://github.com/wuare/demo/tree/master/demo-maven-archetype)
 - [x] [maven plugin](https://github.com/wuare/demo/tree/master/demo-maven-plugin)  
 - [x] [JSON Parser](https://github.com/wuare/demo/tree/master/demo-json)
-- [ ] Http Server
+- [x] [Http Server](https://github.com/wuare/demo/tree/master/demo-http-server)
 - [ ] Cache
 - [ ] Parser
