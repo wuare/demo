@@ -23,7 +23,7 @@ public class HttpServerTest {
 ```
 
 ## TODO
--[ ] parse request headers
--[ ] parse request body
--[ ] url mapping handle
--[ ] static resource handle
+- [ ] parse request headers
+- [ ] parse request body
+- [ ] url mapping handle
+- [ ] static resource handle
