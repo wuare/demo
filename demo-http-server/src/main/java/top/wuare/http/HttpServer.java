@@ -1,5 +1,6 @@
 package top.wuare.http;
 
+import top.wuare.http.define.HttpStatus;
 import top.wuare.http.exception.HttpServerException;
 import top.wuare.http.handler.DefaultHandler;
 import top.wuare.http.handler.RequestErrorHandler;
@@ -8,6 +9,7 @@ import top.wuare.http.handler.RequestHandler;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -46,7 +48,6 @@ public class HttpServer {
 
     // handler
     private final List<RequestHandler> requestHandlers = new LinkedList<>();
-    private RequestErrorHandler errorHandler;
 
     // static resource path
     private String staticResourcePath;
@@ -112,15 +113,6 @@ public class HttpServer {
         requestHandlers.clear();
     }
 
-    public HttpServer setErrorHandler(RequestErrorHandler handler) {
-        this.errorHandler = handler;
-        return this;
-    }
-
-    public RequestErrorHandler getErrorHandler() {
-        return errorHandler;
-    }
-
     public int getPort() {
         return port;
     }
@@ -139,5 +131,31 @@ public class HttpServer {
 
     public ExecutorService getExecutorService() {
         return executorService;
+    }
+
+    // error handler
+    private RequestErrorHandler errorHandler = (req, res, e) -> {
+        res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (e == null) {
+            res.setBody(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            return;
+        }
+        StackTraceElement[] stackTrace = e.getStackTrace();
+        StringBuilder errorBuilder = new StringBuilder();
+        errorBuilder.append("<h1>").append(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()).append("</h1><br/>");
+        Arrays.stream(stackTrace).forEach(v -> {
+            errorBuilder.append(v.toString()).append("<br/>");
+        });
+        res.setBody(errorBuilder.toString());
+        res.flush();
+    };
+
+    public HttpServer setErrorHandler(RequestErrorHandler handler) {
+        this.errorHandler = handler;
+        return this;
+    }
+
+    public RequestErrorHandler getErrorHandler() {
+        return errorHandler;
     }
 }
