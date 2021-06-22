@@ -2,10 +2,14 @@ package top.wuare.http;
 
 import top.wuare.http.exception.HttpServerException;
 import top.wuare.http.handler.DefaultHandler;
+import top.wuare.http.handler.RequestErrorHandler;
+import top.wuare.http.handler.RequestHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -40,6 +44,13 @@ public class HttpServer {
     // run flag
     private volatile boolean running = true;
 
+    // handler
+    private final List<RequestHandler> requestHandlers = new LinkedList<>();
+    private RequestErrorHandler errorHandler;
+
+    // static resource path
+    private String staticResourcePath;
+
     public HttpServer(int port) {
         this.port = port;
     }
@@ -57,6 +68,13 @@ public class HttpServer {
         } catch (IOException e) {
             throw new HttpServerException(e);
         }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                logger.warning(e.getMessage());
+            }
+        }));
     }
 
     public void start() {
@@ -65,11 +83,42 @@ public class HttpServer {
         while (isRunning()) {
             try {
                 Socket socket = serverSocket.accept();
-                executorService.execute(new DefaultHandler(socket));
+                executorService.execute(new DefaultHandler(this, socket));
             } catch (IOException e) {
                 logger.severe(e.getMessage());
             }
         }
+    }
+
+    public HttpServer setStaticResourcePath(String path) {
+        staticResourcePath = path;
+        return this;
+    }
+
+    public String getStaticResourcePath() {
+        return staticResourcePath;
+    }
+
+    public HttpServer addHandler(RequestHandler handler) {
+        requestHandlers.add(handler);
+        return this;
+    }
+
+    public void removeHandler(RequestHandler handler) {
+        requestHandlers.remove(handler);
+    }
+
+    public void clearHandler() {
+        requestHandlers.clear();
+    }
+
+    public HttpServer setErrorHandler(RequestErrorHandler handler) {
+        this.errorHandler = handler;
+        return this;
+    }
+
+    public RequestErrorHandler getErrorHandler() {
+        return errorHandler;
     }
 
     public int getPort() {
@@ -82,5 +131,13 @@ public class HttpServer {
 
     public void setRunning(boolean running) {
         this.running = running;
+    }
+
+    public List<RequestHandler> getRequestHandlers() {
+        return requestHandlers;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 }

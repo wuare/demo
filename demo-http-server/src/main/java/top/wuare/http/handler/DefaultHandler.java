@@ -1,6 +1,16 @@
 package top.wuare.http.handler;
 
+import top.wuare.http.HttpServer;
+import top.wuare.http.define.HttpStatus;
+import top.wuare.http.parser.HttpMessageParser;
+import top.wuare.http.proto.HttpLine;
+import top.wuare.http.proto.HttpRequest;
+import top.wuare.http.proto.HttpResponse;
+import top.wuare.http.proto.HttpResponseLine;
+
 import java.net.Socket;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * default handler for handle http request
@@ -10,18 +20,47 @@ import java.net.Socket;
  */
 public class DefaultHandler implements Runnable {
 
+    private static final Logger logger = Logger.getLogger(DefaultHandler.class.getName());
     private final Socket socket;
+    private final HttpServer httpServer;
+    private final HttpMessageParser parser = new HttpMessageParser();
 
-    public DefaultHandler(Socket socket) {
+    public DefaultHandler(HttpServer httpServer, Socket socket) {
+        this.httpServer = httpServer;
         this.socket = socket;
     }
 
     @Override
     public void run() {
+        HttpRequest request = null;
+        HttpResponse response = null;
+        try {
+            request = parser.parseRequest(socket.getInputStream());
+            request.setSocket(socket);
+            response = new HttpResponse(socket, socket.getOutputStream());
+            response.setStatus(HttpStatus.OK);
+            List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
 
+            for (RequestHandler handler : requestHandlers) {
+                handler.handle(request, response);
+            }
+        } catch (Exception e) {
+            logger.severe(e.getMessage());
+            handleError(request, response, e);
+        }
     }
 
-    public Socket getSocket() {
-        return socket;
+    private void handleError(HttpRequest request, HttpResponse response, Exception e) {
+        if (response == null) {
+            return;
+        }
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        RequestErrorHandler errorHandler = httpServer.getErrorHandler();
+        // TODO default error handler
+        if (errorHandler == null) {
+            return;
+        }
+        errorHandler.handle(request, response, e);
     }
 }

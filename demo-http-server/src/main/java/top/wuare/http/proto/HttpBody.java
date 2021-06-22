@@ -8,7 +8,14 @@ package top.wuare.http.proto;
  */
 public class HttpBody {
 
-    private byte[] data;
+    private byte[] data = new byte[0];
+
+    public HttpBody() {
+    }
+
+    public HttpBody(byte[] data) {
+        this.data = data;
+    }
 
     public byte[] getData() {
         return data;

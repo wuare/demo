@@ -7,4 +7,6 @@ package top.wuare.http.proto;
  * @date 2021/6/21
  */
 public abstract class HttpLine {
+
+    public static final String DEFAULT_VERSION = "HTTP/1.1";
 }

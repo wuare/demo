@@ -15,6 +15,20 @@ public class HttpRequest {
     private InputStream in;
     private HttpMessage httpMessage;
 
+    public HttpRequest() {
+    }
+
+    public HttpRequest(Socket socket, InputStream in) {
+        this.socket = socket;
+        this.in = in;
+    }
+
+    public HttpRequest(Socket socket, InputStream in, HttpMessage httpMessage) {
+        this.socket = socket;
+        this.in = in;
+        this.httpMessage = httpMessage;
+    }
+
     public Socket getSocket() {
         return socket;
     }

@@ -1,5 +1,6 @@
 package top.wuare.http.proto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,8 +12,22 @@ import java.util.List;
 public class HttpMessage {
 
     private HttpLine httpLine;
-    private List<HttpHeader> headers;
-    private HttpBody body;
+    private List<HttpHeader> headers = new ArrayList<>();
+    private HttpBody body = new HttpBody();
+
+    {
+        headers.add(new HttpHeader("Content-Type", "text/html; charset=utf-8"));
+        headers.add(new HttpHeader("Server", "WaSer"));
+    }
+
+    public HttpMessage() {
+    }
+
+    public HttpMessage(HttpLine httpLine, List<HttpHeader> headers, HttpBody body) {
+        this.httpLine = httpLine;
+        this.headers = headers;
+        this.body = body;
+    }
 
     public HttpLine getHttpLine() {
         return httpLine;

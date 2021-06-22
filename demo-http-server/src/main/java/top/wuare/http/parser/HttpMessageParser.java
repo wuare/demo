@@ -1,11 +1,16 @@
 package top.wuare.http.parser;
 
+import top.wuare.http.proto.HttpBody;
+import top.wuare.http.proto.HttpHeader;
 import top.wuare.http.proto.HttpLine;
+import top.wuare.http.proto.HttpMessage;
+import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.exception.HttpParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * http message parser
@@ -89,4 +94,21 @@ public class HttpMessageParser {
             throw new HttpParserException("expect " + (char) expect + ", but get " + (char) ch);
         }
     }
+
+    public List<HttpHeader> parseRequestHeaders(InputStream in) {
+        // TODO
+        return null;
+    }
+
+    public HttpBody parseRequestBody(InputStream in) {
+        // TODO
+        return null;
+    }
+
+    public HttpRequest parseRequest(InputStream in) {
+        HttpMessage httpMessage =
+                new HttpMessage(parseRequestLine(in), parseRequestHeaders(in), parseRequestBody(in));
+        return new HttpRequest(null, in, httpMessage);
+    }
+
 }

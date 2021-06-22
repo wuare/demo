@@ -8,24 +8,23 @@ package top.wuare.http.proto;
  */
 public class HttpResponseLine extends HttpLine {
 
-    private String method;
-    private String url;
     private String version;
+    private int status;
+    private String statusDesc;
 
-    public String getMethod() {
-        return method;
+    public HttpResponseLine() {
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public HttpResponseLine(int status, String statusDesc) {
+        this.version = HttpLine.DEFAULT_VERSION;
+        this.status = status;
+        this.statusDesc = statusDesc;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public HttpResponseLine(String version, int status, String statusDesc) {
+        this.version = version;
+        this.status = status;
+        this.statusDesc = statusDesc;
     }
 
     public String getVersion() {
@@ -36,12 +35,19 @@ public class HttpResponseLine extends HttpLine {
         this.version = version;
     }
 
-    @Override
-    public String toString() {
-        return "HttpResponseLine{" +
-                "method='" + method + '\'' +
-                ", url='" + url + '\'' +
-                ", version='" + version + '\'' +
-                '}';
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
     }
 }
