@@ -2,9 +2,11 @@ package top.wuare.http.proto;
 
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.exception.HttpServerException;
+import top.wuare.http.util.IOUtil;
 
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ public class HttpResponse {
     private Socket socket;
     private OutputStream out;
     private HttpMessage httpMessage = new HttpMessage();
+    private volatile boolean flushed = false;
 
     public HttpResponse() {
     }
@@ -63,6 +66,10 @@ public class HttpResponse {
     }
 
     public void flush() {
+        if (flushed) {
+            return;
+        }
+        flushed = true;
         HttpResponseLine httpLine = (HttpResponseLine) httpMessage.getHttpLine();
         String httpLineText = httpLine.getVersion() + " "
                 + httpLine.getStatus() + " "
@@ -75,10 +82,14 @@ public class HttpResponse {
         headerBuilder.append("\r\n");
         try {
             out.write(httpLineText.getBytes());
-            out.write(headerBuilder.toString().getBytes());
+            out.write(headerBuilder.toString().getBytes(StandardCharsets.UTF_8));
             out.write(data);
+            out.flush();
         } catch (Exception e) {
             throw new HttpServerException(e);
+        } finally {
+            IOUtil.close(out);
+            IOUtil.close(socket);
         }
     }
 

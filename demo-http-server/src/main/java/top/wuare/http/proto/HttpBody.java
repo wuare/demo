@@ -1,5 +1,7 @@
 package top.wuare.http.proto;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * http message body
  *
@@ -23,5 +25,12 @@ public class HttpBody {
 
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "HttpBody{" +
+                "data=" + new String(data, StandardCharsets.UTF_8) +
+                '}';
     }
 }

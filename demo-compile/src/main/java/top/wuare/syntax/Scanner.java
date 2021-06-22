@@ -50,7 +50,7 @@ public class Scanner {
             return null;
         }
         // skip space character
-        while (Character.isSpaceChar(ch)) {
+        while (Character.isWhitespace(ch)) {
             ch = nextCh();
         }
         if (Character.isLetter(ch)) {

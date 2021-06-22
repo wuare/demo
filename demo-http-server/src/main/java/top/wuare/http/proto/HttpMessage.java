@@ -23,10 +23,9 @@ public class HttpMessage {
     public HttpMessage() {
     }
 
-    public HttpMessage(HttpLine httpLine, List<HttpHeader> headers, HttpBody body) {
+    public HttpMessage(HttpLine httpLine, List<HttpHeader> headers) {
         this.httpLine = httpLine;
         this.headers = headers;
-        this.body = body;
     }
 
     public HttpLine getHttpLine() {
@@ -51,5 +50,14 @@ public class HttpMessage {
 
     public void setBody(HttpBody body) {
         this.body = body;
+    }
+
+    @Override
+    public String toString() {
+        return "HttpMessage{" +
+                "httpLine=" + httpLine +
+                ", headers=" + headers +
+                ", body=" + body +
+                '}';
     }
 }

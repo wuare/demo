@@ -10,6 +10,7 @@ import top.wuare.http.exception.HttpParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public class HttpMessageParser {
                 if (ch == -1) {
                     throw new HttpParserException("parse request line error, no data for read");
                 }
-                if (!Character.isSpaceChar(ch)) {
+                if (!Character.isWhitespace(ch)) {
                     break;
                 }
                 ch = in.read();
@@ -96,18 +97,84 @@ public class HttpMessageParser {
     }
 
     public List<HttpHeader> parseRequestHeaders(InputStream in) {
-        // TODO
-        return null;
+        if (in == null) {
+            throw new HttpParserException("parse request header error, the inputStream is null");
+        }
+        try {
+            List<HttpHeader> httpHeaders = new ArrayList<>();
+            for (;;) {
+                int ch = in.read();
+                if (ch == '\r') {
+                    ch = in.read();
+                    if (ch == '\n') {
+                        break;
+                    }
+                    throw new HttpParserException("parse request header error, syntax error");
+                }
+                // parse key
+                StringBuilder key = new StringBuilder();
+                for (;;) {
+                    if (ch == -1) {
+                        throw new HttpParserException("parse request header error, no data for read");
+                    }
+                    if (ch == ':') {
+                        break;
+                    }
+                    key.append((char) ch);
+                    ch = in.read();
+                }
+                // consume ':'
+                ch = in.read();
+                StringBuilder value = new StringBuilder();
+                // parse value
+                for (;;) {
+                    if (ch == -1) {
+                        throw new HttpParserException("parse request header error, no data for read");
+                    }
+                    if (ch == '\r') {
+                        break;
+                    }
+                    value.append((char) ch);
+                    ch = in.read();
+                }
+                // consume '\n'
+                ch = in.read();
+                want(ch, '\n');
+                httpHeaders.add(new HttpHeader(key.toString().trim(), value.toString().trim()));
+            }
+            return httpHeaders;
+        } catch (IOException e) {
+            throw new HttpParserException("parse request header error, can not read data from inputStream");
+        }
     }
 
-    public HttpBody parseRequestBody(InputStream in) {
-        // TODO
-        return null;
+    public HttpBody parseRequestBody(InputStream in, int contentLength) {
+        if (contentLength <= 0) {
+            return new HttpBody(new byte[0]);
+        }
+        byte[] buf = new byte[contentLength];
+        try {
+            int c = in.read(buf);
+            if (c == -1) {
+                throw new HttpParserException("read http body error");
+            }
+            return new HttpBody(buf);
+        } catch (IOException e) {
+            throw new HttpParserException(e);
+        }
     }
 
     public HttpRequest parseRequest(InputStream in) {
-        HttpMessage httpMessage =
-                new HttpMessage(parseRequestLine(in), parseRequestHeaders(in), parseRequestBody(in));
+        HttpRequestLine httpLine = (HttpRequestLine) parseRequestLine(in);
+        List<HttpHeader> httpHeaders = parseRequestHeaders(in);
+        HttpMessage httpMessage = new HttpMessage(httpLine, httpHeaders);
+        if ("POST".equals(httpLine.getMethod())) {
+            int length = httpHeaders.stream()
+                    .filter(v -> "Content-Length".equals(v.getKey()))
+                    .findFirst().map(v -> Integer.parseInt(v.getValue())).orElse(0);
+            HttpBody httpBody = parseRequestBody(in, length);
+            httpMessage.setBody(httpBody);
+        }
         return new HttpRequest(null, in, httpMessage);
     }
 

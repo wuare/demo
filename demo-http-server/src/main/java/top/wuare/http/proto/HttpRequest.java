@@ -2,6 +2,7 @@ package top.wuare.http.proto;
 
 import java.io.InputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 /**
  * http request
@@ -51,5 +52,19 @@ public class HttpRequest {
 
     public void setHttpMessage(HttpMessage httpMessage) {
         this.httpMessage = httpMessage;
+    }
+
+    public String getHeader(String key) {
+        return httpMessage.getHeaders().stream()
+                .filter(v -> v.getKey().equals(key))
+                .findFirst().map(HttpHeader::getValue).orElse(null);
+    }
+
+    public String getBody() {
+        return new String(httpMessage.getBody().getData(), StandardCharsets.UTF_8);
+    }
+
+    public byte[] getOriginalBody() {
+        return httpMessage.getBody().getData();
     }
 }

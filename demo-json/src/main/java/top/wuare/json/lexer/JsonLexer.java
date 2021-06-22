@@ -36,7 +36,7 @@ public class JsonLexer {
         if (ch == -1) {
             return null;
         }
-        while (Character.isSpaceChar(ch)) {
+        while (Character.isWhitespace(ch)) {
             nextCh();
         }
 
