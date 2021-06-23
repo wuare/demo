@@ -3,10 +3,8 @@ package top.wuare.http.handler;
 import top.wuare.http.HttpServer;
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.parser.HttpMessageParser;
-import top.wuare.http.proto.HttpLine;
 import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpResponse;
-import top.wuare.http.proto.HttpResponseLine;
 
 import java.net.Socket;
 import java.util.List;
