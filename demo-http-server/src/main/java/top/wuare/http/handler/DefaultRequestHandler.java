@@ -68,7 +68,7 @@ public class DefaultRequestHandler implements RequestHandler {
                 if (staticPath.charAt(staticPath.length() - 1) != '/') {
                     staticPath = staticPath + "/";
                 }
-                File file = new File(staticPath + staticPath + url);
+                File file = new File(staticPath + url);
                 if (!file.exists()) {
                     return false;
                 }

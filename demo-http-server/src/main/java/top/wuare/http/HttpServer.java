@@ -173,7 +173,8 @@ public class HttpServer {
         return staticResourcePathAbsolute;
     }
 
-    public void setStaticResourcePathAbsolute(boolean staticResourcePathAbsolute) {
+    public HttpServer setStaticResourcePathAbsolute(boolean staticResourcePathAbsolute) {
         this.staticResourcePathAbsolute = staticResourcePathAbsolute;
+        return this;
     }
 }
