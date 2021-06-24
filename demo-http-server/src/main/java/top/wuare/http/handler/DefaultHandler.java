@@ -35,10 +35,15 @@ public class DefaultHandler implements Runnable {
         try {
             request = parser.parseRequest(socket.getInputStream());
             request.setSocket(socket);
+            request.addHeader("staticAbsolute", String.valueOf(httpServer.isStaticResourcePathAbsolute()));
+            request.addHeader("staticPath", String.valueOf(httpServer.getStaticResourcePath()));
             response = new HttpResponse(socket, socket.getOutputStream());
             response.setStatus(HttpStatus.OK);
             List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
-
+            if (requestHandlers.isEmpty()) {
+                httpServer.getDefaultRequestHandler().handle(request, response);
+                return;
+            }
             for (RequestHandler handler : requestHandlers) {
                 handler.handle(request, response);
             }

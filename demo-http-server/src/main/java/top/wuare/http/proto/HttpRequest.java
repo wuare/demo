@@ -67,4 +67,15 @@ public class HttpRequest {
     public byte[] getOriginalBody() {
         return httpMessage.getBody().getData();
     }
+
+    public HttpRequest addHeader(String key, String value) {
+        for (HttpHeader header : httpMessage.getHeaders()) {
+            if (header.getKey().equals(key)) {
+                header.setValue(value);
+                return this;
+            }
+        }
+        httpMessage.getHeaders().add(new HttpHeader(key, value));
+        return this;
+    }
 }

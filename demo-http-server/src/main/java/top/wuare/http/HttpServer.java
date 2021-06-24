@@ -3,6 +3,7 @@ package top.wuare.http;
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.exception.HttpServerException;
 import top.wuare.http.handler.DefaultHandler;
+import top.wuare.http.handler.DefaultRequestHandler;
 import top.wuare.http.handler.RequestErrorHandler;
 import top.wuare.http.handler.RequestHandler;
 
@@ -48,9 +49,11 @@ public class HttpServer {
 
     // handler
     private final List<RequestHandler> requestHandlers = new LinkedList<>();
+    private final DefaultRequestHandler defaultRequestHandler = new DefaultRequestHandler();
 
     // static resource path
     private String staticResourcePath;
+    private boolean staticResourcePathAbsolute;
 
     public HttpServer(int port) {
         this.port = port;
@@ -115,6 +118,10 @@ public class HttpServer {
         requestHandlers.clear();
     }
 
+    public DefaultRequestHandler getDefaultRequestHandler() {
+        return defaultRequestHandler;
+    }
+
     public int getPort() {
         return port;
     }
@@ -160,5 +167,13 @@ public class HttpServer {
 
     public RequestErrorHandler getErrorHandler() {
         return errorHandler;
+    }
+
+    public boolean isStaticResourcePathAbsolute() {
+        return staticResourcePathAbsolute;
+    }
+
+    public void setStaticResourcePathAbsolute(boolean staticResourcePathAbsolute) {
+        this.staticResourcePathAbsolute = staticResourcePathAbsolute;
     }
 }
