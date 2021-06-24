@@ -6,24 +6,34 @@ import top.wuare.http.HttpServer;
  * bootstrap
  */
 public class HttpServerTest {
-
+    
+    // user default handler
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer(8082);
-        // can ignore
-        //httpServer.setErrorHandler((req, res, e) -> {
-        //    res.setBody("HttpServer Error");
-        //    res.flush();
-        //});
-        httpServer.addHandler((req, res) -> {
-            res.setBody("Hello HttpServer");
-            res.flush();
-        }).start();
+        
+        // don't set url if you just access static resources
+        httpServer.getDefaultRequestHandler().get("/a", (req, res) -> {
+            res.setBody("the url is /a");
+        }).get("/b", (req, res) -> {
+            res.setBody("the url is /b");
+        });
+        httpServer.start();
     }
+    
+    // access static resource
+    public static void main(String[] args) {
+        HttpServer httpServer = new HttpServer(8082);
+        // set absolute path, if not, will find static resources in classes directory
+        // httpServer.setStaticResourcePathAbsolute(true)
+        //     .setStaticResourcePath("C:/");
+        httpServer.start();
+    }
+
 }
 ```
 
 ## TODO
-- [ ] parse request headers
-- [ ] parse request body
-- [ ] url mapping handle
-- [ ] static resource handle
+- [x] parse request headers
+- [x] parse request body
+- [x] url mapping handle
+- [x] static resource handle
