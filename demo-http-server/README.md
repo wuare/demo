@@ -12,7 +12,7 @@ public class HttpServerTest {
         HttpServer httpServer = new HttpServer(8082);
         
         // don't set url if you just access static resources
-        httpServer.getDefaultRequestHandler().get("/a", (req, res) -> {
+        httpServer.get("/a", (req, res) -> {
             res.setBody("the url is /a");
         }).get("/b", (req, res) -> {
             res.setBody("the url is /b");
