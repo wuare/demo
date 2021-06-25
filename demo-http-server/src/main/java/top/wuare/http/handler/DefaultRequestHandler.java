@@ -57,6 +57,9 @@ public class DefaultRequestHandler implements RequestHandler {
     private boolean handleStaticResource(HttpRequest request, HttpResponse response) {
         HttpRequestLine httpLine = (HttpRequestLine) request.getHttpMessage().getHttpLine();
         String url = httpLine.getUrl().substring(1);
+        if ("".equals(url)) {
+            return false;
+        }
         String staticAbsolute = request.getHeader("staticAbsolute");
         String staticPath = request.getHeader("staticPath");
         InputStream in = null;

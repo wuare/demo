@@ -24,18 +24,16 @@ public class HttpServerTest {
         httpServer.setRunning(false);
     }
 
-    public void testHandleJson() {
-        HttpServer httpServer = new HttpServer(8082);
-        httpServer.addHandler((req, res) -> {
-            //String header = req.getHeader("Content-Type");
-            //if ("application/json".equals(header)) {
-                //JsonParser parser = new JsonParser();
-                //String body = req.getBody();
-                //Object parse = parser.parse(body);
-                //System.out.println(parse);
-            //}
-            res.setBody("Hello HttpServer");
-            res.flush();
-        }).start();
+    @Test
+    public void testStart0() {
+        HttpServer httpServer = new HttpServer(8083);
+        httpServer.get("/a", (req, res) -> res.setBody("method is GET, the path is /a"))
+                .post("/a", (req, res) -> res.setBody("method is POST, the path is /a"))
+        ;
+        // WARN: do not call start method!!!
+        // use thread
+        Thread t = new Thread(httpServer::start);
+        t.start();
+        httpServer.setRunning(false);
     }
 }

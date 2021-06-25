@@ -177,4 +177,14 @@ public class HttpServer {
         this.staticResourcePathAbsolute = staticResourcePathAbsolute;
         return this;
     }
+
+    public HttpServer get(String path, RequestHandler handler) {
+        defaultRequestHandler.get(path, handler);
+        return this;
+    }
+
+    public HttpServer post(String path, RequestHandler handler) {
+        defaultRequestHandler.post(path, handler);
+        return this;
+    }
 }
