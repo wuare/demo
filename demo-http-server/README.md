@@ -23,7 +23,7 @@ public class HttpServerTest {
     // access static resource
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer(8082);
-        // set absolute path, if not, will find static resources in classes directory
+        // set absolute path, if not, will find static resources in classpath
         // httpServer.setStaticResourcePathAbsolute(true)
         //     .setStaticResourcePath("C:/");
         httpServer.start();
