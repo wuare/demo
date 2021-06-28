@@ -32,6 +32,6 @@ public class Parser {
             curToken = scanner.next();
             return;
         }
-        throw new RuntimeException("syntax error");
+        throw new RuntimeException("syntax error, expect: [" + val +"], actual get: [" + new String(curToken.getValue()) + "]");
     }
 }
