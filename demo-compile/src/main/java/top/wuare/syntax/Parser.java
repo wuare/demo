@@ -23,7 +23,7 @@ public class Parser {
 
     public void parsePackageStatement() {
         match("package");
-        match("com.cxt.insurance.backend.controller.base");
+        match("org.example.controller");
         match(";");
     }
 
