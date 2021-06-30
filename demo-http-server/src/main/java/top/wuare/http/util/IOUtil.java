@@ -2,7 +2,6 @@ package top.wuare.http.util;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.Socket;
 
 /**
  * io utils
