@@ -145,9 +145,11 @@ public class Scanner {
                 strB.append((char) ch);
                 for (; ; ) {
                     ch = nextCh();
+                    if (ch == -1) {
+                        throw new RuntimeException("read error, EOF when parse string ");
+                    }
                     strB.append((char) ch);
                     if (ch == '"') {
-                        // TODO check ch == -1
                         ch = nextCh();
                         break;
                     }
