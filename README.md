@@ -9,4 +9,9 @@ for learn something
 - [x] [Http Server](https://github.com/wuare/demo/tree/master/demo-http-server)
 - [x] [Parser](https://github.com/wuare/demo/blob/master/demo-compile/src/main/java/top/wuare/syntax/Parser.java)
 - [ ] Cache
-- [ ] ...
+
+
+### Question
+1.how to handle escape character?
+2.how to handle http header connection-keepalive?
+3.how to implement a complete parser?
