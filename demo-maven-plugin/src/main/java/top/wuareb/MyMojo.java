@@ -26,12 +26,12 @@ import java.util.Map;
  * Goal which touches a timestamp file.
  *
  * @goal touch
- *
  * @phase process-sources
  */
 public class MyMojo extends AbstractMojo {
     /**
      * Location of the file.
+     *
      * @parameter property="project.build.directory"
      * @required
      */
