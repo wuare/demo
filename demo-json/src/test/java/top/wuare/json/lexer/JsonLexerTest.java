@@ -73,4 +73,9 @@ public class JsonLexerTest {
             System.out.println(token);
         }
     }
+
+    @Test
+    public void testNextTokenEscapeCharacter() {
+        // TODO
+    }
 }

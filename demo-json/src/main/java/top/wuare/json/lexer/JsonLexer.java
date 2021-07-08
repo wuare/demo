@@ -119,6 +119,41 @@ public class JsonLexer {
                 break;
             }
             // TODO \" Escape character handle?
+            // " \ b f n r t
+            if (ch == '\\') {
+                nextCh();
+                if (ch == '\\') {
+                    builder.append((char) ch);
+                    nextCh();
+                    continue;
+                }
+                if (ch == 'b') {
+                    builder.append('\b');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 'f') {
+                    builder.append('\f');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 'n') {
+                    builder.append('\n');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 'r') {
+                    builder.append('\r');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 't') {
+                    builder.append('\t');
+                    nextCh();
+                    continue;
+                }
+                throw new RuntimeException("Invalid String, unexpect character '\\" + (char) ch + "'");
+            }
             builder.append((char) ch);
             if (ch == '"') {
                 nextCh();
