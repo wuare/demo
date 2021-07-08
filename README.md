@@ -8,7 +8,7 @@ for learn something
 - [x] [JSON Parser](https://github.com/wuare/demo/tree/master/demo-json)
 - [x] [Http Server](https://github.com/wuare/demo/tree/master/demo-http-server)
 - [x] [Parser](https://github.com/wuare/demo/blob/master/demo-compile/src/main/java/top/wuare/syntax/Parser.java)
-- [x] [calculator](https://github.com/wuare/demo/tree/master/demo-calculator)
+- [x] [Simple Calculator](https://github.com/wuare/demo/tree/master/demo-calculator)
 - [ ] Cache
 
 
