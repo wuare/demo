@@ -44,7 +44,7 @@ public class CalcFrame {
         JTextPane textPane = new JTextPane();
         textPane.setBounds(0, 0, width, textPaneHeight);
         textPane.setFont(new Font(Font.SERIF, Font.BOLD, 30));
-        textPane.setEditable(false);
+        textPane.setEditable(true);
         panel.add(textPane);
 
         // 按键
@@ -76,14 +76,21 @@ public class CalcFrame {
             if (text == null || "".equals(text)) {
                 return;
             }
-            interpreter.reset(text);
             try {
+                interpreter.reset(text);
                 int expr = interpreter.expr();
                 textPane.setText(expr + "");
-            } catch (RuntimeException ex) {
+            } catch (Exception ex) {
                 System.out.println("Error: " + ex.getMessage());
-                JOptionPane.showMessageDialog(frame, "表达式错误");
-                textPane.setText(null);
+                if ("Invalid character".equals(ex.getMessage())) {
+                    JOptionPane.showMessageDialog(frame, "计算器当前只支持整数计算，" +
+                            "请检查您是否输入了其它字符");
+                } else if ("Invalid syntax".equals(ex.getMessage())) {
+                    JOptionPane.showMessageDialog(frame, "语法错误，请检查输入是否符合算术表达式");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Sorry about that, " +
+                            "it's so pity have error, please contact developer to fix this.");
+                }
             }
         });
     }
