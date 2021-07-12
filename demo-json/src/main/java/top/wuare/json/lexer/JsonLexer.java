@@ -152,6 +152,11 @@ public class JsonLexer {
                     nextCh();
                     continue;
                 }
+                if (ch == '"') {
+                    builder.append("\"");
+                    nextCh();
+                    continue;
+                }
                 throw new RuntimeException("Invalid String, unexpect character '\\" + (char) ch + "'");
             }
             builder.append((char) ch);
