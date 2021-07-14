@@ -17,8 +17,8 @@ public class Token {
     public static final int LPAREN = 6;
     public static final int RPAREN = 7;
 
-    private int type;
-    private String value;
+    private final int type;
+    private final String value;
 
     public Token(int type, String value) {
         this.type = type;
@@ -29,16 +29,8 @@ public class Token {
         return type;
     }
 
-    public void setType(int type) {
-        this.type = type;
-    }
-
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     @Override
