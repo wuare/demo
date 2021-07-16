@@ -16,3 +16,6 @@ for learn something
 1. how to handle escape character? 
 2. how to handle http header connection-keepalive? 
 3. how to implement a complete parser? 
+
+### Thanks
+Thanks for [JetBrains](https://www.jetbrains.com/)'s Open Source license(s)
