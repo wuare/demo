@@ -124,37 +124,30 @@ public class JsonLexer {
                 nextCh();
                 if (ch == '\\') {
                     builder.append((char) ch);
-                    nextCh();
                     continue;
                 }
                 if (ch == 'b') {
                     builder.append('\b');
-                    nextCh();
                     continue;
                 }
                 if (ch == 'f') {
                     builder.append('\f');
-                    nextCh();
                     continue;
                 }
                 if (ch == 'n') {
                     builder.append('\n');
-                    nextCh();
                     continue;
                 }
                 if (ch == 'r') {
                     builder.append('\r');
-                    nextCh();
                     continue;
                 }
                 if (ch == 't') {
                     builder.append('\t');
-                    nextCh();
                     continue;
                 }
                 if (ch == '"') {
                     builder.append("\"");
-                    nextCh();
                     continue;
                 }
                 throw new RuntimeException("Invalid String, unexpect character '\\" + (char) ch + "'");
