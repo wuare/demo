@@ -22,34 +22,56 @@ public class JsonParser {
 
     private Token curToken;
 
+    // antlr4 json grammar
+    // json: value
+    //     ;
+    // value: STRING
+    //      | NUMBER
+    //      | obj
+    //      | arr
+    //      | 'true'
+    //      | 'false'
+    //      | 'null
+    //      ;
+    // obj: '{' pair (',' pair)* '}'
+    //    | '{' '}'
+    //    ;
+    // pair: STRING ':' value
+    // arr: '[' value (',' value)* ']'
+    //    | '[' ']'
+    //    ;
     public Object parse(String text) {
         lexer = new JsonLexer(text);
         curToken = lexer.nextToken();
         return parseValue();
     }
 
+    // obj: '{' pair (',' pair)* '}'
+    //    | '{' '}'
+    //    ;
+    // pair: STRING ':' value
     private Map<String, Object> parseObject() {
         Map<String, Object> map = new HashMap<>();
         eat(Token.LBRACE);
-        for (;;) {
-            if (curToken == null) {
+        if (curToken.getType() == Token.STRING) {
+            String key = curToken.getVal().substring(1, curToken.getVal().length() - 1);
+            eat(Token.STRING);
+            eat(Token.COLON);
+            Object value = parseValue();
+            map.put(key, value);
+        }
+        while (curToken.getType() == Token.COMMA) {
+            eat(Token.COMMA);
+            if (curToken.getType() != Token.STRING) {
                 throw new CommonException("parse object error");
-            }
-            if (curToken.getType() == Token.RBRACE) {
-                eat(Token.RBRACE);
-                break;
             }
             String key = curToken.getVal().substring(1, curToken.getVal().length() - 1);
             eat(Token.STRING);
             eat(Token.COLON);
             Object value = parseValue();
             map.put(key, value);
-            if (curToken.getType() == Token.RBRACE) {
-                eat(Token.RBRACE);
-                break;
-            }
-            eat(Token.COMMA);
         }
+        eat(Token.RBRACE);
         return map;
     }
 

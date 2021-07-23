@@ -158,7 +158,7 @@ public class JsonLexer {
             if (ch == -1) {
                 return builder.toString();
             }
-            if (ch != ',' && ch != '.' && ch != 'E' && ch != 'e') {
+            if (ch != ',' && ch != '.' && ch != 'E' && ch != 'e' && ch != '}') {
                 throw new CommonException("Invalid number, should not have character behind '0'");
             }
             return builder.toString();
