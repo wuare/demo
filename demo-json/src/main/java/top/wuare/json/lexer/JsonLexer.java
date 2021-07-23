@@ -149,6 +149,7 @@ public class JsonLexer {
         if (ch == '0') {
             builder.append((char) ch);
             nextCh();
+            // maybe we should not check, because check whether it is legal in phase of syntax analysis
             // skip whitespace and check next character that should be comma or dot or 'E' or 'e'
             while (Character.isWhitespace(ch)) {
                 nextCh();
