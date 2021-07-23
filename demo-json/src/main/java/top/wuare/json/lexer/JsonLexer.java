@@ -96,18 +96,95 @@ public class JsonLexer {
         return new Token(type, expect);
     }
 
+    // json.org grammar
+    // number: integer fraction exponent
+    // integer: digit
+    //        | onenine digits
+    //        | '-' digit
+    //        | '-' onenine digits
+    // digits: digit
+    //       | digit digits
+    // digit: '0'
+    //      | onenine
+    // onenine: '1-9'
+    // fraction: ""
+    //         | '.' digits
+    // exponent: ""
+    //         | 'E' sign digits
+    //         | 'e' sign digits
+    // sign: ""
+    //     | '+'
+    //     | '-'
+
+    // antlr4
+    // NUMBER: '-'? INT ('.' [0-9] +)? EXP?
+    // INT: '0' | [1-9] [0-9]*
+    // EXP: [Ee] [+\-]? INT
     private Token number() {
         StringBuilder builder = new StringBuilder();
-        builder.append((char) ch);
-        for (;;) {
+        if (ch == '-') {
+            builder.append((char) ch);
             nextCh();
-            if (ch == '.' || Character.isDigit(ch)) {
+        }
+        builder.append(nInt());
+        if (ch == '.') {
+            nextCh();
+            do {
+                if (!Character.isDigit(ch)) {
+                    throw new CommonException("Invalid number, must has digit behind dot");
+                }
                 builder.append((char) ch);
-                continue;
-            }
-            break;
+                nextCh();
+            } while (Character.isDigit(ch));
+        }
+        if (ch == 'E' || ch == 'e') {
+            builder.append(nExp());
         }
         return new Token(Token.NUMBER, builder.toString());
+    }
+
+    // INT: '0' | [1-9] [0-9]*
+    private String nInt() {
+        StringBuilder builder = new StringBuilder();
+        if (ch == '0') {
+            builder.append((char) ch);
+            nextCh();
+            // skip whitespace and check next character that should be comma or dot or 'E' or 'e'
+            while (Character.isWhitespace(ch)) {
+                nextCh();
+            }
+            // may be number only
+            if (ch == -1) {
+                return builder.toString();
+            }
+            if (ch != ',' && ch != '.' && ch != 'E' && ch != 'e') {
+                throw new CommonException("Invalid number, should not have character behind '0'");
+            }
+            return builder.toString();
+        }
+        if (Character.isDigit(ch) && ch != '0') {
+            builder.append((char) ch);
+            nextCh();
+            while (Character.isDigit(ch)) {
+                builder.append((char) ch);
+                nextCh();
+            }
+            return builder.toString();
+        }
+        throw new CommonException("Invalid number, expect '0' or '1-9', but get " + (char) ch);
+    }
+
+    // EXP: [Ee] [+\-]? INT
+    private String nExp() {
+        StringBuilder builder = new StringBuilder();
+        builder.append((char) ch);
+        nextCh();
+        if (ch == '+' || ch == '-') {
+            builder.append((char) ch);
+            nextCh();
+        }
+        builder.append(nInt());
+        return builder.toString();
     }
 
     private Token string() {

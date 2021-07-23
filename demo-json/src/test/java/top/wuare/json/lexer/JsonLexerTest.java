@@ -78,4 +78,42 @@ public class JsonLexerTest {
     public void testNextTokenEscapeCharacter() {
         // TODO
     }
+
+    @Test
+    public void testNextTokenNumber() {
+        JsonLexer lexer0 = new JsonLexer("-0");
+        Token token0 = lexer0.nextToken();
+        Assert.assertNotNull(token0);
+        Assert.assertEquals(Token.NUMBER, token0.getType());
+
+        JsonLexer lexer1 = new JsonLexer("12");
+        Token token1 = lexer1.nextToken();
+        Assert.assertNotNull(token1);
+        Assert.assertEquals(Token.NUMBER, token1.getType());
+
+        JsonLexer lexer2 = new JsonLexer("-12");
+        Token token2 = lexer2.nextToken();
+        Assert.assertNotNull(token2);
+        Assert.assertEquals(Token.NUMBER, token2.getType());
+
+        JsonLexer lexer3 = new JsonLexer("-12.345");
+        Token token3 = lexer3.nextToken();
+        Assert.assertNotNull(token3);
+        Assert.assertEquals(Token.NUMBER, token3.getType());
+
+        JsonLexer lexer4 = new JsonLexer("-12.345e+2");
+        Token token4 = lexer4.nextToken();
+        Assert.assertNotNull(token4);
+        Assert.assertEquals(Token.NUMBER, token4.getType());
+
+        JsonLexer lexer5 = new JsonLexer("1.0e-2");
+        Token token5 = lexer5.nextToken();
+        Assert.assertNotNull(token5);
+        Assert.assertEquals(Token.NUMBER, token5.getType());
+
+        JsonLexer lexer6 = new JsonLexer("0");
+        Token token6 = lexer6.nextToken();
+        Assert.assertNotNull(token6);
+        Assert.assertEquals(Token.NUMBER, token6.getType());
+    }
 }
