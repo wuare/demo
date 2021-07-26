@@ -75,24 +75,20 @@ public class JsonParser {
         return map;
     }
 
+    // arr: '[' value (',' value)* ']'
+    //    | '[' ']'
+    //    ;
     private List<Object> parseArray() {
         List<Object> list = new ArrayList<>();
         eat(Token.LBRACKET);
-        for (;;) {
-            if (curToken == null) {
-                throw new CommonException("parse array error");
-            }
-            if (curToken.getType() == Token.RBRACKET) {
-                eat(Token.RBRACKET);
-                break;
-            }
+        if (curToken.getType() != Token.RBRACKET) {
             list.add(parseValue());
-            if (curToken.getType() == Token.RBRACKET) {
-                eat(Token.RBRACKET);
-                break;
+            while (curToken.getType() == Token.COMMA) {
+                eat(Token.COMMA);
+                list.add(parseValue());
             }
-            eat(Token.COMMA);
         }
+        eat(Token.RBRACKET);
         return list;
     }
 
