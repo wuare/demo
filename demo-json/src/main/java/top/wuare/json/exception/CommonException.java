@@ -4,7 +4,7 @@ package top.wuare.json.exception;
  * common exception
  *
  * @author wuare
- * @date 2021/6/15
+ * @since 2021/6/15
  */
 public class CommonException extends RuntimeException {
     public CommonException() {

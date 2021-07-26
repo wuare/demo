@@ -4,7 +4,7 @@ package top.wuare.json.lexer;
  * JSON Token
  *
  * @author wuare
- * @date 2021/6/15
+ * @since 2021/6/15
  */
 public class Token {
     // {

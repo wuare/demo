@@ -7,7 +7,7 @@ import java.io.IOException;
  * util for io
  *
  * @author wuare
- * @date 2021/6/15
+ * @since 2021/6/15
  */
 public class IOUtil {
 
