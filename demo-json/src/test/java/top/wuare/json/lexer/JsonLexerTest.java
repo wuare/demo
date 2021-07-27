@@ -1,8 +1,12 @@
 package top.wuare.json.lexer;
 
+import com.google.gson.stream.JsonReader;
 import org.junit.Assert;
 import org.junit.Test;
 import top.wuare.json.exception.CommonException;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * test JSON Lexer
@@ -75,8 +79,41 @@ public class JsonLexerTest {
     }
 
     @Test
-    public void testNextTokenEscapeCharacter() {
-        // TODO
+    public void testNextTokenEscapeCharacter() throws IOException {
+        String t = "{ \"name\": \"\\t\\nbob\" }";
+        JsonLexer lexer = new JsonLexer(t);
+        lexer.nextToken(); // {
+        lexer.nextToken(); // name
+        lexer.nextToken(); // :
+        Token token = lexer.nextToken(); // expect value
+        String str = token.getVal();
+        str = str.substring(1, str.length() - 1); // delete double quote
+
+        // Gson Reader
+        JsonReader reader = new JsonReader(new StringReader(t));
+        reader.beginObject();
+        reader.nextName();
+        String readerStr = reader.nextString();
+        Assert.assertEquals(str, readerStr);
+    }
+
+    @Test
+    public void testNextTokenEscapeCharacter0() throws IOException {
+        String t = "{ \"name\": \"\t\nbob\" }";
+        JsonLexer lexer = new JsonLexer(t);
+        lexer.nextToken(); // {
+        lexer.nextToken(); // name
+        lexer.nextToken(); // :
+        Token token = lexer.nextToken(); // expect value
+        String str = token.getVal();
+        str = str.substring(1, str.length() - 1); // delete double quote
+
+        // Gson Reader
+        JsonReader reader = new JsonReader(new StringReader(t));
+        reader.beginObject();
+        reader.nextName();
+        String readerStr = reader.nextString();
+        Assert.assertEquals(str, readerStr);
     }
 
     @Test

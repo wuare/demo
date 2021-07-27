@@ -188,7 +188,113 @@ public class JsonLexer {
         return builder.toString();
     }
 
+    // antlr4
+    // STRING
+    //   : '"' (ESC | SAFECODEPOINT)* '"'
+    //   ;
+    // fragment ESC
+    //   : '\\' (["\\/bfnrt] | UNICODE)
+    //   ;
+    // fragment UNICODE
+    //   : 'u' HEX HEX HEX HEX
+    //   ;
+    // fragment HEX
+    //   : [0-9a-fA-F]
+    //   ;
+    // fragment SAFECODEPOINT
+    //   : ~ ["\\\u0000-\u001F]
+    //   ;
     private Token string() {
+        StringBuilder builder = new StringBuilder();
+        builder.append((char) ch);
+        nextCh();
+        // '\u001F'十进制是31，缩写'US'，为单元分隔符
+        // 32是空格
+        // while ((ch == '\\' || ch > '\u001F') && ch != '"') {
+        while (ch != -1 && ch != '"') {
+
+            // escape character
+            // 转义字符
+            // fragment ESC
+            //    : '\\' (["\\/bfnrt] | UNICODE)
+            //    ;
+            if (ch == '\\') {
+                nextCh();
+                if (ch == '"') {
+                    builder.append('"');
+                    nextCh();
+                    continue;
+                }
+                if (ch == '\\') {
+                    builder.append('\\');
+                    nextCh();
+                    continue;
+                }
+                // TODO '/'?
+
+                if (ch == 'b') {
+                    builder.append('\b');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 'f') {
+                    builder.append('\f');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 'n') {
+                    builder.append('\n');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 'r') {
+                    builder.append('\r');
+                    nextCh();
+                    continue;
+                }
+                if (ch == 't') {
+                    builder.append('\t');
+                    nextCh();
+                    continue;
+                }
+                // fragment UNICODE
+                //   : 'u' HEX HEX HEX HEX
+                //   ;
+                // fragment HEX
+                //   : [0-9a-fA-F]
+                //   ;
+                if (ch == 'u') {
+                    StringBuilder hexBuilder = new StringBuilder();
+                    nextCh();
+                    for (int i = 0; i < 4; i++) {
+                        if ((ch >= '0' && ch <= '9')
+                                || (ch >= 'a' && ch <= 'f')
+                                || (ch >= 'A' && ch <= 'F')) {
+                            hexBuilder.append((char) ch);
+                            nextCh();
+                            continue;
+                        }
+                        throw new CommonException("Invalid unicode character, unexpect character '" + (char) ch + "'");
+                    }
+                    int codePoint = Integer.parseInt(hexBuilder.toString(), 16);
+                    char[] chars = Character.toChars(codePoint);
+                    builder.append(new String(chars));
+                    continue;
+                }
+            }
+            builder.append((char) ch);
+            nextCh();
+        }
+        if (ch == '"') {
+            builder.append((char) ch);
+            nextCh();
+            return new Token(Token.STRING, builder.toString());
+        }
+        throw new CommonException("Invalid String, unexpect character '" + (char) ch + "'");
+    }
+
+    @Deprecated
+    private Token string0() {
         StringBuilder builder = new StringBuilder();
         builder.append((char) ch);
         for (;;) {
