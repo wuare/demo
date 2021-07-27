@@ -284,6 +284,18 @@ public class JsonLexer {
             }
             builder.append((char) ch);
             nextCh();
+            // TODO
+            // check character greater than '\u001F' in antlr4's grammar,
+            // but this is invalid when string has space etc character.
+            // the string can be has space character when i use gson reader parse string,
+            // so not check there, perhaps will fix it one day, hope so.
+
+            // if (ch > '\u001F') {
+            //     builder.append((char) ch);
+            //     nextCh();
+            //     continue;
+            // }
+            // throw new CommonException("Invalid String, unexpect character '" + (char) ch + "'");
         }
         if (ch == '"') {
             builder.append((char) ch);
