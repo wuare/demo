@@ -45,6 +45,8 @@ public class JsonLexer {
         }
 
         switch (ch) {
+            case -1:
+                return null;
             case '{':
                 Token token = new Token(Token.LBRACE, Character.toString((char) ch));
                 nextCh();

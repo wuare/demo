@@ -71,7 +71,7 @@ public class JsonLexerTest {
 
     @Test
     public void testNextToken() {
-        JsonLexer lexer = new JsonLexer("{ \"orderCode\": \"C001\", \"type\": 1, \"pageNo\": 3 , \"amount\": -1.236 }");
+        JsonLexer lexer = new JsonLexer("{ \"orderCode\": \"C001\", \"type\": 1, \"pageNo\": 3 , \"amount\": -1.236 } ");
         Token token;
         while ((token = lexer.nextToken()) != null) {
             System.out.println(token);
