@@ -30,7 +30,7 @@ public class JsonLexer {
             ch = reader.read();
             if (ch == '\n') {
                 line++;
-                column = 1;
+                column = 0;
             } else {
                 column++;
             }
