@@ -17,6 +17,8 @@ public class JsonLexer {
 
     private int ch;
     private final Reader reader;
+    private int line = 1;
+    private int column;
 
     public JsonLexer(String text) {
         this.reader = new StringReader(text);
@@ -26,6 +28,12 @@ public class JsonLexer {
     protected void nextCh() {
         try {
             ch = reader.read();
+            if (ch == '\n') {
+                line++;
+                column = 1;
+            } else {
+                column++;
+            }
         } catch (IOException e) {
             IOUtil.close(reader);
             throw new CommonException(e);
@@ -48,27 +56,27 @@ public class JsonLexer {
             case -1:
                 return null;
             case '{':
-                Token token = new Token(Token.LBRACE, Character.toString((char) ch));
+                Token token = new Token(Token.LBRACE, Character.toString((char) ch), line, column);
                 nextCh();
                 return token;
             case '}':
-                Token token1 = new Token(Token.RBRACE, Character.toString((char) ch));
+                Token token1 = new Token(Token.RBRACE, Character.toString((char) ch), line, column);
                 nextCh();
                 return token1;
             case '[':
-                Token token2 = new Token(Token.LBRACKET, Character.toString((char) ch));
+                Token token2 = new Token(Token.LBRACKET, Character.toString((char) ch), line, column);
                 nextCh();
                 return token2;
             case ']':
-                Token token3 = new Token(Token.RBRACKET, Character.toString((char) ch));
+                Token token3 = new Token(Token.RBRACKET, Character.toString((char) ch), line, column);
                 nextCh();
                 return token3;
             case ':':
-                Token token4 = new Token(Token.COLON, Character.toString((char) ch));
+                Token token4 = new Token(Token.COLON, Character.toString((char) ch), line, column);
                 nextCh();
                 return token4;
             case ',':
-                Token token5 = new Token(Token.COMMA, Character.toString((char) ch));
+                Token token5 = new Token(Token.COMMA, Character.toString((char) ch), line, column);
                 nextCh();
                 return token5;
             case '"':
@@ -83,19 +91,21 @@ public class JsonLexer {
                 // null
                 return literal(Token.LITERAL_NULL, "null");
             default:
-                throw new CommonException("the character '" + (char) ch + "' is unexpected, please check it");
+                throw new CommonException("the character '" + (char) ch + "' at line: " + line + ", column: " + column + " is unexpected, please check it");
         }
     }
 
     private Token literal(int type, String expect) {
+        int li = this.line;
+        int co = this.column;
         for (int i = 0; i < expect.length(); i++) {
             if (expect.charAt(i) == ch) {
                 nextCh();
                 continue;
             }
-            throw new CommonException("the character '" + (char) ch + "' is unexpected, please check it");
+            throw new CommonException("the character '" + (char) ch + "' at line: " + line + ", column: " + column + " is unexpected, please check it");
         }
-        return new Token(type, expect);
+        return new Token(type, expect, li, co);
     }
 
     // json.org grammar
@@ -123,6 +133,8 @@ public class JsonLexer {
     // INT: '0' | [1-9] [0-9]*
     // EXP: [Ee] [+\-]? INT
     private Token number() {
+        int li = this.line;
+        int co = this.column;
         StringBuilder builder = new StringBuilder();
         if (ch == '-') {
             builder.append((char) ch);
@@ -142,7 +154,7 @@ public class JsonLexer {
         if (ch == 'E' || ch == 'e') {
             builder.append(nExp());
         }
-        return new Token(Token.NUMBER, builder.toString());
+        return new Token(Token.NUMBER, builder.toString(), li, co);
     }
 
     // INT: '0' | [1-9] [0-9]*
@@ -161,7 +173,7 @@ public class JsonLexer {
                 return builder.toString();
             }
             if (ch != ',' && ch != '.' && ch != 'E' && ch != 'e' && ch != '}') {
-                throw new CommonException("Invalid number, should not have character behind '0'");
+                throw new CommonException("Invalid number at line: " + line + ", column: " + column + ", should not have character behind '0'");
             }
             return builder.toString();
         }
@@ -174,7 +186,7 @@ public class JsonLexer {
             }
             return builder.toString();
         }
-        throw new CommonException("Invalid number, expect '0' or '1-9', but get " + (char) ch);
+        throw new CommonException("Invalid number at line: " + line + ", column: " + column + ", expect '0' or '1-9', but get " + (char) ch);
     }
 
     // EXP: [Ee] [+\-]? INT
@@ -207,6 +219,8 @@ public class JsonLexer {
     //   : ~ ["\\\u0000-\u001F]
     //   ;
     private Token string() {
+        int li = this.line;
+        int co = this.column;
         StringBuilder builder = new StringBuilder();
         builder.append((char) ch);
         nextCh();
@@ -276,7 +290,7 @@ public class JsonLexer {
                             nextCh();
                             continue;
                         }
-                        throw new CommonException("Invalid unicode character, unexpect character '" + (char) ch + "'");
+                        throw new CommonException("Invalid unicode character at line: " + line + ", column: " + column + ", unexpect character '" + (char) ch + "'");
                     }
                     int codePoint = Integer.parseInt(hexBuilder.toString(), 16);
                     char[] chars = Character.toChars(codePoint);
@@ -302,9 +316,9 @@ public class JsonLexer {
         if (ch == '"') {
             builder.append((char) ch);
             nextCh();
-            return new Token(Token.STRING, builder.toString());
+            return new Token(Token.STRING, builder.toString(), li, co);
         }
-        throw new CommonException("Invalid String, unexpect character '" + (char) ch + "'");
+        throw new CommonException("Invalid String at line: " + line + ", column: " + column + ", unexpect character '" + (char) ch + "'");
     }
 
     @Deprecated
@@ -316,7 +330,6 @@ public class JsonLexer {
             if (ch == -1) {
                 break;
             }
-            // TODO \" Escape character handle?
             // " \ b f n r t
             if (ch == '\\') {
                 nextCh();
@@ -348,7 +361,7 @@ public class JsonLexer {
                     builder.append("\"");
                     continue;
                 }
-                throw new RuntimeException("Invalid String, unexpect character '\\" + (char) ch + "'");
+                throw new RuntimeException("Invalid String at line: " + line + ", column: " + column + ", unexpect character '\\" + (char) ch + "'");
             }
             builder.append((char) ch);
             if (ch == '"') {

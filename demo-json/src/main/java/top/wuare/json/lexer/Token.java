@@ -24,6 +24,8 @@ public class Token {
 
     private int type;
     private String val;
+    private int line;
+    private int column;
 
     public Token() {
     }
@@ -31,6 +33,13 @@ public class Token {
     public Token(int type, String val) {
         this.type = type;
         this.val = val;
+    }
+
+    public Token(int type, String val, int line, int column) {
+        this.type = type;
+        this.val = val;
+        this.line = line;
+        this.column = column;
     }
 
     public int getType() {
@@ -49,11 +58,29 @@ public class Token {
         this.val = val;
     }
 
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
     @Override
     public String toString() {
         return "Token{" +
                 "type=" + type +
                 ", val='" + val + '\'' +
+                ", line=" + line +
+                ", column=" + column +
                 '}';
     }
 }
