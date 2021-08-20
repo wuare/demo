@@ -500,8 +500,9 @@ public class Lexer {
             if (ch == '\n') {
                 line++;
                 column = 0;
+            } else {
+                column++;
             }
-            column++;
         } catch (IOException e) {
             throw new LexerException(e);
         }
