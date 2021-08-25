@@ -30,6 +30,7 @@ public class HttpServerTest {
         httpServer.get("/a", (req, res) -> res.setBody("method is GET, the path is /a"))
                 .post("/a", (req, res) -> res.setBody("method is POST, the path is /a"))
         ;
+        httpServer.start();
         // WARN: do not call start method!!!
         // use thread
         Thread t = new Thread(httpServer::start);

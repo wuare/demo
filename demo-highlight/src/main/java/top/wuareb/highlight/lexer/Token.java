@@ -59,6 +59,8 @@ public class Token {
     public static final int LINE_COMMENT = 52;
     public static final int COMMENT = 53;
 
+    public static final int WHITE_SPACE = 54;
+
     private int type;
     private String value;
 

@@ -30,8 +30,17 @@ public class Lexer {
             return null;
         }
         // skip while space
-        while (Character.isWhitespace(ch)) {
-            advance();
+        if (Character.isWhitespace(ch)) {
+            StringBuilder spaceBuilder = new StringBuilder();
+            Token spaceToken = new Token(line, column);
+            while (Character.isWhitespace(ch)) {
+                spaceBuilder.append((char) ch);
+                advance();
+            }
+            spaceToken.setType(Token.WHITE_SPACE);
+            spaceToken.setValue(spaceBuilder.toString());
+            // 特定场景，高亮需保存空白符，如果是编译构造语法数，空白符不保留
+            return spaceToken;
         }
 
         // IDENTIFIER
