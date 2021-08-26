@@ -32,9 +32,9 @@ public class DefaultRequestHandler implements RequestHandler {
     public void handle(HttpRequest request, HttpResponse response) {
         HttpRequestLine httpLine = (HttpRequestLine) request.getHttpMessage().getHttpLine();
         RequestHandler handler;
-        if ("GET".equals(httpLine.getMethod().toUpperCase())) {
+        if ("GET".equalsIgnoreCase(httpLine.getMethod())) {
             handler = requestHandlerGetMap.get(httpLine.getUrl());
-        } else if ("POST".equals(httpLine.getMethod().toUpperCase())) {
+        } else if ("POST".equalsIgnoreCase(httpLine.getMethod())) {
             handler = requestHandlerPostMap.get(httpLine.getUrl());
         } else {
             handlerError(response, HttpStatus.METHOD_NOT_ALLOWED);
