@@ -30,7 +30,7 @@ public class Lexer {
             return null;
         }
         // skip control character
-        while (ch >= 0 && ch <= 31) {
+        while (ch >= 0 && ch <= 31 && ch != '\r' && ch != '\n') {
             advance();
         }
         // skip while space
@@ -55,7 +55,7 @@ public class Lexer {
         if (Character.isDigit(ch)) {
             return number();
         }
-        while (ch >= 0 && ch <= 31) {
+        while (ch >= 0 && ch <= 31 && ch != '\r' && ch != '\n') {
             advance();
         }
         switch (ch) {
