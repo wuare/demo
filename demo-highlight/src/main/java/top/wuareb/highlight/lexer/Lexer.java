@@ -261,6 +261,10 @@ public class Lexer {
                 return assign_2('=', Token.CARET, Token.XOR_ASSIGN);
             case '%':
                 return assign_2('=', Token.MOD, Token.MOD_ASSIGN);
+            case '@':
+                Token token22 = new Token(Token.AT, "@", line, column);
+                advance();
+                return token22;
             default:
                 throw new LexerException("syntax error at line: " + line + ", column " + column + ", unexpect character: '" + (char) ch + "'");
         }

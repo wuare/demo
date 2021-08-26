@@ -66,6 +66,12 @@ public class JavaGen implements Gen {
                 builder.append(newText);
                 continue;
             }
+            // #BBB529
+            if (token.getType() == Token.AT) {
+                String newText = "<span style=\"color: #BBB529;\">" + token.getValue() + "</span>";
+                builder.append(newText);
+                continue;
+            }
             builder.append(token.getValue());
         }
 
