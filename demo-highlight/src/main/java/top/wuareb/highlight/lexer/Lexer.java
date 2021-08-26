@@ -29,6 +29,10 @@ public class Lexer {
         if (ch == -1) {
             return null;
         }
+        // skip control character
+        while (ch >= 0 && ch <= 31) {
+            advance();
+        }
         // skip while space
         if (Character.isWhitespace(ch)) {
             StringBuilder spaceBuilder = new StringBuilder();
@@ -50,6 +54,9 @@ public class Lexer {
         // NUMBER
         if (Character.isDigit(ch)) {
             return number();
+        }
+        while (ch >= 0 && ch <= 31) {
+            advance();
         }
         switch (ch) {
             case -1:
