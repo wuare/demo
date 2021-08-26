@@ -297,7 +297,7 @@ public class Lexer {
         if (ch == '/') {
             advance();
             builder.append("//");
-            while (ch != '\r' && ch != '\n') {
+            while (ch != '\r' && ch != '\n' && ch != -1) {
                 builder.append((char) ch);
                 advance();
             }
@@ -350,7 +350,7 @@ public class Lexer {
         StringBuilder builder = new StringBuilder();
         Token token = new Token(line, column);
         advance();
-        while (ch != '"' && ch != '\r' && ch != '\n') {
+        while (ch != '"' && ch != '\r' && ch != '\n' && ch != -1) {
             if (ch == '\\') {
                 escape(builder);
                 continue;
