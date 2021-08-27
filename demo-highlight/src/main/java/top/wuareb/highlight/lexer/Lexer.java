@@ -29,10 +29,6 @@ public class Lexer {
         if (ch == -1) {
             return null;
         }
-        // skip control character
-        while (ch >= 0 && ch <= 31 && ch != '\r' && ch != '\n') {
-            advance();
-        }
         // skip while space
         if (Character.isWhitespace(ch)) {
             StringBuilder spaceBuilder = new StringBuilder();
@@ -54,9 +50,6 @@ public class Lexer {
         // NUMBER
         if (Character.isDigit(ch)) {
             return number();
-        }
-        while (ch >= 0 && ch <= 31 && ch != '\r' && ch != '\n') {
-            advance();
         }
         switch (ch) {
             case -1:
@@ -273,7 +266,10 @@ public class Lexer {
                 advance();
                 return token22;
             default:
-                throw new LexerException("syntax error at line: " + line + ", column " + column + ", unexpect character: '" + (char) ch + "'");
+//                throw new LexerException("syntax error at line: " + line + ", column " + column + ", unexpect character: '" + (char) ch + "'");
+                Token token23 = new Token(Token.UN_KNOW, String.valueOf((char) ch), line, column);
+                advance();
+                return token23;
         }
     }
 

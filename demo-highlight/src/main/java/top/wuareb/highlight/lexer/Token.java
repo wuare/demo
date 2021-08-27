@@ -61,6 +61,7 @@ public class Token {
 
     public static final int WHITE_SPACE = 54;
     public static final int AT = 55;
+    public static final int UN_KNOW = 99;
 
     private int type;
     private String value;
