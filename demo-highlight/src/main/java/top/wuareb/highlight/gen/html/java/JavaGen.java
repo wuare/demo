@@ -72,6 +72,42 @@ public class JavaGen implements Gen {
                 builder.append(newText);
                 continue;
             }
+            if (token.getType() == Token.LT) {
+                builder.append("&lt;");
+                continue;
+            }
+            if (token.getType() == Token.GT) {
+                builder.append("&gt;");
+                continue;
+            }
+            if (token.getType() == Token.LE) {
+                builder.append("&lt;=");
+                continue;
+            }
+            if (token.getType() == Token.GE) {
+                builder.append("&gt;=");
+                continue;
+            }
+            if (token.getType() == Token.L_SHIFT_ASSIGN) {
+                builder.append("&lt;&lt;=");
+                continue;
+            }
+            if (token.getType() == Token.R_SHIFT_ASSIGN) {
+                builder.append("&gt;&gt;=");
+                continue;
+            }
+            if (token.getType() == Token.U_R_SHIFT_ASSIGN) {
+                builder.append("&gt;&gt;&gt;=");
+                continue;
+            }
+            if (token.getType() == Token.L_SHIFT) {
+                builder.append("&lt;&lt;");
+                continue;
+            }
+            if (token.getType() == Token.R_SHIFT) {
+                builder.append("&gt;&gt;");
+                continue;
+            }
             builder.append(token.getValue());
         }
 
