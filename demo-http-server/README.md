@@ -37,3 +37,9 @@ public class HttpServerTest {
 - [x] parse request body
 - [x] url mapping handle
 - [x] static resource handle
+- [ ] Connection header handle
+
+## Note
+如果遇到`Connection: keep-alive`请求头，执行完业务逻辑后，需要将输入流中未读取的数据消费完，然后把socket放到线程池中继续处理。  
+
+
