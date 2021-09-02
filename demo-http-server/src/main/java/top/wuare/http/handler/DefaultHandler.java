@@ -50,6 +50,10 @@ public class DefaultHandler implements Runnable {
         } catch (Exception e) {
             logger.severe(e.getMessage());
             handleError(request, response, e);
+        } finally {
+            if (response != null && !response.isFlushed()) {
+                response.flush();
+            }
         }
     }
 

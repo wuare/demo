@@ -80,8 +80,8 @@ public class HttpResponse {
         HttpResponseLine httpLine = (HttpResponseLine) httpMessage.getHttpLine();
         byte[] data = httpMessage.getBody().getData();
         List<HttpHeader> headers = httpMessage.getHeaders();
-        headers.add(new HttpHeader("Content-Length", String.valueOf(data.length)));
-
+        addHeader("Content-Length", String.valueOf(data.length));
+        addHeader("Connection", "close");
         try {
             writeResponseLine(httpLine, out);
             writeResponseHeaders(headers, out);
