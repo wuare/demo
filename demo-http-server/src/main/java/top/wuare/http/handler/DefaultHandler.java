@@ -67,7 +67,7 @@ public class DefaultHandler implements Runnable {
             return;
         }
         try {
-            if (socket != null && !socket.isClosed() && "keep-alive".equals(request.getHeader("Connection"))) {
+            if (socket != null && socket.isConnected() && !socket.isClosed() && "keep-alive".equals(request.getHeader("Connection"))) {
                 httpServer.getExecutorService().execute(new DefaultHandler(httpServer, socket));
             } else {
                 IOUtil.close(socket);
@@ -82,6 +82,9 @@ public class DefaultHandler implements Runnable {
         if (response == null) {
             return;
         }
+        if (socket.isClosed()) {
+            return;
+        }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 
         RequestErrorHandler errorHandler = httpServer.getErrorHandler();
@@ -89,10 +92,12 @@ public class DefaultHandler implements Runnable {
         if (errorHandler == null) {
             return;
         }
-        errorHandler.handle(request, response, e);
-    }
-
-    public Socket getSocket() {
-        return socket;
+        try {
+            errorHandler.handle(request, response, e);
+        } catch (Exception ex) {
+            logger.severe(ex.getMessage());
+            IOUtil.close(socket);
+            response.setFlushed(true);
+        }
     }
 }

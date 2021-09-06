@@ -137,4 +137,8 @@ public class HttpResponse {
     public boolean isFlushed() {
         return flushed;
     }
+
+    public void setFlushed(boolean flushed) {
+        this.flushed = flushed;
+    }
 }
