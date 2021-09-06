@@ -46,10 +46,11 @@ public class DefaultHandler implements Runnable {
             List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
             if (requestHandlers.isEmpty()) {
                 httpServer.getDefaultRequestHandler().handle(request, response);
-            } else {
-                for (RequestHandler handler : requestHandlers) {
-                    handler.handle(request, response);
-                }
+                handleKeepAlive(request);
+                return;
+            }
+            for (RequestHandler handler : requestHandlers) {
+                handler.handle(request, response);
             }
         } catch (Exception e) {
             logger.severe(e.getMessage());
@@ -92,12 +93,6 @@ public class DefaultHandler implements Runnable {
         if (errorHandler == null) {
             return;
         }
-        try {
-            errorHandler.handle(request, response, e);
-        } catch (Exception ex) {
-            logger.severe(ex.getMessage());
-            IOUtil.close(socket);
-            response.setFlushed(true);
-        }
+        errorHandler.handle(request, response, e);
     }
 }
