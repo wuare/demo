@@ -84,16 +84,19 @@ public class HttpServer {
     public void start() {
         init();
         logger.info("the thread pool config, coreSize: {" + coreSize + "}, maxSize: {" + maxSize + "}.");
+        initAndStartTasks();
         while (isRunning()) {
             try {
-                // TODO can not handle client header connection is keep-alive,
-                //  so we must close output/in stream when call http response flush method
                 Socket socket = serverSocket.accept();
                 executorService.execute(new DefaultHandler(this, socket));
             } catch (IOException e) {
                 logger.severe(e.getMessage());
             }
         }
+    }
+
+    private void initAndStartTasks() {
+
     }
 
     public HttpServer setStaticResourcePath(String path) {

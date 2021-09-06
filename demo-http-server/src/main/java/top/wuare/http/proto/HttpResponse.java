@@ -81,7 +81,7 @@ public class HttpResponse {
         byte[] data = httpMessage.getBody().getData();
         List<HttpHeader> headers = httpMessage.getHeaders();
         addHeader("Content-Length", String.valueOf(data.length));
-        addHeader("Connection", "close");
+        // addHeader("Connection", "close");
         try {
             writeResponseLine(httpLine, out);
             writeResponseHeaders(headers, out);
@@ -89,10 +89,11 @@ public class HttpResponse {
             out.flush();
         } catch (Exception e) {
             throw new HttpServerException(e);
-        } finally {
-            IOUtil.close(out);
-            IOUtil.close(socket);
         }
+        // finally {
+        //     IOUtil.close(out);
+        //     IOUtil.close(socket);
+        // }
     }
 
     public void writeResponseLine(HttpResponseLine httpLine, OutputStream out) throws IOException {

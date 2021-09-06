@@ -5,6 +5,7 @@ import top.wuare.http.define.HttpStatus;
 import top.wuare.http.parser.HttpMessageParser;
 import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpResponse;
+import top.wuare.http.util.IOUtil;
 
 import java.net.Socket;
 import java.util.List;
@@ -30,6 +31,9 @@ public class DefaultHandler implements Runnable {
 
     @Override
     public void run() {
+        if (socket.isClosed()) {
+            return;
+        }
         HttpRequest request = null;
         HttpResponse response = null;
         try {
@@ -55,6 +59,23 @@ public class DefaultHandler implements Runnable {
                 response.flush();
             }
         }
+        handleKeepAlive(request);
+    }
+
+    private void handleKeepAlive(HttpRequest request) {
+        if (request == null) {
+            return;
+        }
+        try {
+            if (socket != null && !socket.isClosed() && "keep-alive".equals(request.getHeader("Connection"))) {
+                httpServer.getExecutorService().execute(new DefaultHandler(httpServer, socket));
+            } else {
+                IOUtil.close(socket);
+            }
+        } catch (Exception e) {
+            logger.severe(e.getMessage());
+            IOUtil.close(socket);
+        }
     }
 
     private void handleError(HttpRequest request, HttpResponse response, Exception e) {
@@ -69,5 +90,9 @@ public class DefaultHandler implements Runnable {
             return;
         }
         errorHandler.handle(request, response, e);
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 }
