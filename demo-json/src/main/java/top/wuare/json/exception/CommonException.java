@@ -7,10 +7,7 @@ package top.wuare.json.exception;
  * @since 2021/6/15
  */
 public class CommonException extends RuntimeException {
-    public CommonException() {
-        super();
-    }
-
+    
     public CommonException(String message) {
         super(message);
     }
