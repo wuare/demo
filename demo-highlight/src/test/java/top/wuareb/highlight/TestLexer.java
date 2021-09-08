@@ -1,8 +1,8 @@
 package top.wuareb.highlight;
 
 import org.junit.Test;
-import top.wuareb.highlight.lexer.Lexer;
-import top.wuareb.highlight.lexer.Token;
+import top.wuareb.highlight.lexer.java.Lexer;
+import top.wuareb.highlight.lexer.java.Token;
 
 import java.io.*;
 

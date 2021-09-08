@@ -1,4 +1,4 @@
-package top.wuareb.highlight.lexer;
+package top.wuareb.highlight.lexer.java;
 
 public class Token {
 

@@ -1,8 +1,8 @@
 package top.wuareb.highlight.gen.html.java;
 
 import top.wuareb.highlight.gen.Gen;
-import top.wuareb.highlight.lexer.Lexer;
-import top.wuareb.highlight.lexer.Token;
+import top.wuareb.highlight.lexer.java.Lexer;
+import top.wuareb.highlight.lexer.java.Token;
 
 public class JavaGen implements Gen {
 

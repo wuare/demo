@@ -1,4 +1,4 @@
-package top.wuareb.highlight.lexer;
+package top.wuareb.highlight.lexer.java;
 
 import top.wuareb.highlight.exception.LexerException;
 import top.wuareb.highlight.util.Sets;
