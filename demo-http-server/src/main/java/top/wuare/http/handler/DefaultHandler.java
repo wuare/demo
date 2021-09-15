@@ -8,6 +8,7 @@ import top.wuare.http.proto.HttpResponse;
 import top.wuare.http.util.IOUtil;
 
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -52,6 +53,9 @@ public class DefaultHandler implements Runnable {
             for (RequestHandler handler : requestHandlers) {
                 handler.handle(request, response);
             }
+        } catch (SocketTimeoutException e) {
+            logger.warning("the socket timeout " + socket);
+            IOUtil.close(socket);
         } catch (Exception e) {
             logger.severe(e.getMessage());
             handleError(request, response, e);

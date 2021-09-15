@@ -32,9 +32,9 @@ public class HttpServer {
     private static final Logger logger = Logger.getLogger(HttpServer.class.getName());
 
     // thread pool config
-    private final int coreSize = Runtime.getRuntime().availableProcessors();
-    private final int maxSize = coreSize + coreSize / 2;
-    private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(50);
+    private final int coreSize = 25;
+    private final int maxSize = coreSize * 2;
+    private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(100);
     private final ExecutorService executorService =
             new ThreadPoolExecutor(coreSize, maxSize, 10, TimeUnit.MINUTES, blockingQueue);
 
@@ -88,6 +88,7 @@ public class HttpServer {
         while (isRunning()) {
             try {
                 Socket socket = serverSocket.accept();
+                socket.setSoTimeout(5000);
                 executorService.execute(new DefaultHandler(this, socket));
             } catch (IOException e) {
                 logger.severe(e.getMessage());
