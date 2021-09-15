@@ -46,13 +46,12 @@ public class DefaultHandler implements Runnable {
             List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
             if (requestHandlers.isEmpty()) {
                 httpServer.getDefaultRequestHandler().handle(request, response);
-                handleKeepAlive(request);
+                response.flush();
                 return;
             }
             for (RequestHandler handler : requestHandlers) {
                 handler.handle(request, response);
             }
-            response.flush();
         } catch (Exception e) {
             logger.severe(e.getMessage());
             handleError(request, response, e);
