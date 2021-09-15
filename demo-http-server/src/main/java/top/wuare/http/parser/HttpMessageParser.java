@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * http message parser
@@ -20,6 +22,8 @@ import java.util.List;
  * @date 2021/6/21
  */
 public class HttpMessageParser {
+
+    private static final Logger logger = Logger.getLogger(HttpMessageParser.class.getName());
 
     public HttpLine parseRequestLine(InputStream in) {
         if (in == null) {
@@ -86,6 +90,7 @@ public class HttpMessageParser {
             want(ch, '\n');
             return requestLine;
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "parse request line error", e);
             throw new HttpParserException("parse request line error, can not read data from inputStream");
         }
     }
@@ -144,6 +149,7 @@ public class HttpMessageParser {
             }
             return httpHeaders;
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "parse request header error", e);
             throw new HttpParserException("parse request header error, can not read data from inputStream");
         }
     }
@@ -160,6 +166,7 @@ public class HttpMessageParser {
             }
             return new HttpBody(buf);
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "parse request body error", e);
             throw new HttpParserException(e);
         }
     }

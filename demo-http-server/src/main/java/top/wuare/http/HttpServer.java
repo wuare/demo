@@ -88,7 +88,7 @@ public class HttpServer {
         while (isRunning()) {
             try {
                 Socket socket = serverSocket.accept();
-                socket.setSoTimeout(5000);
+                // socket.setSoTimeout(5000);
                 executorService.execute(new DefaultHandler(this, socket));
             } catch (IOException e) {
                 logger.severe(e.getMessage());

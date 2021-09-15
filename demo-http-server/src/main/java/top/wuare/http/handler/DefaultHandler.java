@@ -8,7 +8,6 @@ import top.wuare.http.proto.HttpResponse;
 import top.wuare.http.util.IOUtil;
 
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -53,18 +52,13 @@ public class DefaultHandler implements Runnable {
             for (RequestHandler handler : requestHandlers) {
                 handler.handle(request, response);
             }
-        } catch (SocketTimeoutException e) {
-            logger.warning("the socket timeout " + socket);
-            IOUtil.close(socket);
+            response.flush();
         } catch (Exception e) {
             logger.severe(e.getMessage());
             handleError(request, response, e);
         } finally {
-            if (response != null && !response.isFlushed()) {
-                response.flush();
-            }
+            handleKeepAlive(request);
         }
-        handleKeepAlive(request);
     }
 
     private void handleKeepAlive(HttpRequest request) {
@@ -93,10 +87,10 @@ public class DefaultHandler implements Runnable {
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 
         RequestErrorHandler errorHandler = httpServer.getErrorHandler();
-        // TODO default error handler
         if (errorHandler == null) {
             return;
         }
         errorHandler.handle(request, response, e);
+        response.flush();
     }
 }
