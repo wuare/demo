@@ -46,7 +46,6 @@ public class DefaultHandler implements Runnable {
             List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
             if (requestHandlers.isEmpty()) {
                 httpServer.getDefaultRequestHandler().handle(request, response);
-                response.flush();
                 return;
             }
             for (RequestHandler handler : requestHandlers) {
@@ -56,6 +55,9 @@ public class DefaultHandler implements Runnable {
             logger.severe(e.getMessage());
             handleError(request, response, e);
         } finally {
+            if (response != null) {
+                response.flush();
+            }
             handleKeepAlive(request);
         }
     }
