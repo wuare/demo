@@ -23,6 +23,7 @@ public class HttpResponse {
     private OutputStream out;
     private HttpMessage httpMessage = new HttpMessage();
     private volatile boolean flushed = false;
+    private boolean needFlush = true;
 
     public HttpResponse() {
     }
@@ -73,6 +74,12 @@ public class HttpResponse {
     }
 
     public void flush() {
+        if (socket == null || socket.isClosed()) {
+            return;
+        }
+        if (!needFlush) {
+            return;
+        }
         if (flushed) {
             return;
         }
@@ -90,10 +97,6 @@ public class HttpResponse {
         } catch (Exception e) {
             throw new HttpServerException(e);
         }
-        // finally {
-        //     IOUtil.close(out);
-        //     IOUtil.close(socket);
-        // }
     }
 
     public void writeResponseLine(HttpResponseLine httpLine, OutputStream out) throws IOException {

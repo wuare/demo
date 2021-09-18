@@ -2,6 +2,7 @@ package top.wuare.http.handler;
 
 import top.wuare.http.HttpServer;
 import top.wuare.http.define.HttpStatus;
+import top.wuare.http.exception.HttpReadTimeOutException;
 import top.wuare.http.parser.HttpMessageParser;
 import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpResponse;
@@ -51,8 +52,10 @@ public class DefaultHandler implements Runnable {
             for (RequestHandler handler : requestHandlers) {
                 handler.handle(request, response);
             }
+        } catch (HttpReadTimeOutException e) {
+            IOUtil.close(socket);
         } catch (Exception e) {
-            logger.severe(e.getMessage());
+            logger.severe("DefaultHandler#run " + e.getMessage());
             handleError(request, response, e);
         } finally {
             if (response != null) {
@@ -73,7 +76,7 @@ public class DefaultHandler implements Runnable {
                 IOUtil.close(socket);
             }
         } catch (Exception e) {
-            logger.severe(e.getMessage());
+            logger.severe("DefaultHandler#handleKeepAlive" + e.getMessage());
             IOUtil.close(socket);
         }
     }

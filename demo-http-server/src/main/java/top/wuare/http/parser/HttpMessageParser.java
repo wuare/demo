@@ -1,5 +1,6 @@
 package top.wuare.http.parser;
 
+import top.wuare.http.exception.HttpReadTimeOutException;
 import top.wuare.http.proto.HttpBody;
 import top.wuare.http.proto.HttpHeader;
 import top.wuare.http.proto.HttpLine;
@@ -7,9 +8,11 @@ import top.wuare.http.proto.HttpMessage;
 import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.exception.HttpParserException;
+import top.wuare.http.util.HttpUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -69,6 +72,7 @@ public class HttpMessageParser {
                 ch = in.read();
             }
             requestLine.setUrl(url.toString());
+            requestLine.setQueryParam(HttpUtil.getQueryParamUrl(url.toString()));
             // space character
             want(ch, ' ');
             ch = in.read();
@@ -89,8 +93,10 @@ public class HttpMessageParser {
             ch = in.read();
             want(ch, '\n');
             return requestLine;
+        } catch (SocketTimeoutException e) {
+          throw new HttpReadTimeOutException(e);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "parse request line error", e);
+            logger.log(Level.SEVERE, "parse request line error", e.getMessage());
             throw new HttpParserException("parse request line error, can not read data from inputStream");
         }
     }
@@ -148,6 +154,8 @@ public class HttpMessageParser {
                 httpHeaders.add(new HttpHeader(key.toString().trim(), value.toString().trim()));
             }
             return httpHeaders;
+        } catch (SocketTimeoutException e) {
+            throw new HttpReadTimeOutException(e);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "parse request header error", e);
             throw new HttpParserException("parse request header error, can not read data from inputStream");

@@ -4,13 +4,9 @@ import top.wuare.http.define.HttpStatus;
 import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.proto.HttpResponse;
+import top.wuare.http.util.HttpUtil;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -33,9 +29,9 @@ public class DefaultRequestHandler implements RequestHandler {
         HttpRequestLine httpLine = (HttpRequestLine) request.getHttpMessage().getHttpLine();
         RequestHandler handler;
         if ("GET".equalsIgnoreCase(httpLine.getMethod())) {
-            handler = requestHandlerGetMap.get(httpLine.getUrl());
+            handler = requestHandlerGetMap.get(HttpUtil.getUrlWithOutQueryParam(httpLine.getUrl()));
         } else if ("POST".equalsIgnoreCase(httpLine.getMethod())) {
-            handler = requestHandlerPostMap.get(httpLine.getUrl());
+            handler = requestHandlerPostMap.get(HttpUtil.getUrlWithOutQueryParam(httpLine.getUrl()));
         } else {
             handlerError(response, HttpStatus.METHOD_NOT_ALLOWED);
             return;
@@ -56,8 +52,11 @@ public class DefaultRequestHandler implements RequestHandler {
 
     private boolean handleStaticResource(HttpRequest request, HttpResponse response) {
         HttpRequestLine httpLine = (HttpRequestLine) request.getHttpMessage().getHttpLine();
-        String url = httpLine.getUrl().substring(1);
+        String url = HttpUtil.getUrlWithOutQueryParam(httpLine.getUrl()).substring(1);
         if ("".equals(url)) {
+            return false;
+        }
+        if (url.endsWith(".class")) {
             return false;
         }
         String staticAbsolute = request.getHeader("staticAbsolute");
@@ -88,11 +87,12 @@ public class DefaultRequestHandler implements RequestHandler {
             while ((c = in.read(b)) != -1) {
                 out.write(b, 0, c);
             }
+            setResponseContentType(url, response);
             response.setBody(out.toByteArray());
             response.flush();
             return true;
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            logger.severe("DefaultRequestHandler#handleStaticResource " + e.getMessage());
             return false;
         } finally {
             if (in != null) {
@@ -101,6 +101,22 @@ public class DefaultRequestHandler implements RequestHandler {
                 } catch (IOException ignored) {
                 }
             }
+        }
+    }
+
+    private void setResponseContentType(String url, HttpResponse response) {
+        String contentType = "Content-Type";
+        if (url.endsWith(".png")) {
+            response.addHeader(contentType, "image/png");
+        }
+        if (url.endsWith(".jpg") || url.endsWith(".jpeg")) {
+            response.addHeader(contentType, "image/jpeg");
+        }
+        if (url.endsWith(".pdf")) {
+            response.addHeader(contentType, "application/pdf");
+        }
+        if (url.endsWith(".ico")) {
+            response.addHeader(contentType, "image/x-icon");
         }
     }
 

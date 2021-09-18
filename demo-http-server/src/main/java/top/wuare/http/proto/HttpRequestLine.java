@@ -11,6 +11,7 @@ public class HttpRequestLine extends HttpLine {
     private String method;
     private String url;
     private String version;
+    private String queryParam;
 
     public String getMethod() {
         return method;
@@ -36,12 +37,21 @@ public class HttpRequestLine extends HttpLine {
         this.version = version;
     }
 
+    public String getQueryParam() {
+        return queryParam;
+    }
+
+    public void setQueryParam(String queryParam) {
+        this.queryParam = queryParam;
+    }
+
     @Override
     public String toString() {
         return "HttpRequestLine{" +
                 "method='" + method + '\'' +
                 ", url='" + url + '\'' +
                 ", version='" + version + '\'' +
+                ", queryParam='" + queryParam + '\'' +
                 '}';
     }
 }
