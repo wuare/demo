@@ -10,13 +10,14 @@ import top.wuare.http.util.IOUtil;
 
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
 
 /**
  * default handler for handle http request
  *
  * @author wuare
- * @date 2021/6/21
+ * @since 2021/6/21
  */
 public class DefaultHandler implements Runnable {
 
@@ -70,8 +71,13 @@ public class DefaultHandler implements Runnable {
             return;
         }
         try {
-            if (socket != null && socket.isConnected() && !socket.isClosed() && "keep-alive".equals(request.getHeader("Connection"))) {
-                httpServer.getExecutorService().execute(new DefaultHandler(httpServer, socket));
+            ThreadPoolExecutor executor = httpServer.getExecutor();
+            int activeCount = executor.getActiveCount();
+            int corePoolSize = executor.getCorePoolSize();
+            if (socket != null && socket.isConnected() && !socket.isClosed()
+                    && "keep-alive".equals(request.getHeader("Connection"))
+                    && activeCount < corePoolSize) {
+                executor.execute(new DefaultHandler(httpServer, socket));
             } else {
                 IOUtil.close(socket);
             }

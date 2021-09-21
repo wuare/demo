@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +23,7 @@ import java.util.logging.Logger;
  * http server
  *
  * @author wuare
- * @date 2021/6/21
+ * @since 2021/6/21
  */
 public class HttpServer {
 
@@ -35,7 +34,7 @@ public class HttpServer {
     private final int coreSize = 25;
     private final int maxSize = coreSize * 2;
     private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(100);
-    private final ExecutorService executorService =
+    private final ThreadPoolExecutor executor =
             new ThreadPoolExecutor(coreSize, maxSize, 10, TimeUnit.MINUTES, blockingQueue);
 
     // server socket
@@ -89,7 +88,7 @@ public class HttpServer {
             try {
                 Socket socket = serverSocket.accept();
                 socket.setSoTimeout(20000);
-                executorService.execute(new DefaultHandler(this, socket));
+                executor.execute(new DefaultHandler(this, socket));
             } catch (IOException e) {
                 logger.severe("HttpServer#start " + e.getMessage());
             }
@@ -142,8 +141,8 @@ public class HttpServer {
         return requestHandlers;
     }
 
-    public ExecutorService getExecutorService() {
-        return executorService;
+    public ThreadPoolExecutor getExecutor() {
+        return executor;
     }
 
     // error handler
