@@ -6,7 +6,7 @@
 
   <groupId>io.github.wuare</groupId>
   <artifactId>demo-json</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
 
   <name>demo-json</name>
   <description>json parser</description>
