@@ -94,7 +94,7 @@ public class HttpMessageParser {
             ch = in.read();
             want(ch, '\n');
             return requestLine;
-        } catch (SocketTimeoutException | HttpRequestClosedException e) {
+        } catch (SocketTimeoutException e) {
             throw new HttpReadTimeOutException(e);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "parse request line error", e.getMessage());
