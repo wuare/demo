@@ -75,7 +75,7 @@ public class JsonConvert {
             }
             for (Field f : fields) {
                 try {
-                    PropertyDescriptor descriptor = new PropertyDescriptor(f.getName(), clazz);
+                    PropertyDescriptor descriptor = new PropertyDescriptor((String) f.getName(), clazz);
                     Method writeMethod = descriptor.getWriteMethod();
                     Object o = map.get(descriptor.getName());
                     if (o == null) {
@@ -150,7 +150,7 @@ public class JsonConvert {
         StringBuilder s0 = new StringBuilder("{");
         for (Field f : fields) {
             try {
-                PropertyDescriptor descriptor = new PropertyDescriptor(f.getName(), obj.getClass());
+                PropertyDescriptor descriptor = new PropertyDescriptor((String) f.getName(), obj.getClass());
                 Method readMethod = descriptor.getReadMethod();
                 s0.append("\"").append(descriptor.getName()).append("\"")
                         .append(":").append(toJson(readMethod.invoke(obj))).append(",");
