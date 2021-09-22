@@ -12,6 +12,10 @@ public class Wson {
         return parser.parse(text);
     }
 
+    public <T> T fromJson(String text, Class<T> tClass) {
+        return convert.fromJson(parser.parse(text), tClass);
+    }
+
     public String toJson(Object obj) {
         return convert.toJson(obj);
     }

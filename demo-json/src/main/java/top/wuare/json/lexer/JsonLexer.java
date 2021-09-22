@@ -142,6 +142,7 @@ public class JsonLexer {
         }
         builder.append(nInt());
         if (ch == '.') {
+            builder.append((char) ch);
             nextCh();
             do {
                 if (!Character.isDigit(ch)) {
