@@ -1,6 +1,7 @@
 package top.wuare.http.parser;
 
 import top.wuare.http.exception.HttpReadTimeOutException;
+import top.wuare.http.exception.HttpRequestClosedException;
 import top.wuare.http.proto.HttpBody;
 import top.wuare.http.proto.HttpHeader;
 import top.wuare.http.proto.HttpLine;
@@ -38,7 +39,7 @@ public class HttpMessageParser {
             // skip white space
             for (;;) {
                 if (ch == -1) {
-                    throw new HttpParserException("parse request line error, no data for read");
+                    throw new HttpRequestClosedException("parse request line error, no data for read");
                 }
                 if (!Character.isWhitespace(ch)) {
                     break;
@@ -93,8 +94,8 @@ public class HttpMessageParser {
             ch = in.read();
             want(ch, '\n');
             return requestLine;
-        } catch (SocketTimeoutException e) {
-          throw new HttpReadTimeOutException(e);
+        } catch (SocketTimeoutException | HttpRequestClosedException e) {
+            throw new HttpReadTimeOutException(e);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "parse request line error", e.getMessage());
             throw new HttpParserException("parse request line error, can not read data from inputStream");
