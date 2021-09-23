@@ -40,6 +40,7 @@ public class HttpServerTest {
 - [ ] Connection header handle
 
 ## Note
-如果遇到`Connection: keep-alive`请求头，执行完业务逻辑后，需要将输入流中未读取的数据消费完，然后把socket放到线程池中继续处理。  
-
+1.如果遇到`Connection: keep-alive`请求头，执行完业务逻辑后，需要将输入流中未读取的数据消费完，然后把socket放到线程池中继续处理。  
+2.读取body数据的时候，如果content-length太大，使用InputStream.read(new byte[contentLength])这种方式，可能会导致数据读取不完整。
+有可能是由于TCP接收缓冲区只有一部分数据，调用完read方法后还没有判断返回值（读取的字节数）有没有等于content-length，所以导致该问题。
 
