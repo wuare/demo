@@ -11,6 +11,7 @@ import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.exception.HttpParserException;
 import top.wuare.http.util.HttpUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
@@ -167,13 +168,16 @@ public class HttpMessageParser {
         if (contentLength <= 0) {
             return new HttpBody(new byte[0]);
         }
-        byte[] buf = new byte[contentLength];
+        byte[] buf = new byte[4096];
+        ByteArrayOutputStream arrayBuf = new ByteArrayOutputStream();
         try {
-            int c = in.read(buf);
-            if (c == -1) {
-                throw new HttpParserException("read http body error");
+            int c = 0;
+            while (c < contentLength) {
+                int read = in.read(buf);
+                arrayBuf.write(buf, 0, read);
+                c = c + read;
             }
-            return new HttpBody(buf);
+            return new HttpBody(arrayBuf.toByteArray());
         } catch (IOException e) {
             logger.log(Level.SEVERE, "parse request body error", e);
             throw new HttpParserException(e);
