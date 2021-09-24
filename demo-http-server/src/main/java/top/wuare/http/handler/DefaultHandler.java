@@ -98,7 +98,7 @@ public class DefaultHandler implements Runnable {
             int corePoolSize = executor.getCorePoolSize();
             if (socket != null && socket.isConnected() && !socket.isClosed()
                     && "keep-alive".equals(request.getHeader("Connection"))
-                    && activeCount < corePoolSize) {
+                    && activeCount < corePoolSize - 5) {
                 executor.execute(new DefaultHandler(httpServer, socket));
             } else {
                 IOUtil.close(socket);
