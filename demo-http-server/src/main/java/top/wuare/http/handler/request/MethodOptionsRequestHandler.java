@@ -10,7 +10,7 @@ public class MethodOptionsRequestHandler implements RequestHandler {
     @Override
     public void handle(HttpRequest request, HttpResponse response) {
         response.setStatus(HttpStatus.NO_CONTENT);
-        response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.addHeader("Access-Control-Allow-Headers", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET");
         response.addHeader("Access-Control-Allow-Origin", "*");
     }
