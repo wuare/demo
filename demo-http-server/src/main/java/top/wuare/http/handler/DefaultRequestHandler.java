@@ -10,6 +10,8 @@ import top.wuare.http.proto.HttpResponse;
 import top.wuare.http.util.HttpUtil;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -92,30 +94,42 @@ public class DefaultRequestHandler implements RequestHandler {
         if (url.endsWith(".class")) {
             return false;
         }
-        String staticAbsolute = request.getHeader("staticAbsolute");
-        String staticPath = request.getHeader("staticPath");
+        String pathType = httpServer.getProperties().getProperty(Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE,
+                Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_CLASSPATH);
+        String path = getStaticResourcePath();
+        if (path == null) {
+            return false;
+        }
         InputStream in = null;
         try {
-            if ("true".equals(staticAbsolute)) {
-                if (staticPath == null || "".equals(staticPath)) {
-                    return false;
-                }
-                if (staticPath.charAt(staticPath.length() - 1) != '/') {
-                    staticPath = staticPath + "/";
-                }
-                File file = new File(staticPath + url);
+            if (Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_ABSOLUTE.equals(pathType)) {
+                File file = new File(path + url);
                 if (!file.exists()) {
                     return false;
                 }
                 in = new BufferedInputStream(new FileInputStream(file));
-            } else {
-                in = Thread.currentThread().getContextClassLoader().getResourceAsStream(url);
-                if (in == null) {
+            } else if (Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_RELATIVE.equals(pathType)) {
+                URL location = this.getClass().getProtectionDomain().getCodeSource().getLocation();
+                String curPath = URLDecoder.decode(location.getPath(), "UTF-8");
+                if (curPath.charAt(curPath.length() - 1) == '/') {
+                    curPath = curPath.substring(0, curPath.charAt(curPath.length() - 1));
+                }
+                if (curPath.endsWith(".jar")) {
+                    curPath = curPath.substring(0, curPath.lastIndexOf("/") + 1);
+                }
+                File file = new File(curPath + path + url);
+                if (!file.exists()) {
                     return false;
                 }
+                in = new BufferedInputStream(new FileInputStream(file));
+            } else if (Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_CLASSPATH.equals(pathType)) {
+                in = Thread.currentThread().getContextClassLoader().getResourceAsStream(url);
+            }
+            if (in == null) {
+                return false;
             }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] b = new byte[2048];
+            byte[] b = new byte[4096];
             int c;
             while ((c = in.read(b)) != -1) {
                 out.write(b, 0, c);
@@ -135,6 +149,17 @@ public class DefaultRequestHandler implements RequestHandler {
                 }
             }
         }
+    }
+
+    private String getStaticResourcePath() {
+        String path = httpServer.getProperties().getProperty(Constant.CONFIG_STATIC_RESOURCE_PATH);
+        if (path != null) {
+            char c = path.charAt(path.length() - 1);
+            if (c != '/') {
+                path = path + "/";
+            }
+        }
+        return path;
     }
 
     private void setResponseContentType(String url, HttpResponse response) {

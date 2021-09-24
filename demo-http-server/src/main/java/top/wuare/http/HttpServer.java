@@ -1,5 +1,6 @@
 package top.wuare.http;
 
+import top.wuare.http.define.Constant;
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.exception.HttpServerException;
 import top.wuare.http.handler.DefaultHandler;
@@ -8,17 +9,18 @@ import top.wuare.http.handler.RequestErrorHandler;
 import top.wuare.http.handler.RequestHandler;
 import top.wuare.http.handler.request.NotFoundRequestHandler;
 import top.wuare.http.util.ExceptionUtil;
+import top.wuare.http.util.IOUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -35,9 +37,7 @@ public class HttpServer {
     // thread pool config
     private final int coreSize = 25;
     private final int maxSize = coreSize * 2;
-    private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(100);
-    private final ThreadPoolExecutor executor =
-            new ThreadPoolExecutor(coreSize, maxSize, 10, TimeUnit.MINUTES, blockingQueue);
+    private ThreadPoolExecutor executor;
 
     // server socket
     private ServerSocket serverSocket;
@@ -53,9 +53,8 @@ public class HttpServer {
     private final DefaultRequestHandler defaultRequestHandler = new DefaultRequestHandler(this);
     private RequestHandler notFoundRequestHandler = new NotFoundRequestHandler();
 
-    // static resource path
-    private String staticResourcePath;
-    private boolean staticResourcePathAbsolute;
+    // properties
+    private Properties properties;
 
     public HttpServer(int port) {
         this.port = port;
@@ -69,6 +68,8 @@ public class HttpServer {
         if (getPort() <= 0) {
             throw new HttpServerException("the port is not valid");
         }
+        loadProperties();
+        initExecutor();
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
@@ -83,32 +84,56 @@ public class HttpServer {
         }));
     }
 
+    private void initExecutor() {
+        String coreSizeStr = properties.getProperty(Constant.CONFIG_THREAD_POOL_CORE_SIZE, coreSize + "");
+        String maxSizeStr = properties.getProperty(Constant.CONFIG_THREAD_POOL_MAX_SIZE, maxSize + "");
+        String queueSizeStr = properties.getProperty(Constant.CONFIG_THREAD_POOL_QUEUE_SIZE,  "200");
+        BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(Integer.parseInt(queueSizeStr));
+        this.executor = new ThreadPoolExecutor(Integer.parseInt(coreSizeStr),
+                Integer.parseInt(maxSizeStr), 10, TimeUnit.MINUTES, blockingQueue);
+    }
+
+    private void loadProperties() {
+        InputStream in = HttpServer.class.getClassLoader().getResourceAsStream(Constant.CONFIG_FILE_NAME);
+        if (in == null) {
+            return;
+        }
+        try {
+            logger.info("load properties start");
+            Properties properties = new Properties();
+            properties.load(in);
+            setProperties(properties);
+
+            Set<String> names = properties.stringPropertyNames();
+            for (String name : names) {
+                logger.info("the properties key: {}, value: {}");
+            }
+            logger.info("load properties end");
+        } catch (IOException e) {
+            logger.severe("HttpServer#loadProperties " + e.getMessage());
+        } finally {
+            IOUtil.close(in);
+        }
+    }
+
     public void start() {
         init();
         logger.info("the thread pool config, coreSize: {" + coreSize + "}, maxSize: {" + maxSize + "}.");
         initAndStartTasks();
+        logger.info("server started, listen port at " + port);
         while (isRunning()) {
             try {
                 Socket socket = serverSocket.accept();
                 socket.setSoTimeout(20000);
                 executor.execute(new DefaultHandler(this, socket));
             } catch (IOException e) {
-                logger.severe("HttpServer#start " + e.getMessage());
+                logger.log(Level.SEVERE, "", e);
             }
         }
     }
 
     private void initAndStartTasks() {
 
-    }
-
-    public HttpServer setStaticResourcePath(String path) {
-        staticResourcePath = path;
-        return this;
-    }
-
-    public String getStaticResourcePath() {
-        return staticResourcePath;
     }
 
     public HttpServer addHandler(RequestHandler handler) {
@@ -170,14 +195,6 @@ public class HttpServer {
         return errorHandler;
     }
 
-    public boolean isStaticResourcePathAbsolute() {
-        return staticResourcePathAbsolute;
-    }
-
-    public HttpServer setStaticResourcePathAbsolute(boolean staticResourcePathAbsolute) {
-        this.staticResourcePathAbsolute = staticResourcePathAbsolute;
-        return this;
-    }
 
     public HttpServer get(String path, RequestHandler handler) {
         defaultRequestHandler.get(path, handler);
@@ -195,5 +212,13 @@ public class HttpServer {
 
     public void setNotFoundRequestHandler(RequestHandler notFoundRequestHandler) {
         this.notFoundRequestHandler = notFoundRequestHandler;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 }

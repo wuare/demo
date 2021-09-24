@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -43,8 +44,6 @@ public class DefaultHandler implements Runnable {
         try {
             request = parser.parseRequest(socket.getInputStream());
             request.setSocket(socket);
-            request.addHeader("staticAbsolute", String.valueOf(httpServer.isStaticResourcePathAbsolute()));
-            request.addHeader("staticPath", String.valueOf(httpServer.getStaticResourcePath()));
             response = new HttpResponse(socket, socket.getOutputStream());
             response.setStatus(HttpStatus.OK);
             List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
@@ -58,7 +57,8 @@ public class DefaultHandler implements Runnable {
         } catch (HttpReadTimeOutException | HttpRequestClosedException e) {
             IOUtil.close(socket);
         } catch (Exception e) {
-            logger.severe("DefaultHandler#run " + e.getMessage());
+            logger.log(Level.SEVERE, "", e);
+            // logger.severe("DefaultHandler#run " + e.getMessage());
             handleError(request, response, e);
         } finally {
             // consume data at this request
