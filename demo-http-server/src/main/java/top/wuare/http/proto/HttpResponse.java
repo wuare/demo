@@ -2,7 +2,6 @@ package top.wuare.http.proto;
 
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.exception.HttpServerException;
-import top.wuare.http.util.IOUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,7 +23,6 @@ public class HttpResponse {
     private HttpMessage httpMessage = new HttpMessage();
     private volatile boolean flushed = false;
     private boolean needFlush = true;
-    private boolean allBody = false;
 
     public HttpResponse() {
     }
@@ -40,28 +38,28 @@ public class HttpResponse {
         this.httpMessage = httpMessage;
     }
 
-    public HttpResponse addHeader(String key, String value) {
+    public void addHeader(String key, String value) {
         Optional<HttpHeader> header = httpMessage.getHeaders().stream().filter(v -> v.getKey().equals(key)).findFirst();
         if (header.isPresent()) {
             header.get().setValue(value);
         } else {
             httpMessage.getHeaders().add(new HttpHeader(key, value));
         }
-        return this;
     }
 
-    public HttpResponse setBody(String body) {
-        allBody = true;
+    public String getHeader(String key) {
+        Optional<HttpHeader> header = httpMessage.getHeaders().stream().filter(v -> v.getKey().equals(key)).findFirst();
+        return header.map(HttpHeader::getValue).orElse(null);
+    }
+
+    public void setBody(String body) {
         HttpBody httpBody = new HttpBody(body.getBytes());
         httpMessage.setBody(httpBody);
-        return this;
     }
 
-    public HttpResponse setBody(byte[] body) {
-        allBody = true;
+    public void setBody(byte[] body) {
         HttpBody httpBody = new HttpBody(body);
         httpMessage.setBody(httpBody);
-        return this;
     }
 
     public HttpResponse setStatus(int status, String statusDesc) {
@@ -70,13 +68,13 @@ public class HttpResponse {
         return this;
     }
 
-    public HttpResponse setStatus(HttpStatus httpStatus) {
+    public void setStatus(HttpStatus httpStatus) {
         HttpResponseLine line = new HttpResponseLine(httpStatus.getValue(), httpStatus.getReasonPhrase());
         httpMessage.setHttpLine(line);
-        return this;
     }
 
     public void flush() {
+
         if (socket == null || socket.isClosed()) {
             return;
         }
@@ -86,15 +84,12 @@ public class HttpResponse {
         if (flushed) {
             return;
         }
-        if (!allBody) {
-            return;
-        }
         flushed = true;
         HttpResponseLine httpLine = (HttpResponseLine) httpMessage.getHttpLine();
         byte[] data = httpMessage.getBody().getData();
         List<HttpHeader> headers = httpMessage.getHeaders();
         addHeader("Content-Length", String.valueOf(data.length));
-        // addHeader("Connection", "close");
+
         try {
             writeResponseLine(httpLine, out);
             writeResponseHeaders(headers, out);
@@ -117,6 +112,11 @@ public class HttpResponse {
         headers.forEach(v -> headerBuilder.append(v.getKey()).append(":").append(v.getValue()).append("\r\n"));
         headerBuilder.append("\r\n");
         out.write(headerBuilder.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    public void writeLineAndHeaders() throws IOException {
+        writeResponseLine((HttpResponseLine) httpMessage.getHttpLine(), out);
+        writeResponseHeaders(httpMessage.getHeaders(), out);
     }
 
     public Socket getSocket() {
@@ -149,5 +149,13 @@ public class HttpResponse {
 
     public void setFlushed(boolean flushed) {
         this.flushed = flushed;
+    }
+
+    public void setNeedFlush(boolean needFlush) {
+        this.needFlush = needFlush;
+    }
+
+    public boolean isNeedFlush() {
+        return needFlush;
     }
 }
