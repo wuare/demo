@@ -15,7 +15,7 @@ public class DefaultRequestHandlerTest {
     @Test
     public void testHandle() {
         HttpServer httpServer = new HttpServer(8082);
-        DefaultRequestHandler handler = new DefaultRequestHandler();
+        DefaultRequestHandler handler = new DefaultRequestHandler(httpServer);
         handler.get("/a", (req, res) ->
                 res.setBody("this url is: " + ((HttpRequestLine) (req.getHttpMessage().getHttpLine())).getUrl()));
         httpServer.addHandler(handler);

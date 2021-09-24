@@ -6,6 +6,7 @@ import top.wuare.http.handler.DefaultHandler;
 import top.wuare.http.handler.DefaultRequestHandler;
 import top.wuare.http.handler.RequestErrorHandler;
 import top.wuare.http.handler.RequestHandler;
+import top.wuare.http.handler.request.NotFoundRequestHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -48,7 +49,8 @@ public class HttpServer {
 
     // handler
     private final List<RequestHandler> requestHandlers = new LinkedList<>();
-    private final DefaultRequestHandler defaultRequestHandler = new DefaultRequestHandler();
+    private final DefaultRequestHandler defaultRequestHandler = new DefaultRequestHandler(this);
+    private RequestHandler notFoundRequestHandler = new NotFoundRequestHandler();
 
     // static resource path
     private String staticResourcePath;
@@ -189,5 +191,13 @@ public class HttpServer {
     public HttpServer post(String path, RequestHandler handler) {
         defaultRequestHandler.post(path, handler);
         return this;
+    }
+
+    public RequestHandler getNotFoundRequestHandler() {
+        return notFoundRequestHandler;
+    }
+
+    public void setNotFoundRequestHandler(RequestHandler notFoundRequestHandler) {
+        this.notFoundRequestHandler = notFoundRequestHandler;
     }
 }

@@ -8,7 +8,7 @@ public class HttpUtil {
         }
         for (int i = 0; i < url.length(); i++) {
             char c = url.charAt(i);
-            if (c == '?') {
+            if (c == '?' || c == '#') {
                 return url.substring(i + 1);
             }
         }
@@ -21,7 +21,7 @@ public class HttpUtil {
         }
         for (int i = 0; i < url.length(); i++) {
             char c = url.charAt(i);
-            if (c == '?') {
+            if (c == '?' || c == '#') {
                 return url.substring(0, i);
             }
         }

@@ -1,5 +1,6 @@
 package top.wuare.http.handler;
 
+import top.wuare.http.HttpServer;
 import top.wuare.http.define.Constant;
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.handler.request.MethodOptionsRequestHandler;
@@ -23,6 +24,11 @@ public class DefaultRequestHandler implements RequestHandler {
 
     private static final Logger logger = Logger.getLogger(DefaultHandler.class.getName());
 
+    private final HttpServer httpServer;
+
+    public DefaultRequestHandler(HttpServer httpServer) {
+        this.httpServer = httpServer;
+    }
 
     private final Map<String, RequestHandler> requestHandlerGetMap = new HashMap<>();
     private final Map<String, RequestHandler> requestHandlerPostMap = new HashMap<>();
@@ -64,12 +70,16 @@ public class DefaultRequestHandler implements RequestHandler {
             if (handleStaticResource(request, response)) {
                 return;
             }
-            handlerError(response, HttpStatus.NOT_FOUND);
+            handleNotFoundError(request, response);
             return;
         }
         handler.handle(request, response);
-        if (!response.isFlushed()) {
-            response.flush();
+    }
+
+    private void handleNotFoundError(HttpRequest request, HttpResponse response) {
+        RequestHandler notFoundRequestHandler = httpServer.getNotFoundRequestHandler();
+        if (notFoundRequestHandler != null) {
+            notFoundRequestHandler.handle(request, response);
         }
     }
 

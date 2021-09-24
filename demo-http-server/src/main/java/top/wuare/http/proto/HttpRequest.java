@@ -104,4 +104,8 @@ public class HttpRequest {
         httpMessage.getHeaders().add(new HttpHeader(key, value));
         return this;
     }
+
+    public String getUrl() {
+        return ((HttpRequestLine) httpMessage.getHttpLine()).getUrl();
+    }
 }
