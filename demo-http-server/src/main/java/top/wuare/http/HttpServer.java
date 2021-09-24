@@ -7,6 +7,7 @@ import top.wuare.http.handler.DefaultRequestHandler;
 import top.wuare.http.handler.RequestErrorHandler;
 import top.wuare.http.handler.RequestHandler;
 import top.wuare.http.handler.request.NotFoundRequestHandler;
+import top.wuare.http.util.ExceptionUtil;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -154,14 +155,9 @@ public class HttpServer {
             res.setBody(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
             return;
         }
-        StackTraceElement[] stackTrace = e.getStackTrace();
-        StringBuilder errorBuilder = new StringBuilder();
-        errorBuilder.append("<h1>").append(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()).append("</h1><br/>");
-        errorBuilder.append(e).append("<br/>");
-        Arrays.stream(stackTrace).forEach(v -> {
-            errorBuilder.append(v.toString()).append("<br/>");
-        });
-        res.setBody(errorBuilder.toString());
+        String errorBuilder = "<h1>" + HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase() + "</h1><br/>" +
+                ExceptionUtil.getStackTrace(e);
+        res.setBody(errorBuilder.replaceAll("\n", "<br/>"));
         res.flush();
     };
 

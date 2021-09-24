@@ -36,4 +36,16 @@ public class HttpServerTest {
         t.start();
         httpServer.setRunning(false);
     }
+
+    public void testStart1() {
+        HttpServer httpServer = new HttpServer(80);
+        httpServer.get("/a", (req, res) -> {
+                    res.setBody("method is GET, the path is /a");
+                })
+                .post("/a", (req, res) -> {
+                    res.setBody("method is POST, the path is /a");
+                })
+        ;
+        httpServer.start();
+    }
 }
