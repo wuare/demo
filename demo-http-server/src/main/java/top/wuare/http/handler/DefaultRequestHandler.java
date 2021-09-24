@@ -1,5 +1,6 @@
 package top.wuare.http.handler;
 
+import top.wuare.http.define.Constant;
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpRequestLine;
@@ -21,8 +22,27 @@ public class DefaultRequestHandler implements RequestHandler {
 
     private static final Logger logger = Logger.getLogger(DefaultHandler.class.getName());
 
+
     private final Map<String, RequestHandler> requestHandlerGetMap = new HashMap<>();
     private final Map<String, RequestHandler> requestHandlerPostMap = new HashMap<>();
+
+    private static final Map<String, String> FILE_CONTENT_TYPE_MAP = new HashMap<>();
+    static {
+        FILE_CONTENT_TYPE_MAP.put(".png", "image/png");
+        FILE_CONTENT_TYPE_MAP.put(".jpg", "image/jpeg");
+        FILE_CONTENT_TYPE_MAP.put(".pdf", "application/pdf");
+        FILE_CONTENT_TYPE_MAP.put(".ico", "image/x-icon");
+        FILE_CONTENT_TYPE_MAP.put(".css", "text/css");
+        FILE_CONTENT_TYPE_MAP.put(".dtd", "text/xml");
+        FILE_CONTENT_TYPE_MAP.put(".htm", "text/html");
+        FILE_CONTENT_TYPE_MAP.put(".html", "text/html");
+        FILE_CONTENT_TYPE_MAP.put(".js", "application/x-javascript");
+        FILE_CONTENT_TYPE_MAP.put(".mp3", "audio/mp3");
+        FILE_CONTENT_TYPE_MAP.put(".mp4", "video/mpeg4");
+        FILE_CONTENT_TYPE_MAP.put(".svg", "text/xml");
+        FILE_CONTENT_TYPE_MAP.put(".xml", "text/xml");
+        FILE_CONTENT_TYPE_MAP.put(".txt", "text/plain");
+    }
 
     @Override
     public void handle(HttpRequest request, HttpResponse response) {
@@ -105,18 +125,14 @@ public class DefaultRequestHandler implements RequestHandler {
     }
 
     private void setResponseContentType(String url, HttpResponse response) {
-        String contentType = "Content-Type";
-        if (url.endsWith(".png")) {
-            response.addHeader(contentType, "image/png");
+        int i = url.lastIndexOf(".");
+        if (i < 0) {
+            return;
         }
-        if (url.endsWith(".jpg") || url.endsWith(".jpeg")) {
-            response.addHeader(contentType, "image/jpeg");
-        }
-        if (url.endsWith(".pdf")) {
-            response.addHeader(contentType, "application/pdf");
-        }
-        if (url.endsWith(".ico")) {
-            response.addHeader(contentType, "image/x-icon");
+        String suffix = url.substring(i);
+        String type = FILE_CONTENT_TYPE_MAP.get(suffix);
+        if (type != null) {
+            response.addHeader(Constant.HTTP_HEADER_CONTENT_TYPE, type);
         }
     }
 
