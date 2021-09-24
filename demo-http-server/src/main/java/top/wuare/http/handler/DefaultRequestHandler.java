@@ -2,6 +2,7 @@ package top.wuare.http.handler;
 
 import top.wuare.http.define.Constant;
 import top.wuare.http.define.HttpStatus;
+import top.wuare.http.handler.request.MethodOptionsRequestHandler;
 import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.proto.HttpResponse;
@@ -52,6 +53,8 @@ public class DefaultRequestHandler implements RequestHandler {
             handler = requestHandlerGetMap.get(HttpUtil.getUrlWithOutQueryParam(httpLine.getUrl()));
         } else if ("POST".equalsIgnoreCase(httpLine.getMethod())) {
             handler = requestHandlerPostMap.get(HttpUtil.getUrlWithOutQueryParam(httpLine.getUrl()));
+        } else if ("OPTIONS".equalsIgnoreCase(httpLine.getMethod())) {
+            handler = new MethodOptionsRequestHandler();
         } else {
             handlerError(response, HttpStatus.METHOD_NOT_ALLOWED);
             return;
