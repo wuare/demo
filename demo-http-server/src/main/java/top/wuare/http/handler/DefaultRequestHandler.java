@@ -129,7 +129,7 @@ public class DefaultRequestHandler implements RequestHandler {
                 return false;
             }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] b = new byte[4096];
+            byte[] b = new byte[8192];
             int c;
             while ((c = in.read(b)) != -1) {
                 out.write(b, 0, c);
