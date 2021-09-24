@@ -39,7 +39,7 @@ public class DefaultRequestHandler implements RequestHandler {
         FILE_CONTENT_TYPE_MAP.put(".js", "application/x-javascript");
         FILE_CONTENT_TYPE_MAP.put(".mp3", "audio/mp3");
         FILE_CONTENT_TYPE_MAP.put(".mp4", "video/mpeg4");
-        FILE_CONTENT_TYPE_MAP.put(".svg", "text/xml");
+        FILE_CONTENT_TYPE_MAP.put(".svg", "image/svg+xml");
         FILE_CONTENT_TYPE_MAP.put(".xml", "text/xml");
         FILE_CONTENT_TYPE_MAP.put(".txt", "text/plain");
     }
