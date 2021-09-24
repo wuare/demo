@@ -106,7 +106,7 @@ public class HttpServer {
 
             Set<String> names = properties.stringPropertyNames();
             for (String name : names) {
-                logger.info("the properties key: {}, value: {}");
+                logger.info("the properties key: {" + name + "}, value: {" + properties.getProperty(name) + "}");
             }
             logger.info("load properties end");
         } catch (IOException e) {
