@@ -2,7 +2,7 @@ package top.wuare.http.parser;
 
 import top.wuare.http.exception.HttpReadTimeOutException;
 import top.wuare.http.exception.HttpRequestClosedException;
-import top.wuare.http.proto.HttpBody;
+import top.wuare.http.io.HttpInputStream;
 import top.wuare.http.proto.HttpHeader;
 import top.wuare.http.proto.HttpLine;
 import top.wuare.http.proto.HttpMessage;
@@ -11,7 +11,6 @@ import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.exception.HttpParserException;
 import top.wuare.http.util.HttpUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
@@ -164,38 +163,14 @@ public class HttpMessageParser {
         }
     }
 
-    public HttpBody parseRequestBody(InputStream in, int contentLength) {
-        if (contentLength <= 0) {
-            return new HttpBody(new byte[0]);
-        }
-        byte[] buf = new byte[4096];
-        ByteArrayOutputStream arrayBuf = new ByteArrayOutputStream();
-        try {
-            int c = 0;
-            while (c < contentLength) {
-                int read = in.read(buf);
-                arrayBuf.write(buf, 0, read);
-                c = c + read;
-            }
-            return new HttpBody(arrayBuf.toByteArray());
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "parse request body error", e);
-            throw new HttpParserException(e);
-        }
-    }
-
     public HttpRequest parseRequest(InputStream in) {
         HttpRequestLine httpLine = (HttpRequestLine) parseRequestLine(in);
         List<HttpHeader> httpHeaders = parseRequestHeaders(in);
         HttpMessage httpMessage = new HttpMessage(httpLine, httpHeaders);
-        if ("POST".equals(httpLine.getMethod())) {
-            int length = httpHeaders.stream()
-                    .filter(v -> "Content-Length".equals(v.getKey()))
-                    .findFirst().map(v -> Integer.parseInt(v.getValue())).orElse(0);
-            HttpBody httpBody = parseRequestBody(in, length);
-            httpMessage.setBody(httpBody);
-        }
-        return new HttpRequest(null, in, httpMessage);
+        int length = httpHeaders.stream()
+                .filter(v -> "Content-Length".equals(v.getKey()))
+                .findFirst().map(v -> Integer.parseInt(v.getValue())).orElse(0);
+        return new HttpRequest(null, new HttpInputStream(in, length), httpMessage);
     }
 
 }

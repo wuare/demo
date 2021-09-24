@@ -9,6 +9,7 @@ import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpResponse;
 import top.wuare.http.util.IOUtil;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -60,10 +61,30 @@ public class DefaultHandler implements Runnable {
             logger.severe("DefaultHandler#run " + e.getMessage());
             handleError(request, response, e);
         } finally {
+            // consume data at this request
+            if (request != null) {
+                endRequest(request);
+            }
             if (response != null) {
                 response.flush();
             }
             handleKeepAlive(request);
+        }
+    }
+
+    private void endRequest(HttpRequest request) {
+        if (request == null || request.getIn() == null) {
+            return;
+        }
+        byte[] buf = new byte[2048];
+        try {
+            while (true) {
+                if (request.getIn().read(buf) == -1) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            logger.severe("DefaultHandler#endRequest " + e.getMessage());
         }
     }
 

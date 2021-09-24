@@ -24,6 +24,7 @@ public class HttpResponse {
     private HttpMessage httpMessage = new HttpMessage();
     private volatile boolean flushed = false;
     private boolean needFlush = true;
+    private boolean allBody = false;
 
     public HttpResponse() {
     }
@@ -50,12 +51,14 @@ public class HttpResponse {
     }
 
     public HttpResponse setBody(String body) {
+        allBody = true;
         HttpBody httpBody = new HttpBody(body.getBytes());
         httpMessage.setBody(httpBody);
         return this;
     }
 
     public HttpResponse setBody(byte[] body) {
+        allBody = true;
         HttpBody httpBody = new HttpBody(body);
         httpMessage.setBody(httpBody);
         return this;
@@ -81,6 +84,9 @@ public class HttpResponse {
             return;
         }
         if (flushed) {
+            return;
+        }
+        if (!allBody) {
             return;
         }
         flushed = true;

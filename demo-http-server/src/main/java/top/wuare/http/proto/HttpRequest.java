@@ -1,8 +1,14 @@
 package top.wuare.http.proto;
 
+import top.wuare.http.exception.HttpInputStreamReadException;
+import top.wuare.http.exception.HttpParserException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 /**
  * http request
@@ -61,11 +67,31 @@ public class HttpRequest {
     }
 
     public String getBody() {
-        return new String(httpMessage.getBody().getData(), StandardCharsets.UTF_8);
+        byte[] buf = new byte[4096];
+        ByteArrayOutputStream arrayBuf = new ByteArrayOutputStream();
+        try {
+            int c;
+            while ((c = in.read(buf)) != -1) {
+                arrayBuf.write(buf, 0, c);
+            }
+            return arrayBuf.size() > 0 ? new String(arrayBuf.toByteArray(), StandardCharsets.UTF_8) : null;
+        } catch (IOException e) {
+            throw new HttpInputStreamReadException(e);
+        }
     }
 
     public byte[] getOriginalBody() {
-        return httpMessage.getBody().getData();
+        byte[] buf = new byte[4096];
+        ByteArrayOutputStream arrayBuf = new ByteArrayOutputStream();
+        try {
+            int c;
+            while ((c = in.read(buf)) != -1) {
+                arrayBuf.write(buf, 0, c);
+            }
+            return arrayBuf.size() > 0 ? arrayBuf.toByteArray() : null;
+        } catch (IOException e) {
+            throw new HttpInputStreamReadException(e);
+        }
     }
 
     public HttpRequest addHeader(String key, String value) {
