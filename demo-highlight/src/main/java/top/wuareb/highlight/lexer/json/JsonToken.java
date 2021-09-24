@@ -1,6 +1,6 @@
 package top.wuareb.highlight.lexer.json;
 
-public class Token {
+public class JsonToken {
     
     private int type;
     private String value;
