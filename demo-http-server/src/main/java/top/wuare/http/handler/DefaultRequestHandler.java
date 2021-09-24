@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * default request handler
  *
  * @author wuare
- * @date 2021/6/24
+ * @since 2021/6/24
  */
 public class DefaultRequestHandler implements RequestHandler {
 
@@ -40,15 +40,15 @@ public class DefaultRequestHandler implements RequestHandler {
         FILE_CONTENT_TYPE_MAP.put(".pdf", "application/pdf");
         FILE_CONTENT_TYPE_MAP.put(".ico", "image/x-icon");
         FILE_CONTENT_TYPE_MAP.put(".css", "text/css");
-        FILE_CONTENT_TYPE_MAP.put(".dtd", "text/xml");
-        FILE_CONTENT_TYPE_MAP.put(".htm", "text/html");
-        FILE_CONTENT_TYPE_MAP.put(".html", "text/html");
+        FILE_CONTENT_TYPE_MAP.put(".dtd", "text/xml;charset=utf-8");
+        FILE_CONTENT_TYPE_MAP.put(".htm", "text/html;charset=utf-8");
+        FILE_CONTENT_TYPE_MAP.put(".html", "text/html;charset=utf-8");
         FILE_CONTENT_TYPE_MAP.put(".js", "application/x-javascript");
         FILE_CONTENT_TYPE_MAP.put(".mp3", "audio/mp3");
         FILE_CONTENT_TYPE_MAP.put(".mp4", "video/mpeg4");
         FILE_CONTENT_TYPE_MAP.put(".svg", "image/svg+xml");
-        FILE_CONTENT_TYPE_MAP.put(".xml", "text/xml");
-        FILE_CONTENT_TYPE_MAP.put(".txt", "text/plain");
+        FILE_CONTENT_TYPE_MAP.put(".xml", "text/xml;charset=utf-8");
+        FILE_CONTENT_TYPE_MAP.put(".txt", "text/plain;charset=utf-8");
     }
 
     @Override
