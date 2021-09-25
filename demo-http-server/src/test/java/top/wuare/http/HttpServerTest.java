@@ -15,7 +15,6 @@ public class HttpServerTest {
         HttpServer httpServer = new HttpServer(8082);
         httpServer.addHandler((req, res) -> {
             res.setBody("Hello HttpServer");
-            res.flush();
         });
         // WARN: do not call start method!!!
         // use thread

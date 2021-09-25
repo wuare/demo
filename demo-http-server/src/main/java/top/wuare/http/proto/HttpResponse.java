@@ -73,7 +73,7 @@ public class HttpResponse {
         httpMessage.setHttpLine(line);
     }
 
-    public void flush() {
+    public void flush() throws IOException {
 
         if (socket == null || socket.isClosed()) {
             return;
@@ -90,14 +90,10 @@ public class HttpResponse {
         List<HttpHeader> headers = httpMessage.getHeaders();
         addHeader("Content-Length", String.valueOf(data.length));
 
-        try {
-            writeResponseLine(httpLine, out);
-            writeResponseHeaders(headers, out);
-            out.write(data);
-            out.flush();
-        } catch (Exception e) {
-            throw new HttpServerException(e);
-        }
+        writeResponseLine(httpLine, out);
+        writeResponseHeaders(headers, out);
+        out.write(data);
+        out.flush();
     }
 
     public void writeResponseLine(HttpResponseLine httpLine, OutputStream out) throws IOException {

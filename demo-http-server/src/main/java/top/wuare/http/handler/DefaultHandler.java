@@ -11,6 +11,7 @@ import top.wuare.http.util.IOUtil;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
@@ -49,24 +50,21 @@ public class DefaultHandler implements Runnable {
             List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
             if (requestHandlers.isEmpty()) {
                 httpServer.getDefaultRequestHandler().handle(request, response);
-                return;
+            } else {
+                for (RequestHandler handler : requestHandlers) {
+                    handler.handle(request, response);
+                }
             }
-            for (RequestHandler handler : requestHandlers) {
-                handler.handle(request, response);
-            }
-        } catch (HttpReadTimeOutException | HttpRequestClosedException e) {
+            response.flush();
+        } catch (HttpReadTimeOutException | HttpRequestClosedException | SocketException e) {
             IOUtil.close(socket);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "", e);
-            // logger.severe("DefaultHandler#run " + e.getMessage());
             handleError(request, response, e);
         } finally {
             // consume data at this request
             if (request != null) {
                 endRequest(request);
-            }
-            if (response != null) {
-                response.flush();
             }
             handleKeepAlive(request);
         }
@@ -74,6 +72,9 @@ public class DefaultHandler implements Runnable {
 
     private void endRequest(HttpRequest request) {
         if (request == null || request.getIn() == null) {
+            return;
+        }
+        if (request.getSocket() == null || request.getSocket().isClosed()) {
             return;
         }
         byte[] buf = new byte[2048];
@@ -123,6 +124,10 @@ public class DefaultHandler implements Runnable {
             return;
         }
         errorHandler.handle(request, response, e);
-        response.flush();
+        try {
+            response.flush();
+        } catch (IOException ex) {
+            IOUtil.close(socket);
+        }
     }
 }

@@ -202,7 +202,6 @@ public class HttpServer {
         String errorBuilder = "<h1>" + HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase() + "</h1><br/>" +
                 ExceptionUtil.getStackTrace(e);
         res.setBody(errorBuilder.replaceAll("\n", "<br/>"));
-        res.flush();
     };
 
     public HttpServer setErrorHandler(RequestErrorHandler handler) {

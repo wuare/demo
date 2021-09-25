@@ -176,6 +176,5 @@ public class DefaultRequestHandler implements RequestHandler {
         }
         response.setStatus(httpStatus);
         response.setBody(httpStatus.getReasonPhrase());
-        response.flush();
     }
 }
