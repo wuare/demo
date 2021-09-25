@@ -8,10 +8,9 @@ import top.wuare.http.proto.HttpRequest;
 import top.wuare.http.proto.HttpRequestLine;
 import top.wuare.http.proto.HttpResponse;
 import top.wuare.http.util.HttpUtil;
+import top.wuare.http.util.IOUtil;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -36,6 +35,7 @@ public class DefaultRequestHandler implements RequestHandler {
     private final Map<String, RequestHandler> requestHandlerPostMap = new HashMap<>();
 
     private static final Map<String, String> FILE_CONTENT_TYPE_MAP = new HashMap<>();
+
     static {
         FILE_CONTENT_TYPE_MAP.put(".png", "image/png");
         FILE_CONTENT_TYPE_MAP.put(".jpg", "image/jpeg");
@@ -94,10 +94,9 @@ public class DefaultRequestHandler implements RequestHandler {
         if (url.endsWith(".class")) {
             return false;
         }
-        String pathType = httpServer.getProperties().getProperty(Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE,
-                Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_CLASSPATH);
-        String path = getStaticResourcePath();
-        if (path == null) {
+        String pathType = httpServer.getConfig().getStaticResourcePathType();
+        String path = httpServer.getConfig().getStaticResourcePath();
+        if (!Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_CLASSPATH.equals(pathType) && path == null) {
             return false;
         }
         InputStream in = null;
@@ -109,15 +108,7 @@ public class DefaultRequestHandler implements RequestHandler {
                 }
                 in = new BufferedInputStream(new FileInputStream(file));
             } else if (Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_RELATIVE.equals(pathType)) {
-                URL location = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-                String curPath = URLDecoder.decode(location.getPath(), "UTF-8");
-                if (curPath.charAt(curPath.length() - 1) == '/') {
-                    curPath = curPath.substring(0, curPath.charAt(curPath.length() - 1));
-                }
-                if (curPath.endsWith(".jar")) {
-                    curPath = curPath.substring(0, curPath.lastIndexOf("/") + 1);
-                }
-                File file = new File(curPath + path + url);
+                File file = new File(path + url);
                 if (!file.exists()) {
                     return false;
                 }
@@ -142,12 +133,7 @@ public class DefaultRequestHandler implements RequestHandler {
             logger.severe("DefaultRequestHandler#handleStaticResource " + e.getMessage());
             return false;
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {
-                }
-            }
+            IOUtil.close(in);
         }
     }
 

@@ -1,5 +1,7 @@
 package top.wuare.http;
 
+import top.wuare.http.builder.StaticResourcePathBuilder;
+import top.wuare.http.config.Config;
 import top.wuare.http.define.Constant;
 import top.wuare.http.define.HttpStatus;
 import top.wuare.http.exception.HttpServerException;
@@ -15,7 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,9 +39,6 @@ public class HttpServer {
     // jdk logger
     private static final Logger logger = Logger.getLogger(HttpServer.class.getName());
 
-    // thread pool config
-    private final int coreSize = 25;
-    private final int maxSize = coreSize * 2;
     private ThreadPoolExecutor executor;
 
     // server socket
@@ -55,6 +57,8 @@ public class HttpServer {
 
     // properties
     private Properties properties;
+    // config
+    private final Config config = new Config();
 
     public HttpServer(int port) {
         this.port = port;
@@ -70,6 +74,7 @@ public class HttpServer {
         }
         loadProperties();
         initExecutor();
+        initConfig();
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
@@ -84,10 +89,25 @@ public class HttpServer {
         }));
     }
 
+    private void initConfig() {
+        try {
+            String staticPathType = getProperties().getProperty(Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE,
+                    Constant.CONFIG_STATIC_RESOURCE_PATH_TYPE_CLASSPATH);
+            String staticPath = new StaticResourcePathBuilder().buildPath(getProperties());
+            config.setStaticResourcePathType(staticPathType);
+            config.setStaticResourcePath(staticPath);
+        } catch (IOException e) {
+            throw new HttpServerException("set static resource path error", e);
+        }
+    }
+
     private void initExecutor() {
+        // thread pool config
+        int coreSize = 25;
+        int maxSize = coreSize * 2;
         String coreSizeStr = properties.getProperty(Constant.CONFIG_THREAD_POOL_CORE_SIZE, coreSize + "");
         String maxSizeStr = properties.getProperty(Constant.CONFIG_THREAD_POOL_MAX_SIZE, maxSize + "");
-        String queueSizeStr = properties.getProperty(Constant.CONFIG_THREAD_POOL_QUEUE_SIZE,  "200");
+        String queueSizeStr = properties.getProperty(Constant.CONFIG_THREAD_POOL_QUEUE_SIZE, "200");
         BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>(Integer.parseInt(queueSizeStr));
         this.executor = new ThreadPoolExecutor(Integer.parseInt(coreSizeStr),
                 Integer.parseInt(maxSizeStr), 10, TimeUnit.MINUTES, blockingQueue);
@@ -106,7 +126,7 @@ public class HttpServer {
 
             Set<String> names = properties.stringPropertyNames();
             for (String name : names) {
-                logger.info("the properties key: {" + name + "}, value: {" + properties.getProperty(name) + "}");
+                logger.info("the properties key: " + name + ", value: " + properties.getProperty(name));
             }
             logger.info("load properties end");
         } catch (IOException e) {
@@ -118,7 +138,6 @@ public class HttpServer {
 
     public void start() {
         init();
-        logger.info("the thread pool config, coreSize: {" + coreSize + "}, maxSize: {" + maxSize + "}.");
         initAndStartTasks();
         logger.info("server started, listen port at " + port);
         while (isRunning()) {
@@ -220,5 +239,9 @@ public class HttpServer {
 
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    public Config getConfig() {
+        return config;
     }
 }
