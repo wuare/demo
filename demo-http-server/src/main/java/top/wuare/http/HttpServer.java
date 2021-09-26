@@ -118,12 +118,10 @@ public class HttpServer {
         if (in == null) {
             return;
         }
+        Properties properties = new Properties();
         try {
             logger.info("load properties start");
-            Properties properties = new Properties();
             properties.load(in);
-            setProperties(properties);
-
             Set<String> names = properties.stringPropertyNames();
             for (String name : names) {
                 logger.info("the properties key: " + name + ", value: " + properties.getProperty(name));
@@ -134,6 +132,7 @@ public class HttpServer {
         } finally {
             IOUtil.close(in);
         }
+        setProperties(properties);
     }
 
     public void start() {
