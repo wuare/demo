@@ -56,7 +56,7 @@ public class HttpServer {
     private RequestHandler notFoundRequestHandler = new NotFoundRequestHandler();
 
     // properties
-    private Properties properties;
+    private Properties properties = new Properties();
     // config
     private final Config config = new Config();
 
@@ -118,7 +118,6 @@ public class HttpServer {
         if (in == null) {
             return;
         }
-        Properties properties = new Properties();
         try {
             logger.info("load properties start");
             properties.load(in);
@@ -132,7 +131,6 @@ public class HttpServer {
         } finally {
             IOUtil.close(in);
         }
-        setProperties(properties);
     }
 
     public void start() {
