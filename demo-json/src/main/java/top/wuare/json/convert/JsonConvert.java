@@ -126,7 +126,7 @@ public class JsonConvert {
             StringBuilder s0 = new StringBuilder("[");
             List<?> list = (List<?>) obj;
             for (Object o : list) {
-                s0.append(toJson(o)).append(", ");
+                s0.append(toJson(o)).append(",");
             }
             if (s0.length() > 1) {
                 s0.setLength(s0.length() - 1);
