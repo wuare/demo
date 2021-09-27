@@ -54,7 +54,7 @@ public class HttpServerTest {
 - `absolute` 绝对路径，加载静态资源时直接在path配置的路径下查找
 - `classpath` 类路径，加载静态资源时在类路径下查找
 ## 大文件下载
-使用`HttpResponse.write()`方法，将文件内容循环写到输出流中，避免占用溢出。  
+使用`HttpResponse.write()`方法，将文件内容循环写到输出流中，避免内存溢出。  
 需要注意如果调用了`HttpResponse.write()`方法，`HttpResponse.setBody()`方法将不起作用。
 ## TODO
 - [x] parse request headers
