@@ -127,7 +127,6 @@ public class DefaultRequestHandler implements RequestHandler {
             }
             setResponseContentType(url, response);
             response.setBody(out.toByteArray());
-            response.flush();
             return true;
         } catch (IOException e) {
             logger.severe("DefaultRequestHandler#handleStaticResource " + e.getMessage());
@@ -156,7 +155,9 @@ public class DefaultRequestHandler implements RequestHandler {
         String suffix = url.substring(i);
         String type = FILE_CONTENT_TYPE_MAP.get(suffix);
         if (type != null) {
-            response.addHeader(Constant.HTTP_HEADER_CONTENT_TYPE, type);
+            response.setContentType(type);
+        } else {
+            response.setContentType("application/octet-stream");
         }
     }
 

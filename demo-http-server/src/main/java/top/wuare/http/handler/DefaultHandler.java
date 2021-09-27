@@ -11,7 +11,6 @@ import top.wuare.http.util.IOUtil;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
@@ -45,7 +44,7 @@ public class DefaultHandler implements Runnable {
         try {
             request = parser.parseRequest(socket.getInputStream());
             request.setSocket(socket);
-            response = new HttpResponse(socket, socket.getOutputStream());
+            response = buildResponse(socket);
             response.setStatus(HttpStatus.OK);
             List<RequestHandler> requestHandlers = httpServer.getRequestHandlers();
             if (requestHandlers.isEmpty()) {
@@ -55,8 +54,8 @@ public class DefaultHandler implements Runnable {
                     handler.handle(request, response);
                 }
             }
-            response.flush();
-        } catch (HttpReadTimeOutException | HttpRequestClosedException | SocketException e) {
+            response.getResponseHelper().flush();
+        } catch (HttpReadTimeOutException | HttpRequestClosedException | IOException e) {
             IOUtil.close(socket);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "", e);
@@ -70,8 +69,12 @@ public class DefaultHandler implements Runnable {
         }
     }
 
+    private HttpResponse buildResponse(Socket socket) throws IOException {
+        return new HttpResponse(socket);
+    }
+
     private void endRequest(HttpRequest request) {
-        if (request == null || request.getIn() == null) {
+        if (request == null || request.getInputStream() == null) {
             return;
         }
         if (request.getSocket() == null || request.getSocket().isClosed()) {
@@ -80,7 +83,7 @@ public class DefaultHandler implements Runnable {
         byte[] buf = new byte[2048];
         try {
             while (true) {
-                if (request.getIn().read(buf) == -1) {
+                if (request.getInputStream().read(buf) == -1) {
                     break;
                 }
             }
@@ -125,7 +128,7 @@ public class DefaultHandler implements Runnable {
         }
         errorHandler.handle(request, response, e);
         try {
-            response.flush();
+            response.getResponseHelper().flush();
         } catch (IOException ex) {
             IOUtil.close(socket);
         }

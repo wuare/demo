@@ -6,7 +6,7 @@
 
   <groupId>io.github.wuare</groupId>
   <artifactId>demo-http-server</artifactId>
-  <version>0.1.9</version>
+  <version>0.2.0</version>
   <description>http server</description>
   <url>https://github.com/wuare/demo</url>
 

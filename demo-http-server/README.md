@@ -19,6 +19,30 @@ public class HttpServerTest {
         });
         httpServer.start();
     }
+    
+    // 文件下载
+    public static void main(String[] args) {
+        HttpServer httpServer = new HttpServer(8082);
+        httpServer.get("/c", (req, res) -> {
+            // 下载文件 使用res.getOutputStream() write()方法
+            // 如果调用了write()方法，setBody()方法将不起作用
+            res.setContentType("application/octet-stream");
+            res.addHeader("Content-Disposition", "attachment;filename=xxx");
+            File file = new File("xxx");
+            OutputStream outputStream = res.getOutputStream();
+            InputStream in = null;
+            try {
+                in = new FileInputStream(file);
+                byte[] buf = new byte[4096];
+                int c;
+                while ((c = in.read(buf)) != -1) {
+                    outputStream.write(buf, 0, c);
+                }
+            } catch (Exception e) {
+                IOUtil.close(in);
+            }
+        });
+    }
 }
 ```
 ## 配置文件
@@ -29,7 +53,9 @@ public class HttpServerTest {
 - `relative` 相对路径，表示当前目录在的文件夹下拼接上path值得路径，当部署为jar时，当前目录为jar包所在的目录，本地启动时，当前目录为classes目录，例：当前jar包部署在`/a`目录下，path的配置值为`b/`，则加载静态资源时在`/a/b/`目录下查找
 - `absolute` 绝对路径，加载静态资源时直接在path配置的路径下查找
 - `classpath` 类路径，加载静态资源时在类路径下查找
-
+## 大文件下载
+使用`HttpResponse.write()`方法，将文件内容循环写到输出流中，避免占用溢出。  
+需要注意如果调用了`HttpResponse.write()`方法，`HttpResponse.setBody()`方法将不起作用。
 ## TODO
 - [x] parse request headers
 - [x] parse request body

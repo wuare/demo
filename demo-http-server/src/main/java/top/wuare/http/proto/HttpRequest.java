@@ -1,14 +1,12 @@
 package top.wuare.http.proto;
 
 import top.wuare.http.exception.HttpInputStreamReadException;
-import top.wuare.http.exception.HttpParserException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
 
 /**
  * http request
@@ -19,20 +17,12 @@ import java.util.logging.Level;
 public class HttpRequest {
 
     private Socket socket;
-    private InputStream in;
+    private InputStream inputStream;
     private HttpMessage httpMessage;
 
-    public HttpRequest() {
-    }
-
-    public HttpRequest(Socket socket, InputStream in) {
+    public HttpRequest(Socket socket, InputStream inputStream, HttpMessage httpMessage) {
         this.socket = socket;
-        this.in = in;
-    }
-
-    public HttpRequest(Socket socket, InputStream in, HttpMessage httpMessage) {
-        this.socket = socket;
-        this.in = in;
+        this.inputStream = inputStream;
         this.httpMessage = httpMessage;
     }
 
@@ -44,12 +34,12 @@ public class HttpRequest {
         this.socket = socket;
     }
 
-    public InputStream getIn() {
-        return in;
+    public InputStream getInputStream() {
+        return inputStream;
     }
 
-    public void setIn(InputStream in) {
-        this.in = in;
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 
     public HttpMessage getHttpMessage() {
@@ -71,7 +61,7 @@ public class HttpRequest {
         ByteArrayOutputStream arrayBuf = new ByteArrayOutputStream();
         try {
             int c;
-            while ((c = in.read(buf)) != -1) {
+            while ((c = inputStream.read(buf)) != -1) {
                 arrayBuf.write(buf, 0, c);
             }
             return arrayBuf.size() > 0 ? new String(arrayBuf.toByteArray(), StandardCharsets.UTF_8) : null;
@@ -85,7 +75,7 @@ public class HttpRequest {
         ByteArrayOutputStream arrayBuf = new ByteArrayOutputStream();
         try {
             int c;
-            while ((c = in.read(buf)) != -1) {
+            while ((c = inputStream.read(buf)) != -1) {
                 arrayBuf.write(buf, 0, c);
             }
             return arrayBuf.size() > 0 ? arrayBuf.toByteArray() : null;
