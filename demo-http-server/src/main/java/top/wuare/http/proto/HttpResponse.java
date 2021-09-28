@@ -58,6 +58,14 @@ public class HttpResponse {
         }
     }
 
+    public byte[] getBody() {
+        return httpMessage.getBody().getData();
+    }
+
+    public String getBodyToString() {
+        return new String(httpMessage.getBody().getData(), StandardCharsets.UTF_8);
+    }
+
     public HttpResponse setStatus(int status, String statusDesc) {
         HttpResponseLine line = new HttpResponseLine(status, statusDesc);
         httpMessage.setHttpLine(line);
