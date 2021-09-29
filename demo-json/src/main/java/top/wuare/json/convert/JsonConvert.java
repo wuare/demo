@@ -19,6 +19,7 @@ import java.util.Map;
  */
 public class JsonConvert {
 
+    @SuppressWarnings("unchecked")
     public <T> T fromJson(Object obj, Type type) {
 
         if (obj == null) {
@@ -62,7 +63,7 @@ public class JsonConvert {
                     resList.addAll(objList);
                     return (T) resList;
                 } catch (ReflectiveOperationException e) {
-                    e.printStackTrace();
+                    throw new JsonConvertException(type.getTypeName() + "没有默认构造方法");
                 }
             }
             if (type instanceof Class && ((Class<?>) type).isArray()) {
@@ -204,8 +205,8 @@ public class JsonConvert {
         }
         if (obj instanceof Map) {
             StringBuilder s0 = new StringBuilder("{");
-            Map<Object, Object> map = (Map<Object, Object>) obj;
-            for (Map.Entry<Object, Object> entry : map.entrySet()) {
+            Map<?, ?> map = (Map<?, ?>) obj;
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
                 s0.append("\"").append(entry.getKey().toString()).append("\"")
                         .append(":").append(toJson(entry.getValue())).append(",");
             }
