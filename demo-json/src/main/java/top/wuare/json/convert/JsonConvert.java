@@ -47,6 +47,9 @@ public class JsonConvert {
             if (type == Double.class || type == double.class) {
                 return (T) Double.valueOf(((BigDecimal) obj).doubleValue());
             }
+            if (type == BigDecimal.class) {
+                return (T) obj;
+            }
         }
         if (obj instanceof List) {
             List<?> objList = (List<?>) obj;

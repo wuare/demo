@@ -5,6 +5,11 @@ import org.junit.Test;
 import top.wuare.json.data.*;
 import top.wuare.json.exception.JsonConvertException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class WsonTest {
 
     @Test
@@ -41,6 +46,31 @@ public class WsonTest {
         String text = "{\"name\": \"str\"}";
         StringData data = new Wson().fromJson(text, StringData.class);
         Assert.assertEquals(data.getName(), "str");
+    }
+
+    @Test
+    public void testMapGeneric() {
+        String text = "{\"map\":{\"z\":{\"a\":[1]}}}";
+        MapGenericData mapGenericData = new Wson().fromJson(text, MapGenericData.class);
+        Map<String, List<Long>> z = mapGenericData.getMap().get("z");
+        Assert.assertNotNull(z);
+        List<Long> a = z.get("a");
+        Assert.assertNotNull(a);
+        Assert.assertEquals(a.size(), 1);
+        Assert.assertEquals(a.get(0).longValue(), 1L);
+    }
+
+    @Test
+    public void testMapGenericText() {
+        MapGenericData data = new MapGenericData();
+        Map<String, Map<String, List<Long>>> map = new HashMap<>();
+        Map<String, List<Long>> map0 = new HashMap<>();
+        List<Long> list = new ArrayList<>();
+        list.add(1L);
+        map0.put("a", list);
+        map.put("z", map0);
+        data.setMap(map);
+        System.out.println(new Wson().toJson(data));
     }
 
     @Test
