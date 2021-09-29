@@ -2,10 +2,8 @@ package top.wuare.json;
 
 import org.junit.Assert;
 import org.junit.Test;
-import top.wuare.json.data.AllData;
-import top.wuare.json.data.ArrayData;
-import top.wuare.json.data.StringData;
-import top.wuare.json.data.User;
+import top.wuare.json.data.*;
+import top.wuare.json.exception.JsonConvertException;
 
 public class WsonTest {
 
@@ -67,8 +65,14 @@ public class WsonTest {
         Assert.assertEquals(data.getUsers()[1].getName(), "u456");
     }
 
-    @Test
+    @Test(expected = JsonConvertException.class)
     public void testOther() {
+        String text = "{\"data\":[1,2,3]}";
+        new Wson().fromJson(text, SetData.class);
+    }
+
+    @Test
+    public void testSetData() {
 
     }
 

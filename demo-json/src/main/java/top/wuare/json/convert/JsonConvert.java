@@ -4,11 +4,10 @@ import top.wuare.json.exception.JsonConvertException;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,78 +19,145 @@ import java.util.Map;
  */
 public class JsonConvert {
 
-    public <T> T fromJson(Object obj, Class<T> clazz) {
+    public <T> T fromJson(Object obj, Type type) {
+
         if (obj == null) {
             return null;
         }
         if (obj instanceof Boolean) {
-            if (clazz == Boolean.class || clazz == boolean.class) {
+            if (type == Boolean.class || type == boolean.class) {
                 return (T) obj;
             }
         }
         if (obj instanceof String) {
-            if (clazz == String.class) {
+            if (type == String.class) {
                 return (T) obj;
             }
         }
         if (obj instanceof BigDecimal) {
-            if (clazz == Integer.class || clazz == int.class) {
+            if (type == Integer.class || type == int.class) {
                 return (T) Integer.valueOf(((BigDecimal) obj).intValue());
             }
-            if (clazz == Long.class || clazz == long.class) {
+            if (type == Long.class || type == long.class) {
                 return (T) Long.valueOf(((BigDecimal) obj).longValue());
             }
-            if (clazz == Float.class || clazz == float.class) {
+            if (type == Float.class || type == float.class) {
                 return (T) Float.valueOf(((BigDecimal) obj).floatValue());
             }
-            if (clazz == Double.class || clazz == double.class) {
+            if (type == Double.class || type == double.class) {
                 return (T) Double.valueOf(((BigDecimal) obj).doubleValue());
             }
         }
-        if (List.class.isAssignableFrom(clazz)) {
-            throw new JsonConvertException("暂不支持List反序列化");
-        }
-        if (Map.class.isAssignableFrom(clazz)) {
-            throw new JsonConvertException("暂不支持Map反序列化");
-        }
         if (obj instanceof List) {
-            if (clazz.isArray()) {
-                List<?> list = (List<?>) obj;
-                Object array = Array.newInstance(clazz.getComponentType(), list.size());
-                for (int i = 0; i < list.size(); i++) {
-                    Array.set(array, i, fromJson(list.get(i), clazz.getComponentType()));
+            List<?> objList = (List<?>) obj;
+            if (type == List.class) {
+                return (T) new ArrayList<Object>(objList);
+            }
+            if (type instanceof Class && List.class.isAssignableFrom((Class<?>) type)) {
+                try {
+                    List<Object> resList = (List<Object>) ((Class<?>) type).getDeclaredConstructor().newInstance();
+                    resList.addAll(objList);
+                    return (T) resList;
+                } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (type instanceof Class && ((Class<?>) type).isArray()) {
+                Class<?> clazz = (Class<?>) type;
+                Object array = Array.newInstance(clazz.getComponentType(), objList.size());
+                for (int i = 0; i < objList.size(); i++) {
+                    Array.set(array, i, fromJson(objList.get(i), clazz.getComponentType()));
                 }
                 return (T) array;
             }
+            if (type instanceof ParameterizedType) {
+                Type rawType = ((ParameterizedType) type).getRawType();
+                Type[] argTypes = ((ParameterizedType) type).getActualTypeArguments();
+                if (rawType instanceof Class && List.class.isAssignableFrom((Class<?>) rawType)) {
+                    List<?> resList;
+                    if (rawType == List.class) {
+                        resList = new ArrayList<>();
+                    } else {
+                        try {
+                            resList = (List<?>) ((Class<?>) rawType).getDeclaredConstructor().newInstance();
+                        } catch (ReflectiveOperationException e) {
+                            throw new JsonConvertException(rawType.getTypeName() + "没有默认构造方法");
+                        }
+                    }
+                    for (Object o : objList) {
+                        resList.add(fromJson(o, argTypes[0]));
+                    }
+                    return (T) resList;
+                }
+            }
         }
         if (obj instanceof Map) {
-            Map<String, Object> map = (Map<String, Object>) obj;
-            Field[] fields = clazz.getDeclaredFields();
-            T t;
-            try {
-                t = clazz.getDeclaredConstructor().newInstance();
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                throw new JsonConvertException(clazz.getName() + "没有默认的构造方法", e);
+            Map<String, Object> objMap = (Map<String, Object>) obj;
+            if (type == Map.class) {
+                return (T) objMap;
             }
-            for (Field f : fields) {
+            if (type instanceof Class && Map.class.isAssignableFrom((Class<?>) type)) {
                 try {
-                    PropertyDescriptor descriptor = new PropertyDescriptor((String) f.getName(), clazz);
-                    Method writeMethod = descriptor.getWriteMethod();
-                    Object o = map.get(descriptor.getName());
-                    if (o == null) {
-                        continue;
-                    }
-                    writeMethod.invoke(t, fromJson(o, f.getType()));
-                } catch (IntrospectionException e) {
-                    System.out.println(e.getMessage());
+                    Map<String, Object> resMap = (Map<String, Object>) ((Class<?>) type).getDeclaredConstructor().newInstance();
+                    resMap.putAll(objMap);
+                    return (T) resMap;
                 } catch (ReflectiveOperationException e) {
-                    System.out.println("设置值错误" + e.getMessage());
+                    throw new JsonConvertException(((Class<?>) type).getName() + "没有默认构造方法");
+                }
+            }
+            if (type instanceof ParameterizedType) {
+                Type rawType = ((ParameterizedType) type).getRawType();
+                if (rawType instanceof Class && Map.class.isAssignableFrom((Class<?>) rawType)) {
+                    Type[] argTypes = ((ParameterizedType) type).getActualTypeArguments();
+                    if (argTypes[0] != String.class) {
+                        throw new JsonConvertException("Map泛型key应该为String类型");
+                    }
+                    Map<?, ?> resMap;
+                    if (rawType == Map.class) {
+                        resMap = new HashMap<>();
+                    } else {
+                        try {
+                            resMap = (Map<?, ?>) ((Class<?>) rawType).getDeclaredConstructor().newInstance();
+                        } catch (ReflectiveOperationException e) {
+                            throw new JsonConvertException(rawType.getTypeName() + "没有默认构造方法");
+                        }
+                    }
+                    for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet()) {
+                        resMap.put(fromJson(entry.getKey(), argTypes[0]), fromJson(entry.getValue(), argTypes[1]));
+                    }
+                    return (T) resMap;
                 }
 
             }
-            return t;
+            if (type instanceof Class) {
+                Class<?> clazz = (Class<?>) type;
+                Field[] fields = clazz.getDeclaredFields();
+                Object instance;
+                try {
+                    instance = clazz.getDeclaredConstructor().newInstance();
+                } catch (ReflectiveOperationException e) {
+                    throw new JsonConvertException(clazz.getName() + "没有默认的构造方法", e);
+                }
+                for (Field f : fields) {
+                    try {
+                        PropertyDescriptor descriptor = new PropertyDescriptor((String) f.getName(), clazz);
+                        Method writeMethod = descriptor.getWriteMethod();
+                        Object o = objMap.get(descriptor.getName());
+                        if (o == null) {
+                            continue;
+                        }
+                        Object arg = fromJson(o, f.getGenericType());
+                        writeMethod.invoke(instance, arg);
+                    } catch (IntrospectionException e) {
+                        System.out.println(e.getMessage());
+                    } catch (ReflectiveOperationException e) {
+                        System.out.println("设置值错误" + e.getMessage());
+                    }
+                }
+                return (T) instance;
+            }
         }
-        throw new JsonConvertException(clazz.getName() + "不支持反序列化");
+        throw new JsonConvertException(type.getTypeName() + "不支持反序列化");
     }
 
     public String toJson(Object obj) {
