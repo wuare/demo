@@ -68,8 +68,18 @@ public class JavaGen implements Gen {
             }
             // #BBB529
             if (token.getType() == Token.AT) {
-                String newText = "<span style=\"color: #BBB529;\">" + token.getValue() + "</span>";
-                builder.append(newText);
+                Token nextToken = lexer.nextToken();
+                if (nextToken != null && nextToken.getType() == Token.IDENTIFIER) {
+                    String newText = "<span style=\"color: #BBB529;\">" + token.getValue() + nextToken.getValue() + "</span>";
+                    builder.append(newText);
+                } else {
+                    String newText = "<span style=\"color: #BBB529;\">" + token.getValue() + "</span>";
+                    builder.append(newText);
+                    if (nextToken != null) {
+                        builder.append("<span style=\"color: #BBB529;\">").append(nextToken.getValue()).append("</span>");
+                    }
+                }
+
                 continue;
             }
             if (token.getType() == Token.LT) {
