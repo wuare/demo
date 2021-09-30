@@ -1,6 +1,9 @@
 package top.wuare.http;
 
 import org.junit.Test;
+import top.wuare.http.exception.MultiPartFormException;
+import top.wuare.http.helper.multipart.MultiPartFormData;
+import top.wuare.http.helper.multipart.MultiPartFormDataHelper;
 import top.wuare.http.util.IOUtil;
 
 import java.io.File;
@@ -62,6 +65,23 @@ public class HttpServerTest {
                     }
                 })
                 .post("/a", (req, res) -> res.setBody("method is POST, the path is /a"))
+        ;
+        httpServer.start();
+    }
+
+    public void testStart2() {
+        HttpServer httpServer = new HttpServer(80);
+        httpServer.get("/a", (req, res) -> {
+                    res.setBody("method is GET, the path is /a");
+                })
+                .post("/a", (req, res) -> {
+                    try {
+                        MultiPartFormData handle = MultiPartFormDataHelper.handle(req);
+                        handle.clear();
+                    } catch (MultiPartFormException e) {
+                        e.printStackTrace();
+                    }
+                })
         ;
         httpServer.start();
     }
