@@ -16,7 +16,7 @@ public class HttpInputStream extends InputStream {
     }
 
     @Override
-    public synchronized int read() throws IOException {
+    public int read() throws IOException {
         if (remainLength-- > 0) {
             return in.read();
         }
@@ -24,9 +24,14 @@ public class HttpInputStream extends InputStream {
     }
 
     @Override
-    public synchronized int read(byte[] b) throws IOException {
+    public int read(byte[] b) throws IOException {
+        return read(b, 0, b.length);
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
         if (remainLength > 0) {
-            int nRead = in.read(b);
+            int nRead = in.read(b, off, len);
             if (nRead > 0) {
                 remainLength = remainLength - nRead;
                 return nRead;

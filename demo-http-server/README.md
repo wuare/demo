@@ -62,6 +62,9 @@ public class HttpServerTest {
 - [x] url mapping handle
 - [x] static resource handle
 - [x] Connection header handle
+- [ ] multipart/form-data parse
+## 待办
+- [ ] multipart/form-data解析，目前实现了一个粗糙的解析，性能和代码不忍直视  
 
 ## Note
 1.如果遇到`Connection: keep-alive`请求头，执行完业务逻辑后，需要将输入流中未读取的数据消费完，然后把socket放到线程池中继续处理。  
