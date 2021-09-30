@@ -180,7 +180,16 @@ public class MultiPartFormDataHelper {
     }
 
     private static void fill(InputStream in, byte[] buf, int srcPos, int len) throws IOException {
-        in.read(buf, srcPos, len);
+        int n = in.read(buf, srcPos, len);
+        if (n < len) {
+            for (int i = 0; i < len - n; i++) {
+                int read = in.read();
+                if (read == -1) {
+                    break;
+                }
+                buf[srcPos + n + i] = (byte) read;
+            }
+        }
     }
 
     private static String getHeaderSubValue(String value, String name) {
