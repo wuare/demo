@@ -1,4 +1,7 @@
-## Json Parser
+## 说明
+json解析库，使用Java编写  
+实现较为简单，为了学习词法分析和语法分析
+## 使用
 Usage:
 
 ```java
@@ -19,7 +22,6 @@ public class WsonTest {
 
         // 或者指定Class
         // 实体类中必须指定get set方法
-        // 且目前不支持List，Map的反序列化，使用数组代替List
         User user = wson.fromJson(text, User.class);
         System.out.println(user);
     }
