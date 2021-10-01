@@ -11,7 +11,9 @@ for learn something
 - [x] [Simple Calculator](https://github.com/wuare/demo/tree/master/demo-calculator)
 - [ ] Cache
 
-
+### 说明
+本仓库为一系列简单的Java库，包括实现了一个http服务器库，一个json解析库，及其它一些小项目  
+为了学习编译原理，http协议等知识  
 ### Question
 1. how to handle escape character? 
 2. how to handle http header connection-keepalive? 
