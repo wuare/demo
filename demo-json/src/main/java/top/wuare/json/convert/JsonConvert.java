@@ -179,6 +179,7 @@ public class JsonConvert {
             return ((Boolean) obj).toString();
         }
         if (obj instanceof String) {
+            // TODO escape character handle
             return "\"" + obj + "\"";
         }
         if (obj.getClass().isArray()) {
