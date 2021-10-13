@@ -1,4 +1,7 @@
-## Http Server
+## 说明
+http服务器，使用Java编写，基于Bio  
+
+## 示例
 Usage: 
 ```java
 import top.wuare.http.HttpServer;
