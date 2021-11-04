@@ -110,7 +110,7 @@ public class ExpLexer {
                     throw new RuntimeException("syntax error, '&' is invalid, at line: " + line + ", column: " + column);
                 }
                 advance();
-                expToken11.setType(ExpTokenType.ADD);
+                expToken11.setType(ExpTokenType.AND);
                 expToken11.setText("&&");
                 return expToken11;
             case '|':
