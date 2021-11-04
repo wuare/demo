@@ -23,8 +23,8 @@ public class ExpParser {
     private void init() {
         register(ExpTokenType.NUMBER, new NameParseLet());
         register(ExpTokenType.IDENT, new NameParseLet());
-        register(ExpTokenType.SUB, new PrefixOperatorParseLet());
-        register(ExpTokenType.BANG, new PrefixOperatorParseLet());
+        register(ExpTokenType.SUB, new PrefixOperatorParseLet(12));
+        register(ExpTokenType.BANG, new PrefixOperatorParseLet(12));
         register(ExpTokenType.LPAREN, new ParenParseLet());
 
         // infix
