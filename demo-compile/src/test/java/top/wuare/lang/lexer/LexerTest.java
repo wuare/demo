@@ -3,6 +3,9 @@ package top.wuare.lang.lexer;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 public class LexerTest {
 
     @Test
@@ -24,6 +27,13 @@ public class LexerTest {
     @Test
     public void testVar() {
         Lexer lexer = new Lexer("var");
+        Token token = lexer.nextToken();
+        Assert.assertSame(token.getType(), TokenType.VAR);
+    }
+
+    @Test
+    public void testInputStream() {
+        Lexer lexer = new Lexer(new ByteArrayInputStream("var".getBytes(StandardCharsets.UTF_8)));
         Token token = lexer.nextToken();
         Assert.assertSame(token.getType(), TokenType.VAR);
     }
