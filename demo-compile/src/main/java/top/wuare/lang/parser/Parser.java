@@ -53,6 +53,7 @@ public class Parser {
         TokenType type = curToken.getType();
         switch (type) {
             case VAR:
+            case FUNC:
                 return parseDeclareStmt();
             case IF:
                 return parseIfStmt();
@@ -60,25 +61,60 @@ public class Parser {
                 return parseWhileStmt();
             case RETURN:
                 return parseReturnStmt();
-            default:
+            case IDENT:
+            case NUMBER:
+            case SUB:
+            case BANG:
+            case LPAREN:
                 return parseExprStmt();
+            default:
+                return null;
         }
     }
 
-    // DeclareStmt: VAR ident (= Expr)? ';'
+    // VarDeclareStmt: VAR ident (= Expr)? ';'
+    // FuncDeclareStmt: FUNC ident '(' (expr (',' expr)*)* ')' '{' Block '}'
     private Stmt parseDeclareStmt() {
-        DeclareStmt stmt = new DeclareStmt();
-        eat(TokenType.VAR);
-        want(TokenType.IDENT);
-        stmt.setIdent(curToken);
-        consume();
-        if (curToken != null && curToken.getType() == TokenType.ASSIGN) {
+        if (curToken.getType() == TokenType.VAR) {
+            VarDeclareStmt stmt = new VarDeclareStmt();
+            eat(TokenType.VAR);
+            want(TokenType.IDENT);
+            stmt.setIdent(curToken);
             consume();
-            Expr expr = parseExp(0);
-            stmt.setExpr(expr);
+            if (curToken != null && curToken.getType() == TokenType.ASSIGN) {
+                consume();
+                Expr expr = parseExp(0);
+                stmt.setExpr(expr);
+            }
+            eat(TokenType.SEMICOLON);
+            return stmt;
         }
-        eat(TokenType.SEMICOLON);
-        return stmt;
+        if (curToken.getType() == TokenType.FUNC) {
+            FuncDeclareStmt stmt = new FuncDeclareStmt();
+            eat(TokenType.FUNC);
+            want(TokenType.IDENT);
+            stmt.setName(curToken);
+            consume();
+            eat(TokenType.LPAREN);
+            if (curToken != null && curToken.getType() != TokenType.RPAREN) {
+                List<Expr> args = new ArrayList<>();
+                Expr expr = parseExp(0);
+                args.add(expr);
+                while (curToken != null && curToken.getType() == TokenType.COMMA) {
+                    consume();
+                    args.add(parseExp(0));
+                }
+                eat(TokenType.RPAREN);
+                stmt.setArgs(args);
+            }
+            eat(TokenType.LBRACE);
+            if (curToken != null && curToken.getType() != TokenType.RBRACE) {
+                stmt.setBlock(parseBlock());
+            }
+            eat(TokenType.RBRACE);
+            return stmt;
+        }
+        throw new RuntimeException("syntax error, not support declare statement");
     }
 
     // IfStmt: IF '(' Expr ')' '{' Block '}' (ELSE '{' Block '}')?
@@ -90,27 +126,56 @@ public class Parser {
         stmt.setExpr(expr);
         eat(TokenType.RPAREN);
         eat(TokenType.LBRACE);
-        stmt.setThen(parseBlock());
+        if (curToken != null && curToken.getType() != TokenType.RBRACE) {
+            stmt.setThen(parseBlock());
+        }
         eat(TokenType.RBRACE);
         if (curToken.getType() == TokenType.ELSE) {
             consume();
             eat(TokenType.LBRACE);
-            stmt.setEls(parseBlock());
+            if (curToken != null && curToken.getType() != TokenType.RBRACE) {
+                stmt.setEls(parseBlock());
+            }
             eat(TokenType.RBRACE);
         }
         return stmt;
     }
 
+    // WhileStmt: WHILE '(' Expr ')' '{' Block '}'
     private Stmt parseWhileStmt() {
-        return null;
+        WhileStmt stmt = new WhileStmt();
+        eat(TokenType.WHILE);
+        eat(TokenType.LPAREN);
+        stmt.setExpr(parseExp(0));
+        eat(TokenType.RPAREN);
+        eat(TokenType.LBRACE);
+        if (curToken != null && curToken.getType() == TokenType.RBRACE) {
+            consume();
+            return stmt;
+        }
+        stmt.setBlock(parseBlock());
+        eat(TokenType.RBRACE);
+        return stmt;
     }
 
+    // ReturnStmt: RETURN (Expr)? ';'
     private Stmt parseReturnStmt() {
-        return null;
+        ReturnStmt stmt = new ReturnStmt();
+        eat(TokenType.RETURN);
+        if (curToken != null && curToken.getType() == TokenType.SEMICOLON) {
+            consume();
+            return stmt;
+        }
+        stmt.setExpr(parseExp(0));
+        eat(TokenType.SEMICOLON);
+        return stmt;
     }
 
+    // ExprStmt: expr ';'
     private Stmt parseExprStmt() {
-        return null;
+        Expr expr = parseExp(0);
+        eat(TokenType.SEMICOLON);
+        return new ExprStmt(expr);
     }
 
 
@@ -120,7 +185,7 @@ public class Parser {
         }
         PrefixParser prefixParser = mPrefixParseLets.get(curToken.getType());
         if (prefixParser == null) {
-            throw new RuntimeException("could not parse '" + curToken.getType().getText() + "'");
+            return null;
         }
         Expr left = prefixParser.parse(this, curToken);
         while (precedence < getPrecedence()) {
@@ -146,40 +211,48 @@ public class Parser {
         return 0;
     }
 
+    public Token getCurToken() {
+        return curToken;
+    }
+
     public void consume() {
         curToken = lexer.nextToken();
     }
 
     public void want(TokenType type) {
-        if (type == curToken.getType()) {
+        if (curToken != null && type == curToken.getType()) {
             return;
         }
         throw new RuntimeException("expect token type: " + type.getText() + ", but get type: "
-                + curToken.getType().getText() + ", at line: " + curToken.getLine() + ", column: " + curToken.getColumn());
+                + (curToken == null ? "null" :
+                curToken.getType().getText() + ", at line: " + curToken.getLine() + ", column: " + curToken.getColumn()));
     }
 
     private void eat(TokenType type) {
-        if (type == curToken.getType()) {
+        if (curToken != null && type == curToken.getType()) {
             consume();
             return;
         }
         throw new RuntimeException("expect token type: " + type.getText() + ", but get type: "
-                + curToken.getType().getText() + ", at line: " + curToken.getLine() + ", column: " + curToken.getColumn());
+                + (curToken == null ? "null" :
+                curToken.getType().getText() + ", at line: " + curToken.getLine() + ", column: " + curToken.getColumn()));
     }
 
     static {
         register(TokenType.NUMBER, new IdentParser());
         register(TokenType.IDENT, new IdentParser());
-        register(TokenType.SUB, new PrefixOperatorParser(12));
-        register(TokenType.BANG, new PrefixOperatorParser(12));
+        register(TokenType.SUB, new PrefixOperatorParser(13));
+        register(TokenType.BANG, new PrefixOperatorParser(13));
         register(TokenType.LPAREN, new ParenParser());
 
         // infix
-        register(TokenType.ADD, new BinOperatorParser(10));
-        register(TokenType.SUB, new BinOperatorParser(10));
+
+        register(TokenType.LPAREN, new CallParser(12));
         register(TokenType.MUL, new BinOperatorParser(11));
         register(TokenType.DIV, new BinOperatorParser(11));
         register(TokenType.MOD, new BinOperatorParser(11));
+        register(TokenType.ADD, new BinOperatorParser(10));
+        register(TokenType.SUB, new BinOperatorParser(10));
         register(TokenType.LT, new BinOperatorParser(3));
         register(TokenType.GT, new BinOperatorParser(3));
         register(TokenType.LE, new BinOperatorParser(3));

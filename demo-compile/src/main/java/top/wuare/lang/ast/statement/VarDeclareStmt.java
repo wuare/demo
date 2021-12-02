@@ -3,7 +3,7 @@ package top.wuare.lang.ast.statement;
 import top.wuare.lang.ast.expr.Expr;
 import top.wuare.lang.lexer.Token;
 
-public class DeclareStmt implements Stmt {
+public class VarDeclareStmt implements Stmt {
     private Token ident;
     private Expr expr;
 
