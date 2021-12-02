@@ -18,6 +18,7 @@ public class Lexer {
         RESERVED_KEYWORDS.put(TokenType.IF.getText(), TokenType.IF);
         RESERVED_KEYWORDS.put(TokenType.WHILE.getText(), TokenType.WHILE);
         RESERVED_KEYWORDS.put(TokenType.RETURN.getText(), TokenType.RETURN);
+        RESERVED_KEYWORDS.put(TokenType.ELSE.getText(), TokenType.ELSE);
     }
 
     public Lexer(String text) {
@@ -137,12 +138,15 @@ public class Lexer {
             case '=':
                 Token Token10 = new Token(line, column);
                 advance();
-                if (ch != '=') {
-                    throw new RuntimeException("syntax error, '=' is invalid, at line: " + line + ", column: " + column);
+                if (ch == '=') {
+                    advance();
+                    Token10.setType(TokenType.EQUAL);
+                    Token10.setText("==");
+                    return Token10;
                 }
                 advance();
-                Token10.setType(TokenType.EQUAL);
-                Token10.setText("==");
+                Token10.setType(TokenType.ASSIGN);
+                Token10.setText("=");
                 return Token10;
             case '&':
                 Token Token11 = new Token(line, column);

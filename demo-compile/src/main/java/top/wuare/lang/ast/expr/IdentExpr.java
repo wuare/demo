@@ -1,14 +1,16 @@
 package top.wuare.lang.ast.expr;
 
+import top.wuare.lang.lexer.Token;
+
 public class IdentExpr implements Expr {
 
-    private final String text;
+    private final Token token;
 
-    public IdentExpr(String text) {
-        this.text = text;
+    public IdentExpr(Token token) {
+        this.token = token;
     }
 
-    public String getText() {
-        return text;
+    public Token getToken() {
+        return token;
     }
 }

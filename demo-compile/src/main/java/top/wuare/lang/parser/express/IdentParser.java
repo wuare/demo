@@ -9,7 +9,7 @@ public class IdentParser implements PrefixParser {
 
     @Override
     public Expr parse(Parser parser, Token token) {
-        IdentExpr expr = new IdentExpr(token.getText());
+        IdentExpr expr = new IdentExpr(token);
         parser.consume();
         return expr;
     }

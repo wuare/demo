@@ -7,6 +7,7 @@ public enum TokenType {
     IF("IF", "if"),
     WHILE("WHILE", "while"),
     RETURN("RETURN", "return"),
+    ELSE("ELSE", "else"),
 
     NUMBER("NUMBER", "数字"),
     IDENT("IDENT", "标识符"),
@@ -19,6 +20,7 @@ public enum TokenType {
     MOD("MOD", "%"),
     ADD("ADD", "+"),
     SUB("SUB", "-"),
+    ASSIGN("ASSIGN", "="),
     EQUAL("EQUAL", "=="),
     NOTEQUAL("NOTEQUAL", "!=="),
     GE("GE", ">="),

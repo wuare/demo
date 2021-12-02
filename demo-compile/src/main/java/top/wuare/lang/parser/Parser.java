@@ -2,13 +2,16 @@ package top.wuare.lang.parser;
 
 import top.wuare.lang.ast.AST;
 import top.wuare.lang.ast.expr.Expr;
+import top.wuare.lang.ast.statement.*;
 import top.wuare.lang.lexer.Lexer;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.express.*;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Parser {
@@ -29,6 +32,84 @@ public class Parser {
     }
 
     public AST parse() {
+        return parseBlock();
+    }
+
+    // Block: Stmt...
+    private Block parseBlock() {
+        List<Stmt> stmts = new ArrayList<>();
+        Stmt stmt;
+        while ((stmt = parseStmt()) != null) {
+            stmts.add(stmt);
+        }
+        return new Block(stmts);
+    }
+
+    // Stmt: DeclareStmt | ExprStmt | IfStmt | WhileStmt | ReturnStmt
+    private Stmt parseStmt() {
+        if (curToken == null) {
+            return null;
+        }
+        TokenType type = curToken.getType();
+        switch (type) {
+            case VAR:
+                return parseDeclareStmt();
+            case IF:
+                return parseIfStmt();
+            case WHILE:
+                return parseWhileStmt();
+            case RETURN:
+                return parseReturnStmt();
+            default:
+                return parseExprStmt();
+        }
+    }
+
+    // DeclareStmt: VAR ident (= Expr)? ';'
+    private Stmt parseDeclareStmt() {
+        DeclareStmt stmt = new DeclareStmt();
+        eat(TokenType.VAR);
+        want(TokenType.IDENT);
+        stmt.setIdent(curToken);
+        consume();
+        if (curToken != null && curToken.getType() == TokenType.ASSIGN) {
+            consume();
+            Expr expr = parseExp(0);
+            stmt.setExpr(expr);
+        }
+        eat(TokenType.SEMICOLON);
+        return stmt;
+    }
+
+    // IfStmt: IF '(' Expr ')' '{' Block '}' (ELSE '{' Block '}')?
+    private Stmt parseIfStmt() {
+        IfStmt stmt = new IfStmt();
+        eat(TokenType.IF);
+        eat(TokenType.LPAREN);
+        Expr expr = parseExp(0);
+        stmt.setExpr(expr);
+        eat(TokenType.RPAREN);
+        eat(TokenType.LBRACE);
+        stmt.setThen(parseBlock());
+        eat(TokenType.RBRACE);
+        if (curToken.getType() == TokenType.ELSE) {
+            consume();
+            eat(TokenType.LBRACE);
+            stmt.setEls(parseBlock());
+            eat(TokenType.RBRACE);
+        }
+        return stmt;
+    }
+
+    private Stmt parseWhileStmt() {
+        return null;
+    }
+
+    private Stmt parseReturnStmt() {
+        return null;
+    }
+
+    private Stmt parseExprStmt() {
         return null;
     }
 
@@ -107,6 +188,7 @@ public class Parser {
         register(TokenType.NOTEQUAL, new BinOperatorParser(3));
         register(TokenType.AND, new BinOperatorParser(2));
         register(TokenType.OR, new BinOperatorParser(1));
+        register(TokenType.ASSIGN, new AssignParser(0));
     }
 
     public static void register(TokenType type, PrefixParser prefixParser) {

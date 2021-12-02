@@ -5,13 +5,18 @@ import top.wuare.lang.ast.AST;
 import java.util.List;
 
 public class Block implements AST {
-    private List<Stmt> statements;
 
-    public List<Stmt> getStatements() {
-        return statements;
+    public Block(List<Stmt> stmts) {
+        this.stmts = stmts;
     }
 
-    public void setStatements(List<Stmt> statements) {
-        this.statements = statements;
+    private List<Stmt> stmts;
+
+    public List<Stmt> getStmts() {
+        return stmts;
+    }
+
+    public void setStmts(List<Stmt> stmts) {
+        this.stmts = stmts;
     }
 }
