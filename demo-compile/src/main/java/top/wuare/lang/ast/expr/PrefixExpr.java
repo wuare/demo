@@ -1,24 +1,24 @@
 package top.wuare.lang.ast.expr;
 
 
-import top.wuare.lang.lexer.TokenType;
+import top.wuare.lang.lexer.Token;
 
 public class PrefixExpr implements Expr {
 
-    private TokenType tokenType;
+    private Token token;
     private Expr operand;
 
-    public PrefixExpr(TokenType tokenType, Expr operand) {
-        this.tokenType = tokenType;
+    public PrefixExpr(Token token, Expr operand) {
+        this.token = token;
         this.operand = operand;
     }
 
-    public TokenType getTokenType() {
-        return tokenType;
+    public Token getToken() {
+        return token;
     }
 
-    public void setTokenType(TokenType tokenType) {
-        this.tokenType = tokenType;
+    public void setToken(Token token) {
+        this.token = token;
     }
 
     public Expr getOperand() {

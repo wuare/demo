@@ -1,4 +1,6 @@
 package top.wuare.lang.ast.statement;
 
-public interface Stmt {
+import top.wuare.lang.ast.AST;
+
+public interface Stmt extends AST {
 }

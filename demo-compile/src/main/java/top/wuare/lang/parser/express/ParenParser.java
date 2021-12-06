@@ -12,6 +12,6 @@ public class ParenParser implements PrefixParser {
         parser.consume();
         Expr expr = parser.parseExp(0);
         parser.consume();
-        return new PrefixExpr(token.getType(), expr);
+        return new PrefixExpr(token, expr);
     }
 }

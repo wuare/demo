@@ -18,6 +18,6 @@ public class PrefixOperatorParser implements PrefixParser {
 
         parser.consume();
         Expr operand = parser.parseExp(precedence);
-        return new PrefixExpr(token.getType(), operand);
+        return new PrefixExpr(token, operand);
     }
 }
