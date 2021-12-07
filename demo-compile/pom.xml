@@ -6,7 +6,7 @@
 
   <groupId>io.github.wuare</groupId>
   <artifactId>demo-compile</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
 
   <name>demo-compile</name>
   <description>demo compile</description>
