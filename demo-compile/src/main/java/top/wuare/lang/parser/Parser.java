@@ -62,6 +62,7 @@ public class Parser {
             case RETURN:
                 return parseReturnStmt();
             case IDENT:
+            case STRING:
             case NUMBER:
             case SUB:
             case BANG:
@@ -240,6 +241,7 @@ public class Parser {
 
     static {
         register(TokenType.NUMBER, new IdentParser());
+        register(TokenType.STRING, new IdentParser());
         register(TokenType.IDENT, new IdentParser());
         register(TokenType.SUB, new PrefixOperatorParser(13));
         register(TokenType.BANG, new PrefixOperatorParser(13));

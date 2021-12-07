@@ -64,4 +64,12 @@ public class InterpreterTest {
         Object eval = interpreter.eval();
         System.out.println(eval);
     }
+
+    @Test
+    public void testString() {
+        String code = "var a = \"1\"; print(\"123\");";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
 }

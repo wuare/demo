@@ -183,6 +183,7 @@ public class Lexer {
         if (ch != '"') {
             throw new RuntimeException("syntax error, '\"' is excepted, at line: " + line + ", column: " + column);
         }
+        advance();
         token.setType(TokenType.STRING);
         token.setText(builder.toString());
         return token;
