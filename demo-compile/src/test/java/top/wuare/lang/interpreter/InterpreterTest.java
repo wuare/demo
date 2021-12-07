@@ -2,6 +2,7 @@ package top.wuare.lang.interpreter;
 
 import org.junit.Assert;
 import org.junit.Test;
+import top.wuare.lang.env.Console;
 import top.wuare.lang.type.ReturnValue;
 
 import java.math.BigDecimal;
@@ -25,13 +26,40 @@ public class InterpreterTest {
     public void testBlock() {
         String code = "var a = 1;            " +
                 "      var b = 2;            " +
-                "      func a(c) {           " +
+                "      func a0(c) {           " +
                 "          if (1+1 == 4) {   " +
                 "              return a+b;   " +
                 "          }                 " +
                 "          return c;         " +
                 "      }                     " +
-                "      a(111);               ";
+                "      var b0 = a0(111);               ";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
+
+    @Test
+    public void testConsole() {
+        String code = "var a = 1;            " +
+                "      var b = 2;            " +
+                "      print(a);             ";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        Console console = interpreter.getConsole();
+        System.out.println(console.toString());
+    }
+
+    @Test
+    public void testWhile() {
+        String code = "while (1 + 1 != 2) { 2+2; }";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
+
+    @Test
+    public void testAssign() {
+        String code = "var a; a = 1;";
         Interpreter interpreter = new Interpreter(code);
         Object eval = interpreter.eval();
         System.out.println(eval);

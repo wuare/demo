@@ -3,6 +3,10 @@ package top.wuare.lang.interpreter;
 import top.wuare.lang.ast.AST;
 import top.wuare.lang.ast.expr.*;
 import top.wuare.lang.ast.statement.*;
+import top.wuare.lang.env.Console;
+import top.wuare.lang.env.EnclosedScopeSymbolTable;
+import top.wuare.lang.env.buildin.BuildInFunc;
+import top.wuare.lang.env.buildin.PrintBuildInFunc;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
@@ -16,8 +20,13 @@ import java.util.Map;
 
 public class Interpreter {
 
-    private Map<String, Object> symbolTable = new HashMap<>();
-    private final Map<String, FuncDeclareStmt> funcTable = new HashMap<>();
+    private EnclosedScopeSymbolTable scopeSymbolTable = new EnclosedScopeSymbolTable();
+    private static final Map<String, BuildInFunc> buildInFuncTable = new HashMap<>();
+    private final Console console = new Console();
+
+    static {
+        buildInFuncTable.put("print", new PrintBuildInFunc());
+    }
 
     private final Parser parser;
 
@@ -64,18 +73,29 @@ public class Interpreter {
 
     private Object evalAssignExpr(AssignExpr ast) {
         Token token = ast.getToken();
-        if (!symbolTable.containsKey(token.getText())) {
+        if (!scopeSymbolTable.containsKey(token.getText())) {
             throw new RuntimeException("变量[" + token.getText() + "]未定义");
         }
-        symbolTable.put(token.getText(), evalExpr(ast.getExpr()));
+        scopeSymbolTable.put(token.getText(), evalExpr(ast.getExpr()));
         return null;
     }
     private Object evalCallExpr(CallExpr ast) {
+        enterNewScopeSymbolTable();
         Token nameToken = ast.getName();
-        FuncDeclareStmt stmt = funcTable.get(nameToken.getText());
-        if (stmt == null) {
+        BuildInFunc buildInFunc = buildInFuncTable.get(nameToken.getText());
+        if (buildInFunc != null) {
+            for (Expr expr : ast.getArgs()) {
+                buildInFunc.execute(eval(expr), console);
+            }
+            exitCurScopeSymbolTable();
+            return null;
+        }
+
+        Object funcDeclare = scopeSymbolTable.get(nameToken.getText());
+        if (!(funcDeclare instanceof FuncDeclareStmt)) {
             throw new RuntimeException("函数[" + nameToken.getText() + "]未定义");
         }
+        FuncDeclareStmt stmt = (FuncDeclareStmt) funcDeclare;
         if (ast.getArgs().size() != stmt.getArgs().size()) {
             throw new RuntimeException("函数[" + nameToken.getText() + "]参数数量不一致");
         }
@@ -86,9 +106,11 @@ public class Interpreter {
             }
             IdentExpr arg = (IdentExpr) stmtExpr;
             Object exprVal = evalExpr(ast.getArgs().get(i));
-            symbolTable.put(arg.getToken().getText(), exprVal);
+            scopeSymbolTable.put(arg.getToken().getText(), exprVal);
         }
-        return eval(stmt.getBlock());
+        Object val = evalBlock(stmt.getBlock());
+        exitCurScopeSymbolTable();
+        return val;
     }
 
     private Object evalIdentExpr(IdentExpr ast) {
@@ -100,10 +122,10 @@ public class Interpreter {
             return token.getText();
         }
         if (token.getType() == TokenType.IDENT) {
-            if (!symbolTable.containsKey(token.getText())) {
+            if (!scopeSymbolTable.containsKey(token.getText())) {
                 throw new RuntimeException("变量[" + token.getText() + "]未定义");
             }
-            return symbolTable.get(token.getText());
+            return scopeSymbolTable.get(token.getText());
         }
         return null;
     }
@@ -176,10 +198,10 @@ public class Interpreter {
                 }
                 return BigDecimal.ZERO.subtract((BigDecimal) exprVal);
             case IDENT:
-                if (!symbolTable.containsKey(token.getText())) {
+                if (!scopeSymbolTable.containsKey(token.getText())) {
                     throw new RuntimeException("变量[" + token.getText() + "]未定义");
                 }
-                return symbolTable.get(token.getText());
+                return scopeSymbolTable.get(token.getText());
             case NUMBER:
                 return new BigDecimal(token.getText());
             case BANG:
@@ -200,7 +222,7 @@ public class Interpreter {
         List<Stmt> stmts = ast.getStmts();
         for (Stmt stmt : stmts) {
             Object val = evalStmt(stmt);
-            if (val instanceof ReturnValue) {
+            if (stmt instanceof ReturnStmt && val instanceof ReturnValue) {
                 return val;
             }
         }
@@ -238,40 +260,50 @@ public class Interpreter {
 
     private Object evalDeclareStmt(VarDeclareStmt ast) {
         Token token = ast.getIdent();
-        if (symbolTable.containsKey(token.getText())) {
+        if (scopeSymbolTable.containsKey(token.getText())) {
             throw new RuntimeException("变量[" + token.getText() + "]已经定义，暂不支持作用域");
         }
         Object exprVal = evalExpr(ast.getExpr());
-        symbolTable.put(token.getText(), exprVal);
+        scopeSymbolTable.put(token.getText(), exprVal);
         return null;
     }
 
     private Object evalFuncDeclareStmt(FuncDeclareStmt ast) {
         Token token = ast.getName();
-        if (funcTable.containsKey(token.getText())) {
-            throw new RuntimeException("函数[" + token.getText() + "]已经定义");
+        if (buildInFuncTable.containsKey(token.getText())) {
+            throw new RuntimeException("函数名称[" + token.getText() + "]是内置函数，不能进行定义");
         }
-        funcTable.put(token.getText(), ast);
+        if (scopeSymbolTable.containsKey(token.getText())) {
+            throw new RuntimeException("函数名称[" + token.getText() + "]已经被定义");
+        }
+        scopeSymbolTable.put(token.getText(), ast);
         return null;
     }
 
     private Object evalIfStmt(IfStmt ast) {
+        enterNewScopeSymbolTable();
         Object exprVal = evalExpr(ast.getExpr());
+        Object val;
         if (exprVal instanceof Boolean && (boolean) exprVal) {
-            return evalBlock(ast.getThen());
+            val = evalBlock(ast.getThen());
         } else {
-            return evalBlock(ast.getEls());
+            val = evalBlock(ast.getEls());
         }
+        exitCurScopeSymbolTable();
+        return val;
     }
 
     private Object evalWhileStmt(WhileStmt ast) {
+        enterNewScopeSymbolTable();
         Object exprVal;
         while ((exprVal = evalExpr(ast.getExpr())) instanceof Boolean && (boolean) exprVal) {
             Object blockVal = evalBlock(ast.getBlock());
             if (blockVal instanceof ReturnValue) {
+                exitCurScopeSymbolTable();
                 return blockVal;
             }
         }
+        exitCurScopeSymbolTable();
         return null;
     }
 
@@ -294,10 +326,10 @@ public class Interpreter {
     private void findValAndCheckNumber(Object obj, Token token) {
         Object val = obj;
         if (token.getType() == TokenType.IDENT) {
-            if (!symbolTable.containsKey(token.getText())) {
+            if (!scopeSymbolTable.containsKey(token.getText())) {
                 throw new RuntimeException("变量[" + token.getText() + "]未定义");
             }
-            val = symbolTable.get(token.getText());
+            val = scopeSymbolTable.get(token.getText());
         }
         checkNumberType(val, token);
     }
@@ -305,11 +337,25 @@ public class Interpreter {
     private void findValAndCheckBoolean(Object obj, Token token) {
         Object val = obj;
         if (token.getType() == TokenType.IDENT) {
-            if (!symbolTable.containsKey(token.getText())) {
+            if (!scopeSymbolTable.containsKey(token.getText())) {
                 throw new RuntimeException("变量[" + token.getText() + "]未定义");
             }
-            val = symbolTable.get(token.getText());
+            val = scopeSymbolTable.get(token.getText());
         }
         checkBooleanType(val, token);
+    }
+
+    public void enterNewScopeSymbolTable() {
+        EnclosedScopeSymbolTable parent = scopeSymbolTable;
+        scopeSymbolTable = new EnclosedScopeSymbolTable();
+        scopeSymbolTable.setParent(parent);
+    }
+
+    public void exitCurScopeSymbolTable() {
+        scopeSymbolTable = scopeSymbolTable.getParent();
+    }
+
+    public Console getConsole() {
+        return console;
     }
 }

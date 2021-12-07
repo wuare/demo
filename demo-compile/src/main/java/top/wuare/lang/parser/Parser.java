@@ -253,15 +253,15 @@ public class Parser {
         register(TokenType.MOD, new BinOperatorParser(11));
         register(TokenType.ADD, new BinOperatorParser(10));
         register(TokenType.SUB, new BinOperatorParser(10));
-        register(TokenType.LT, new BinOperatorParser(3));
-        register(TokenType.GT, new BinOperatorParser(3));
-        register(TokenType.LE, new BinOperatorParser(3));
-        register(TokenType.GE, new BinOperatorParser(3));
-        register(TokenType.EQUAL, new BinOperatorParser(3));
-        register(TokenType.NOTEQUAL, new BinOperatorParser(3));
-        register(TokenType.AND, new BinOperatorParser(2));
-        register(TokenType.OR, new BinOperatorParser(1));
-        register(TokenType.ASSIGN, new AssignParser(0));
+        register(TokenType.LT, new BinOperatorParser(5));
+        register(TokenType.GT, new BinOperatorParser(5));
+        register(TokenType.LE, new BinOperatorParser(5));
+        register(TokenType.GE, new BinOperatorParser(5));
+        register(TokenType.EQUAL, new BinOperatorParser(5));
+        register(TokenType.NOTEQUAL, new BinOperatorParser(5));
+        register(TokenType.AND, new BinOperatorParser(4));
+        register(TokenType.OR, new BinOperatorParser(3));
+        register(TokenType.ASSIGN, new AssignParser(2));
     }
 
     public static void register(TokenType type, PrefixParser prefixParser) {
