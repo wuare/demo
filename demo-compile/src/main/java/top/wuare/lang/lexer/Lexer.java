@@ -96,7 +96,7 @@ public class Lexer {
                 advance();
                 return Token3;
             case '-':
-                Token Token4 = new Token(TokenType.SUB, "+", line, column);
+                Token Token4 = new Token(TokenType.SUB, "-", line, column);
                 advance();
                 return Token4;
             case '*':

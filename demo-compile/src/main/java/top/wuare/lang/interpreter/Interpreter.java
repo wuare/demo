@@ -108,9 +108,9 @@ public class Interpreter {
             Object exprVal = evalExpr(ast.getArgs().get(i));
             scopeSymbolTable.put(arg.getToken().getText(), exprVal);
         }
-        Object val = evalBlock(stmt.getBlock());
+        Object val = evalFuncBlock(stmt.getBlock());
         exitCurScopeSymbolTable();
-        return val;
+        return val instanceof ReturnValue ? ((ReturnValue) val).getVal() : val;
     }
 
     private Object evalIdentExpr(IdentExpr ast) {
@@ -223,6 +223,21 @@ public class Interpreter {
         for (Stmt stmt : stmts) {
             Object val = evalStmt(stmt);
             if (stmt instanceof ReturnStmt && val instanceof ReturnValue) {
+                return val;
+            }
+        }
+        return null;
+    }
+
+    // 为了解决返回值问题，如果函数中别的块（如IF块）返回，那么整个函数返回
+    private Object evalFuncBlock(Block ast) {
+        if (ast == null) {
+            return null;
+        }
+        List<Stmt> stmts = ast.getStmts();
+        for (Stmt stmt : stmts) {
+            Object val = evalStmt(stmt);
+            if (val instanceof ReturnValue) {
                 return val;
             }
         }

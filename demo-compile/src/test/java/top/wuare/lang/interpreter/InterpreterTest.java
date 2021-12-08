@@ -72,4 +72,20 @@ public class InterpreterTest {
         Object eval = interpreter.eval();
         System.out.println(eval);
     }
+
+    @Test
+    public void testFunc() {
+        String code = "func rec(num){                  " +
+                "          if(num<=1) {                " +
+                "              return 1;               " +
+                "          } else {                    " +
+                "              return num * rec(num-1);" +
+                "          }                           " +
+                "      }                               " +
+                "      var a = rec(3);                 " +
+                "      print(a);";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
 }
