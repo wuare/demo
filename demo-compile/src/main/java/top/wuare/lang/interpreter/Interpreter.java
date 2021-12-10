@@ -136,9 +136,7 @@ public class Interpreter {
         Object rightVal = evalExpr(ast.getRight());
         switch (token.getType()) {
             case ADD:
-                findValAndCheckNumber(leftVal, token);
-                findValAndCheckNumber(rightVal, token);
-                return ((BigDecimal) leftVal).add((BigDecimal) rightVal);
+                return evalAddOperatorExpr(token, leftVal, rightVal);
             case SUB:
                 findValAndCheckNumber(leftVal, token);
                 findValAndCheckNumber(rightVal, token);
@@ -168,13 +166,9 @@ public class Interpreter {
                 findValAndCheckNumber(rightVal, token);
                 return ((BigDecimal) leftVal).compareTo((BigDecimal) rightVal) <= 0;
             case EQUAL:
-                findValAndCheckNumber(leftVal, token);
-                findValAndCheckNumber(rightVal, token);
-                return ((BigDecimal) leftVal).compareTo((BigDecimal) rightVal) == 0;
+                return evalEqualOperatorExpr(token, leftVal, rightVal);
             case NOTEQUAL:
-                findValAndCheckNumber(leftVal, token);
-                findValAndCheckNumber(rightVal, token);
-                return ((BigDecimal) leftVal).compareTo((BigDecimal) rightVal) != 0;
+                return evalNotEqualOperatorExpr(token, leftVal, rightVal);
             case AND:
                 findValAndCheckBoolean(leftVal, token);
                 findValAndCheckBoolean(rightVal, token);
@@ -186,6 +180,45 @@ public class Interpreter {
 
         }
         return null;
+    }
+
+    private Object evalNotEqualOperatorExpr(Token token, Object leftVal, Object rightVal) {
+        Object left = findVal(leftVal, token);
+        Object right = findVal(rightVal, token);
+        if (left instanceof BigDecimal && right instanceof BigDecimal) {
+            return ((BigDecimal) left).compareTo((BigDecimal) right) != 0;
+        }
+        if (left instanceof String && right instanceof String) {
+            return !left.equals(right);
+        }
+        return true;
+    }
+
+    private Object evalEqualOperatorExpr(Token token, Object leftVal, Object rightVal) {
+        Object left = findVal(leftVal, token);
+        Object right = findVal(rightVal, token);
+        if (left instanceof BigDecimal && right instanceof BigDecimal) {
+            return ((BigDecimal) left).compareTo((BigDecimal) right) == 0;
+        }
+        if (left instanceof String && right instanceof String) {
+            return left.equals(right);
+        }
+        return false;
+    }
+
+    private Object evalAddOperatorExpr(Token token, Object leftVal, Object rightVal) {
+        Object left = findVal(leftVal, token);
+        Object right = findVal(rightVal, token);
+        if (left instanceof BigDecimal && right instanceof BigDecimal) {
+            return ((BigDecimal) left).add((BigDecimal) right);
+        }
+        if (left == null) {
+            throw new RuntimeException("表达式的值为空，在第" + token.getLine() + "行，第" + token.getColumn() + "列+号左侧");
+        }
+        if (right == null) {
+            throw new RuntimeException("表达式的值为空，在第" + token.getLine() + "行，第" + token.getColumn() + "列+号右侧附近");
+        }
+        return left.toString() + right;
     }
 
     private Object evalPrefixExpr(PrefixExpr ast) {
@@ -347,6 +380,17 @@ public class Interpreter {
             val = scopeSymbolTable.get(token.getText());
         }
         checkNumberType(val, token);
+    }
+
+    private Object findVal(Object obj, Token token) {
+        Object val = obj;
+        if (token.getType() == TokenType.IDENT) {
+            if (!scopeSymbolTable.containsKey(token.getText())) {
+                throw new RuntimeException("变量[" + token.getText() + "]未定义");
+            }
+            val = scopeSymbolTable.get(token.getText());
+        }
+        return val;
     }
 
     private void findValAndCheckBoolean(Object obj, Token token) {

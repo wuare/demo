@@ -88,4 +88,36 @@ public class InterpreterTest {
         Object eval = interpreter.eval();
         System.out.println(eval);
     }
+
+    @Test
+    public void testAddOperator() {
+        String code = "var a = 1 + \"2\"; print(a);";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testAddOperator1() {
+        String code = "var a; print(a + 1);";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
+
+    @Test
+    public void testEqualOperator() {
+        String code = "print(\"a\" == \"a\");";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
+
+    @Test
+    public void testEqualOperator1() {
+        String code = "print(\"a\" == 1);";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
 }
