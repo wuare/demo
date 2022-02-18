@@ -35,4 +35,4 @@ while (1 == 1) {
 }
 ```
 ### 演示地址
-[地址](http://119.3.177.167/lang.html)
+[地址](https://demo.wuareb.top/lang.html)
