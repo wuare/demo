@@ -3,7 +3,6 @@ package top.wuare.lang.interpreter;
 import org.junit.Assert;
 import org.junit.Test;
 import top.wuare.lang.env.Console;
-import top.wuare.lang.type.ReturnValue;
 
 import java.math.BigDecimal;
 
@@ -14,11 +13,8 @@ public class InterpreterTest {
         Interpreter interpreter = new Interpreter("var a = 1; return a+1;");
         Object eval = interpreter.eval();
         Assert.assertNotNull(eval);
-        Assert.assertTrue(eval instanceof ReturnValue);
-        ReturnValue val = (ReturnValue) eval;
-        Assert.assertNotNull(val.getVal());
-        Assert.assertTrue(val.getVal() instanceof BigDecimal);
-        BigDecimal num = (BigDecimal) val.getVal();
+        Assert.assertTrue(eval instanceof BigDecimal);
+        BigDecimal num = (BigDecimal) eval;
         Assert.assertEquals(num.intValue(), 2);
     }
 
@@ -116,6 +112,23 @@ public class InterpreterTest {
     @Test
     public void testEqualOperator1() {
         String code = "print(\"a\" == 1);";
+        Interpreter interpreter = new Interpreter(code);
+        Object eval = interpreter.eval();
+        System.out.println(eval);
+    }
+
+    @Test
+    public void testReturnValue() {
+        String code = "func a(num) {\n" +
+                "\tif (1 == 1) {\n" +
+                "\t\tif (num > 1) {\n" +
+                "\t\t\treturn num;\n" +
+                "\t\t} else {\n" +
+                "\t\t\treturn 0;\n" +
+                "\t\t}\n" +
+                "\t}\n" +
+                "}\n" +
+                "print(a(2));";
         Interpreter interpreter = new Interpreter(code);
         Object eval = interpreter.eval();
         System.out.println(eval);

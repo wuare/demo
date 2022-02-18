@@ -1,10 +1,10 @@
 package top.wuare.lang.type;
 
-public class ReturnValue {
+public class ReturnVal extends RuntimeException {
 
     private final Object val;
 
-    public ReturnValue(Object val) {
+    public ReturnVal(Object val) {
         this.val = val;
     }
 

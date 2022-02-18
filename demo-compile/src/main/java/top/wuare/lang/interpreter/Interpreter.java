@@ -10,7 +10,7 @@ import top.wuare.lang.env.buildin.PrintBuildInFunc;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
-import top.wuare.lang.type.ReturnValue;
+import top.wuare.lang.type.ReturnVal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -36,7 +36,11 @@ public class Interpreter {
 
     public Object eval() {
         AST ast = parser.parse();
-        return eval(ast);
+        try {
+            return eval(ast);
+        } catch (ReturnVal re) {
+            return re.getVal();
+        }
     }
 
     private Object eval(AST ast) {
@@ -108,9 +112,14 @@ public class Interpreter {
             Object exprVal = evalExpr(ast.getArgs().get(i));
             scopeSymbolTable.put(arg.getToken().getText(), exprVal);
         }
-        Object val = evalFuncBlock(stmt.getBlock());
+        Object reVal = null;
+        try {
+            evalBlock(stmt.getBlock());
+        } catch (ReturnVal re) {
+            reVal = re.getVal();
+        }
         exitCurScopeSymbolTable();
-        return val instanceof ReturnValue ? ((ReturnValue) val).getVal() : val;
+        return reVal;
     }
 
     private Object evalIdentExpr(IdentExpr ast) {
@@ -254,26 +263,9 @@ public class Interpreter {
         }
         List<Stmt> stmts = ast.getStmts();
         for (Stmt stmt : stmts) {
-            Object val = evalStmt(stmt);
-            if (stmt instanceof ReturnStmt && val instanceof ReturnValue) {
-                return val;
-            }
+            evalStmt(stmt);
         }
-        return null;
-    }
 
-    // 为了解决返回值问题，如果函数中别的块（如IF块）返回，那么整个函数返回
-    private Object evalFuncBlock(Block ast) {
-        if (ast == null) {
-            return null;
-        }
-        List<Stmt> stmts = ast.getStmts();
-        for (Stmt stmt : stmts) {
-            Object val = evalStmt(stmt);
-            if (val instanceof ReturnValue) {
-                return val;
-            }
-        }
         return null;
     }
 
@@ -303,7 +295,7 @@ public class Interpreter {
 
     private Object evalReturnStmt(ReturnStmt ast) {
         Object exprVal = evalExpr(ast.getExpr());
-        return new ReturnValue(exprVal);
+        throw new ReturnVal(exprVal);
     }
 
     private Object evalDeclareStmt(VarDeclareStmt ast) {
@@ -329,29 +321,31 @@ public class Interpreter {
     }
 
     private Object evalIfStmt(IfStmt ast) {
-        enterNewScopeSymbolTable();
-        Object exprVal = evalExpr(ast.getExpr());
-        Object val;
-        if (exprVal instanceof Boolean && (boolean) exprVal) {
-            val = evalBlock(ast.getThen());
-        } else {
-            val = evalBlock(ast.getEls());
+        try {
+            enterNewScopeSymbolTable();
+            Object exprVal = evalExpr(ast.getExpr());
+            if (exprVal instanceof Boolean && (boolean) exprVal) {
+                evalBlock(ast.getThen());
+            } else {
+                evalBlock(ast.getEls());
+            }
+        } finally {
+            exitCurScopeSymbolTable();
         }
-        exitCurScopeSymbolTable();
-        return val;
+        return null;
     }
 
     private Object evalWhileStmt(WhileStmt ast) {
-        enterNewScopeSymbolTable();
-        Object exprVal;
-        while ((exprVal = evalExpr(ast.getExpr())) instanceof Boolean && (boolean) exprVal) {
-            Object blockVal = evalBlock(ast.getBlock());
-            if (blockVal instanceof ReturnValue) {
-                exitCurScopeSymbolTable();
-                return blockVal;
+        try {
+            enterNewScopeSymbolTable();
+            Object exprVal;
+
+            while ((exprVal = evalExpr(ast.getExpr())) instanceof Boolean && (boolean) exprVal) {
+                evalBlock(ast.getBlock());
             }
+        } finally {
+            exitCurScopeSymbolTable();
         }
-        exitCurScopeSymbolTable();
         return null;
     }
 
