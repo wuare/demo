@@ -105,9 +105,9 @@ public class Parser {
                     consume();
                     args.add(parseExp(0));
                 }
-                eat(TokenType.RPAREN);
                 stmt.setArgs(args);
             }
+            eat(TokenType.RPAREN);
             eat(TokenType.LBRACE);
             if (curToken != null && curToken.getType() != TokenType.RBRACE) {
                 stmt.setBlock(parseBlock());
