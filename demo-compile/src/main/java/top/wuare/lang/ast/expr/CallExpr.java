@@ -2,6 +2,7 @@ package top.wuare.lang.ast.expr;
 
 import top.wuare.lang.lexer.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CallExpr implements Expr {
@@ -17,7 +18,7 @@ public class CallExpr implements Expr {
     }
 
     public List<Expr> getArgs() {
-        return args;
+        return args == null ? new ArrayList<>() : args;
     }
 
     public void setArgs(List<Expr> args) {
