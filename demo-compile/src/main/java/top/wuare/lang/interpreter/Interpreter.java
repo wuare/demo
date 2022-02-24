@@ -157,7 +157,7 @@ public class Interpreter {
             case DIV:
                 findValAndCheckNumber(leftVal, token);
                 findValAndCheckNumber(rightVal, token);
-                return ((BigDecimal) leftVal).divide((BigDecimal) rightVal, RoundingMode.DOWN);
+                return ((BigDecimal) leftVal).divide((BigDecimal) rightVal, 12, RoundingMode.DOWN);
             case GT:
                 findValAndCheckNumber(leftVal, token);
                 findValAndCheckNumber(rightVal, token);
@@ -301,7 +301,7 @@ public class Interpreter {
     private Object evalDeclareStmt(VarDeclareStmt ast) {
         Token token = ast.getIdent();
         if (scopeSymbolTable.containsKey(token.getText())) {
-            throw new RuntimeException("变量[" + token.getText() + "]已经定义，暂不支持作用域");
+            throw new RuntimeException("变量[" + token.getText() + "]已经定义");
         }
         Object exprVal = evalExpr(ast.getExpr());
         scopeSymbolTable.put(token.getText(), exprVal);
