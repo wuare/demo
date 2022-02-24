@@ -13,7 +13,8 @@ public class JavaGen implements Gen {
 //        builder.append("<!DOCTYPE html>\n");
 //        builder.append("<head></head>\n");
 //        builder.append("<body>\n");
-        builder.append("<pre style=\"background-color: #2B2B2B; color: white; padding: 20px 20px;\">\n");
+        builder.append("<pre style=\"background-color: #2B2B2B; color: white; padding: 20px 20px;" +
+                "font-family: 'Arial','Microsoft YaHei','黑体',sans-serif;\">\n");
         Token token;
         while ((token = lexer.nextToken()) != null) {
             // #698652
