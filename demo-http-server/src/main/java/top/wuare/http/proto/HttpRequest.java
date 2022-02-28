@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class HttpRequest {
 
     private Socket socket;
-    private InputStream inputStream;
+    private final InputStream inputStream;
     private HttpMessage httpMessage;
 
     public HttpRequest(Socket socket, InputStream inputStream, HttpMessage httpMessage) {
@@ -36,10 +36,6 @@ public class HttpRequest {
 
     public InputStream getInputStream() {
         return inputStream;
-    }
-
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
     }
 
     public HttpMessage getHttpMessage() {
