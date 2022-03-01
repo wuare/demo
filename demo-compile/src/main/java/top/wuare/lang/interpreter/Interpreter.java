@@ -157,7 +157,7 @@ public class Interpreter {
             case DIV:
                 findValAndCheckNumber(leftVal, token);
                 findValAndCheckNumber(rightVal, token);
-                return ((BigDecimal) leftVal).divide((BigDecimal) rightVal, 12, RoundingMode.DOWN);
+                return ((BigDecimal) leftVal).divide((BigDecimal) rightVal, 12, RoundingMode.DOWN).stripTrailingZeros();
             case GT:
                 findValAndCheckNumber(leftVal, token);
                 findValAndCheckNumber(rightVal, token);
