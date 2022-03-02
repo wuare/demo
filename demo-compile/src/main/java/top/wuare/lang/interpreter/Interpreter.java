@@ -7,6 +7,7 @@ import top.wuare.lang.env.Console;
 import top.wuare.lang.env.EnclosedScopeSymbolTable;
 import top.wuare.lang.env.buildin.BuildInFunc;
 import top.wuare.lang.env.buildin.PrintBuildInFunc;
+import top.wuare.lang.env.buildin.TimeBuildInFunc;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
@@ -14,6 +15,7 @@ import top.wuare.lang.type.ReturnVal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ public class Interpreter {
 
     static {
         buildInFuncTable.put("print", new PrintBuildInFunc());
+        buildInFuncTable.put("time", new TimeBuildInFunc());
     }
 
     private final Parser parser;
@@ -88,11 +91,17 @@ public class Interpreter {
         Token nameToken = ast.getName();
         BuildInFunc buildInFunc = buildInFuncTable.get(nameToken.getText());
         if (buildInFunc != null) {
-            for (Expr expr : ast.getArgs()) {
-                buildInFunc.execute(eval(expr), console);
+            int argSize = buildInFunc.args();
+            if (argSize != -1 && argSize != ast.getArgs().size()) {
+                throw new RuntimeException("函数[" + nameToken.getText() + "]参数个数不匹配，应该传入" + argSize + "个参数");
             }
+            List<Object> args = new ArrayList<>();
+            for (Expr expr : ast.getArgs()) {
+                args.add(eval(expr));
+            }
+            Object buildInRes = buildInFunc.execute(args, console);
             exitCurScopeSymbolTable();
-            return null;
+            return buildInRes;
         }
 
         Object funcDeclare = scopeSymbolTable.get(nameToken.getText());

@@ -2,6 +2,9 @@ package top.wuare.lang.env.buildin;
 
 import top.wuare.lang.env.Console;
 
+import java.util.List;
+
 public interface BuildInFunc {
-    void execute(Object arg, Console console);
+    Object execute(List<Object> args, Console console);
+    int args();
 }

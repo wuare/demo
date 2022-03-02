@@ -133,4 +133,12 @@ public class InterpreterTest {
         Object eval = interpreter.eval();
         System.out.println(eval);
     }
+
+    @Test
+    public void testTimeFunc() {
+        String code = "var start = time(); var aa = 0; while (aa < 100) {print(aa);print(\"\n\"); aa = aa + 1;}var end = time(); print(end - start);";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
 }
