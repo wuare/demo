@@ -5,7 +5,12 @@ import top.wuareb.highlight.lexer.wa.WaLexer;
 import top.wuareb.highlight.lexer.wa.WaToken;
 import top.wuareb.highlight.lexer.wa.WaTokenType;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class WaGen implements Gen {
+
+    private static final Logger logger = Logger.getLogger(WaGen.class.getName());
 
     @Override
     public String gen(String text) {
@@ -13,7 +18,7 @@ public class WaGen implements Gen {
         StringBuilder builder = new StringBuilder();
         WaToken token;
         while ((token = lexer.nextToken()).getType() != WaTokenType.EOF) {
-            System.out.println(token);
+            logger.log(Level.FINE, token.toString());
             switch (token.getType()) {
                 case STRING:
                     builder.append("<span class='hl-str'>").append("\"").append(token.getText()).append("\"").append("</span>");

@@ -178,7 +178,9 @@ public class WaLexer {
                 WaToken12.setText("||");
                 return WaToken12;
             default:
-                return new WaToken(WaTokenType.TEXT, String.valueOf((char) ch));
+                int tmp = ch;
+                advance();
+                return new WaToken(WaTokenType.TEXT, String.valueOf((char) tmp));
         }
     }
 
