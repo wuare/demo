@@ -156,7 +156,6 @@ public class Lexer {
                     Token10.setText("==");
                     return Token10;
                 }
-                advance();
                 Token10.setType(TokenType.ASSIGN);
                 Token10.setText("=");
                 return Token10;
