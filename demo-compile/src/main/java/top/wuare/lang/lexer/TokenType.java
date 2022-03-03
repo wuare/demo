@@ -35,7 +35,9 @@ public enum TokenType {
     LBRACKET("LBRACKET", "["),
     RBRACKET("RBRACKET", "]"),
     SEMICOLON("SEMICOLON", ";"),
-    COMMA("COMMA", ",");
+    COMMA("COMMA", ","),
+
+    COMMENT("COMMENT", "单行注释");
 
     private final String code;
     private final String text;

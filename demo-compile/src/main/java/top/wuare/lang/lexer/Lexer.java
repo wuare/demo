@@ -104,8 +104,18 @@ public class Lexer {
                 advance();
                 return Token5;
             case '/':
-                Token Token6 = new Token(TokenType.DIV, "/", line, column);
+                Token Token6 = new Token(line, column);
                 advance();
+                if (ch == '/') {
+                    advance();
+                    while (ch != '\n' && ch != -1) {
+                        advance();
+                    }
+                    Token6.setType(TokenType.COMMENT);
+                    return Token6;
+                }
+                Token6.setType(TokenType.DIV);
+                Token6.setText("/");
                 return Token6;
             case '%':
                 Token Token7 = new Token(TokenType.MOD, "%", line, column);
