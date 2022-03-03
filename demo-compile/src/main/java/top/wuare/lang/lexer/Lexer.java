@@ -35,6 +35,22 @@ public class Lexer {
         while (Character.isWhitespace(ch)) {
             advance();
         }
+        // comment
+        if (ch == '/') {
+            advance();
+            if (ch == '/') {
+                advance();
+                // skip comment
+                while (ch != -1 && ch != '\n') {
+                    advance();
+                }
+            } else {
+                return new Token(TokenType.DIV, "/", line, column);
+            }
+        }
+        while (Character.isWhitespace(ch)) {
+            advance();
+        }
         if (Character.isDigit(ch)) {
             return number();
         }
@@ -103,20 +119,6 @@ public class Lexer {
                 Token Token5 = new Token(TokenType.MUL, "*", line, column);
                 advance();
                 return Token5;
-            case '/':
-                Token Token6 = new Token(line, column);
-                advance();
-                if (ch == '/') {
-                    advance();
-                    while (ch != '\n' && ch != -1) {
-                        advance();
-                    }
-                    Token6.setType(TokenType.COMMENT);
-                    return Token6;
-                }
-                Token6.setType(TokenType.DIV);
-                Token6.setText("/");
-                return Token6;
             case '%':
                 Token Token7 = new Token(TokenType.MOD, "%", line, column);
                 advance();
