@@ -21,7 +21,8 @@ public class WaGen implements Gen {
             logger.log(Level.FINE, token.toString());
             switch (token.getType()) {
                 case STRING:
-                    builder.append("<span class='hl-str'>").append("\"").append(token.getText()).append("\"").append("</span>");
+                    String s0 = token.getText().replaceAll("<", "&lt;");
+                    builder.append("<span class='hl-str'>").append("\"").append(s0).append("\"").append("</span>");
                     break;
                 case NUMBER:
                     builder.append("<span class='hl-num'>").append(token.getText()).append("</span>");
