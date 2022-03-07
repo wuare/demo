@@ -27,8 +27,8 @@ public class Interpreter {
     static {
         buildInFuncTable.put("print", new PrintBuildInFunc());
         buildInFuncTable.put("time", new TimeBuildInFunc());
-//        buildInFuncTable.put("read", new FileReadBuildInFunc());
-//        buildInFuncTable.put("write", new FileWriteBuildInFunc());
+        buildInFuncTable.put("read", new FileReadBuildInFunc());
+        buildInFuncTable.put("write", new FileWriteBuildInFunc());
     }
 
     private final Parser parser;
