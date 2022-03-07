@@ -9,9 +9,14 @@ public enum TokenType {
     RETURN("RETURN", "return"),
     ELSE("ELSE", "else"),
 
+    NIL("NIL", "nil"),
+
     NUMBER("NUMBER", "数字"),
     IDENT("IDENT", "标识符"),
     STRING("STRING", "字符串"),
+    TRUE("TRUE", "true"),
+    FALSE("FALSE", "false"),
+
     BANG("BANG", "!"),
     LPAREN("LPAREN", "("),
     RPAREN("RPAREN", ")"),

@@ -131,7 +131,7 @@ public class Parser {
             stmt.setThen(parseBlock());
         }
         eat(TokenType.RBRACE);
-        if (curToken.getType() == TokenType.ELSE) {
+        if (curToken != null && curToken.getType() == TokenType.ELSE) {
             consume();
             eat(TokenType.LBRACE);
             if (curToken != null && curToken.getType() != TokenType.RBRACE) {
@@ -242,6 +242,9 @@ public class Parser {
     static {
         register(TokenType.NUMBER, new IdentParser());
         register(TokenType.STRING, new IdentParser());
+        register(TokenType.TRUE, new IdentParser());
+        register(TokenType.FALSE, new IdentParser());
+        register(TokenType.NIL, new IdentParser());
         register(TokenType.IDENT, new IdentParser());
         register(TokenType.SUB, new PrefixOperatorParser(13));
         register(TokenType.BANG, new PrefixOperatorParser(13));

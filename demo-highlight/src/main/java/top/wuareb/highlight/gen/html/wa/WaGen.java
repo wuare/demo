@@ -33,6 +33,9 @@ public class WaGen implements Gen {
                 case WHILE:
                 case RETURN:
                 case ELSE:
+                case TRUE:
+                case FALSE:
+                case NIL:
                     builder.append("<span class='hl-kwd'>").append(token.getText()).append("</span>");
                     break;
                 case COMMENT:

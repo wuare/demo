@@ -19,6 +19,9 @@ public class WaLexer {
         RESERVED_KEYWORDS.put(WaTokenType.WHILE.getText(), WaTokenType.WHILE);
         RESERVED_KEYWORDS.put(WaTokenType.RETURN.getText(), WaTokenType.RETURN);
         RESERVED_KEYWORDS.put(WaTokenType.ELSE.getText(), WaTokenType.ELSE);
+        RESERVED_KEYWORDS.put(WaTokenType.TRUE.getText(), WaTokenType.TRUE);
+        RESERVED_KEYWORDS.put(WaTokenType.FALSE.getText(), WaTokenType.FALSE);
+        RESERVED_KEYWORDS.put(WaTokenType.NIL.getText(), WaTokenType.NIL);
     }
 
     public WaLexer(String text) {

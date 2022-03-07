@@ -141,4 +141,21 @@ public class InterpreterTest {
         interpreter.eval();
         System.out.println(interpreter.getConsole().toString());
     }
+
+    @Test
+    public void testFileWriteFunc() {
+        String code = "var a = write(\"/data/aaa.txt\", \"a123\"); print(a);";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
+    @Test
+    public void testFileReadFunc() {
+        String code = "var a = read(\"/data/aaa.txt\"); print(a);";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
 }

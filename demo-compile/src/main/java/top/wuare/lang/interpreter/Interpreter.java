@@ -5,9 +5,7 @@ import top.wuare.lang.ast.expr.*;
 import top.wuare.lang.ast.statement.*;
 import top.wuare.lang.env.Console;
 import top.wuare.lang.env.EnclosedScopeSymbolTable;
-import top.wuare.lang.env.buildin.BuildInFunc;
-import top.wuare.lang.env.buildin.PrintBuildInFunc;
-import top.wuare.lang.env.buildin.TimeBuildInFunc;
+import top.wuare.lang.env.buildin.*;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
@@ -29,6 +27,8 @@ public class Interpreter {
     static {
         buildInFuncTable.put("print", new PrintBuildInFunc());
         buildInFuncTable.put("time", new TimeBuildInFunc());
+        buildInFuncTable.put("read", new FileReadBuildInFunc());
+        buildInFuncTable.put("write", new FileWriteBuildInFunc());
     }
 
     private final Parser parser;
@@ -86,6 +86,7 @@ public class Interpreter {
         scopeSymbolTable.put(token.getText(), evalExpr(ast.getExpr()));
         return null;
     }
+
     private Object evalCallExpr(CallExpr ast) {
         enterNewScopeSymbolTable();
         Token nameToken = ast.getName();
@@ -133,19 +134,24 @@ public class Interpreter {
 
     private Object evalIdentExpr(IdentExpr ast) {
         Token token = ast.getToken();
-        if (token.getType() == TokenType.NUMBER) {
-            return new BigDecimal(token.getText());
+        switch (token.getType()) {
+            case NUMBER:
+                return new BigDecimal(token.getText());
+            case STRING:
+                return token.getText();
+            case TRUE:
+                return true;
+            case FALSE:
+                return false;
+            case IDENT:
+                if (!scopeSymbolTable.containsKey(token.getText())) {
+                    throw new RuntimeException("变量[" + token.getText() + "]未定义");
+                }
+                return scopeSymbolTable.get(token.getText());
+            case NIL:
+            default:
+                return null;
         }
-        if (token.getType() == TokenType.STRING) {
-            return token.getText();
-        }
-        if (token.getType() == TokenType.IDENT) {
-            if (!scopeSymbolTable.containsKey(token.getText())) {
-                throw new RuntimeException("变量[" + token.getText() + "]未定义");
-            }
-            return scopeSymbolTable.get(token.getText());
-        }
-        return null;
     }
 
     private Object evalOperatorExpr(OperatorExpr ast) {
@@ -209,6 +215,12 @@ public class Interpreter {
         if (left instanceof String && right instanceof String) {
             return !left.equals(right);
         }
+        if (left == null && right == null) {
+            return false;
+        }
+        if (left instanceof Boolean && right instanceof Boolean) {
+            return !left.equals(right);
+        }
         return true;
     }
 
@@ -219,6 +231,12 @@ public class Interpreter {
             return ((BigDecimal) left).compareTo((BigDecimal) right) == 0;
         }
         if (left instanceof String && right instanceof String) {
+            return left.equals(right);
+        }
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left instanceof Boolean && right instanceof Boolean) {
             return left.equals(right);
         }
         return false;
@@ -244,10 +262,13 @@ public class Interpreter {
         Token token = ast.getToken();
         switch (token.getType()) {
             case SUB:
-                if (!(exprVal instanceof BigDecimal)) {
-                    throw new RuntimeException("计算一元表达式时错误，不是数字，在第" + token.getLine() + "行，第" + token.getColumn() + "列");
+                if (exprVal instanceof BigDecimal) {
+                    return BigDecimal.ZERO.subtract((BigDecimal) exprVal);
                 }
-                return BigDecimal.ZERO.subtract((BigDecimal) exprVal);
+                if (exprVal instanceof Boolean) {
+                    return !((Boolean) exprVal);
+                }
+                throw new RuntimeException("计算一元表达式时错误，不是数字或布尔类型，在第" + token.getLine() + "行，第" + token.getColumn() + "列");
             case IDENT:
                 if (!scopeSymbolTable.containsKey(token.getText())) {
                     throw new RuntimeException("变量[" + token.getText() + "]未定义");
@@ -299,7 +320,6 @@ public class Interpreter {
         }
         return null;
     }
-
 
 
     private Object evalReturnStmt(ReturnStmt ast) {

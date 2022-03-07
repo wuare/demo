@@ -11,7 +11,7 @@ public class PrintBuildInFunc implements BuildInFunc {
     public Object execute(List<Object> args, Console console) {
         for (Object arg : args) {
             if (arg == null) {
-                console.write("null");
+                console.write("nil");
                 continue;
             }
 

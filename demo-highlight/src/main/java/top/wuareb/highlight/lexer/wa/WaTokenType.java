@@ -9,6 +9,10 @@ public enum WaTokenType {
     RETURN("RETURN", "return"),
     ELSE("ELSE", "else"),
 
+    TRUE("TRUE", "true"),
+    FALSE("FALSE", "false"),
+    NIL("NIL", "nil"),
+
     NUMBER("NUMBER", "数字"),
     IDENT("IDENT", "标识符"),
     STRING("STRING", "字符串"),
