@@ -3,10 +3,11 @@ package top.wuare.json.parser;
 import top.wuare.json.exception.CommonException;
 import top.wuare.json.lexer.JsonLexer;
 import top.wuare.json.lexer.Token;
+import top.wuare.json.lexer.TokenType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,11 @@ public class JsonParser {
     public Object parse(String text) {
         lexer = new JsonLexer(text);
         curToken = lexer.nextToken();
-        return parseValue();
+        Object o = parseValue();
+        if (curToken != null) {
+            throw new CommonException("unexpected token: " + curToken);
+        }
+        return o;
     }
 
     // obj: '{' pair (',' pair)* '}'
@@ -51,27 +56,27 @@ public class JsonParser {
     //    ;
     // pair: STRING ':' value
     private Map<String, Object> parseObject() {
-        Map<String, Object> map = new HashMap<>();
-        eat(Token.LBRACE);
-        if (curToken.getType() == Token.STRING) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        eat(TokenType.LBRACE);
+        if (curToken.getType() == TokenType.STRING) {
             String key = curToken.getVal().substring(1, curToken.getVal().length() - 1);
-            eat(Token.STRING);
-            eat(Token.COLON);
+            eat(TokenType.STRING);
+            eat(TokenType.COLON);
             Object value = parseValue();
             map.put(key, value);
         }
-        while (curToken.getType() == Token.COMMA) {
-            eat(Token.COMMA);
-            if (curToken.getType() != Token.STRING) {
+        while (curToken.getType() == TokenType.COMMA) {
+            eat(TokenType.COMMA);
+            if (curToken.getType() != TokenType.STRING) {
                 throw new CommonException("parse object error");
             }
             String key = curToken.getVal().substring(1, curToken.getVal().length() - 1);
-            eat(Token.STRING);
-            eat(Token.COLON);
+            eat(TokenType.STRING);
+            eat(TokenType.COLON);
             Object value = parseValue();
             map.put(key, value);
         }
-        eat(Token.RBRACE);
+        eat(TokenType.RBRACE);
         return map;
     }
 
@@ -80,15 +85,15 @@ public class JsonParser {
     //    ;
     private List<Object> parseArray() {
         List<Object> list = new ArrayList<>();
-        eat(Token.LBRACKET);
-        if (curToken.getType() != Token.RBRACKET) {
+        eat(TokenType.LBRACKET);
+        if (curToken.getType() != TokenType.RBRACKET) {
             list.add(parseValue());
-            while (curToken.getType() == Token.COMMA) {
-                eat(Token.COMMA);
+            while (curToken.getType() == TokenType.COMMA) {
+                eat(TokenType.COMMA);
                 list.add(parseValue());
             }
         }
-        eat(Token.RBRACKET);
+        eat(TokenType.RBRACKET);
         return list;
     }
 
@@ -98,31 +103,31 @@ public class JsonParser {
         }
         Object obj;
         switch (curToken.getType()) {
-            case Token.LBRACE:
+            case LBRACE:
                 // object start
                 obj = parseObject();
                 break;
-            case Token.LBRACKET:
+            case LBRACKET:
                 // array start
                 obj = parseArray();
                 break;
-            case Token.STRING:
+            case STRING:
                 obj = curToken.getVal().substring(1, curToken.getVal().length() - 1);
                 next();
                 break;
-            case Token.NUMBER:
+            case NUMBER:
                 obj = new BigDecimal(curToken.getVal());
                 next();
                 break;
-            case Token.LITERAL_TRUE:
+            case LITERAL_TRUE:
                 obj = Boolean.TRUE;
                 next();
                 break;
-            case Token.LITERAL_FALSE:
+            case LITERAL_FALSE:
                 obj = Boolean.FALSE;
                 next();
                 break;
-            case Token.LITERAL_NULL:
+            case LITERAL_NULL:
                 obj = null;
                 next();
                 break;
@@ -136,7 +141,7 @@ public class JsonParser {
         curToken = lexer.nextToken();
     }
 
-    private void eat(int type) {
+    private void eat(TokenType type) {
         if (type == curToken.getType()) {
             next();
             return;

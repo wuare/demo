@@ -1,6 +1,7 @@
 package top.wuare.json.parser;
 
 import org.junit.Test;
+import top.wuare.json.exception.CommonException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -124,6 +125,14 @@ public class JsonParserTest {
                 "        }\n" +
                 "    }\n" +
                 "}";
+        JsonParser parser = new JsonParser();
+        Object obj = parser.parse(t);
+        System.out.println(obj);
+    }
+
+    @Test(expected = CommonException.class)
+    public void testTxtEnd() {
+        String t = "1 2 ";
         JsonParser parser = new JsonParser();
         Object obj = parser.parse(t);
         System.out.println(obj);

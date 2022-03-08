@@ -56,46 +56,46 @@ public class JsonLexer {
             case -1:
                 return null;
             case '{':
-                Token token = new Token(Token.LBRACE, Character.toString((char) ch), line, column);
+                Token token = new Token(TokenType.LBRACE, Character.toString((char) ch), line, column);
                 nextCh();
                 return token;
             case '}':
-                Token token1 = new Token(Token.RBRACE, Character.toString((char) ch), line, column);
+                Token token1 = new Token(TokenType.RBRACE, Character.toString((char) ch), line, column);
                 nextCh();
                 return token1;
             case '[':
-                Token token2 = new Token(Token.LBRACKET, Character.toString((char) ch), line, column);
+                Token token2 = new Token(TokenType.LBRACKET, Character.toString((char) ch), line, column);
                 nextCh();
                 return token2;
             case ']':
-                Token token3 = new Token(Token.RBRACKET, Character.toString((char) ch), line, column);
+                Token token3 = new Token(TokenType.RBRACKET, Character.toString((char) ch), line, column);
                 nextCh();
                 return token3;
             case ':':
-                Token token4 = new Token(Token.COLON, Character.toString((char) ch), line, column);
+                Token token4 = new Token(TokenType.COLON, Character.toString((char) ch), line, column);
                 nextCh();
                 return token4;
             case ',':
-                Token token5 = new Token(Token.COMMA, Character.toString((char) ch), line, column);
+                Token token5 = new Token(TokenType.COMMA, Character.toString((char) ch), line, column);
                 nextCh();
                 return token5;
             case '"':
                 return string();
             case 't':
                 // true
-                return literal(Token.LITERAL_TRUE, "true");
+                return literal(TokenType.LITERAL_TRUE, "true");
             case 'f':
                 // false
-                return literal(Token.LITERAL_FALSE, "false");
+                return literal(TokenType.LITERAL_FALSE, "false");
             case 'n':
                 // null
-                return literal(Token.LITERAL_NULL, "null");
+                return literal(TokenType.LITERAL_NULL, "null");
             default:
                 throw new CommonException("the character '" + (char) ch + "' at line: " + line + ", column: " + column + " is unexpected, please check it");
         }
     }
 
-    private Token literal(int type, String expect) {
+    private Token literal(TokenType type, String expect) {
         int li = this.line;
         int co = this.column;
         for (int i = 0; i < expect.length(); i++) {
@@ -155,7 +155,7 @@ public class JsonLexer {
         if (ch == 'E' || ch == 'e') {
             builder.append(nExp());
         }
-        return new Token(Token.NUMBER, builder.toString(), li, co);
+        return new Token(TokenType.NUMBER, builder.toString(), li, co);
     }
 
     // INT: '0' | [1-9] [0-9]*
@@ -317,60 +317,9 @@ public class JsonLexer {
         if (ch == '"') {
             builder.append((char) ch);
             nextCh();
-            return new Token(Token.STRING, builder.toString(), li, co);
+            return new Token(TokenType.STRING, builder.toString(), li, co);
         }
         throw new CommonException("Invalid String at line: " + line + ", column: " + column + ", unexpect character '" + (char) ch + "'");
-    }
-
-    @Deprecated
-    private Token string0() {
-        StringBuilder builder = new StringBuilder();
-        builder.append((char) ch);
-        for (;;) {
-            nextCh();
-            if (ch == -1) {
-                break;
-            }
-            // " \ b f n r t
-            if (ch == '\\') {
-                nextCh();
-                if (ch == '\\') {
-                    builder.append((char) ch);
-                    continue;
-                }
-                if (ch == 'b') {
-                    builder.append('\b');
-                    continue;
-                }
-                if (ch == 'f') {
-                    builder.append('\f');
-                    continue;
-                }
-                if (ch == 'n') {
-                    builder.append('\n');
-                    continue;
-                }
-                if (ch == 'r') {
-                    builder.append('\r');
-                    continue;
-                }
-                if (ch == 't') {
-                    builder.append('\t');
-                    continue;
-                }
-                if (ch == '"') {
-                    builder.append("\"");
-                    continue;
-                }
-                throw new RuntimeException("Invalid String at line: " + line + ", column: " + column + ", unexpect character '\\" + (char) ch + "'");
-            }
-            builder.append((char) ch);
-            if (ch == '"') {
-                nextCh();
-                break;
-            }
-        }
-        return new Token(Token.STRING, builder.toString());
     }
 
     public int getCh() {

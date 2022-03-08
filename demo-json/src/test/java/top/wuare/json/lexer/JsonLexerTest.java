@@ -1,12 +1,8 @@
 package top.wuare.json.lexer;
 
-import com.google.gson.stream.JsonReader;
 import org.junit.Assert;
 import org.junit.Test;
 import top.wuare.json.exception.CommonException;
-
-import java.io.IOException;
-import java.io.StringReader;
 
 /**
  * test JSON Lexer
@@ -79,7 +75,7 @@ public class JsonLexerTest {
     }
 
     @Test
-    public void testNextTokenEscapeCharacter() throws IOException {
+    public void testNextTokenEscapeCharacter() {
         String t = "{ \"name\": \"\\t\\nbob\" }";
         JsonLexer lexer = new JsonLexer(t);
         lexer.nextToken(); // {
@@ -89,16 +85,11 @@ public class JsonLexerTest {
         String str = token.getVal();
         str = str.substring(1, str.length() - 1); // delete double quote
 
-        // Gson Reader
-        JsonReader reader = new JsonReader(new StringReader(t));
-        reader.beginObject();
-        reader.nextName();
-        String readerStr = reader.nextString();
-        Assert.assertEquals(str, readerStr);
+        Assert.assertEquals(str, "\t\nbob");
     }
 
     @Test
-    public void testNextTokenEscapeCharacter0() throws IOException {
+    public void testNextTokenEscapeCharacter0() {
         String t = "{ \"name\": \"\t\nbob\" }";
         JsonLexer lexer = new JsonLexer(t);
         lexer.nextToken(); // {
@@ -108,12 +99,7 @@ public class JsonLexerTest {
         String str = token.getVal();
         str = str.substring(1, str.length() - 1); // delete double quote
 
-        // Gson Reader
-        JsonReader reader = new JsonReader(new StringReader(t));
-        reader.beginObject();
-        reader.nextName();
-        String readerStr = reader.nextString();
-        Assert.assertEquals(str, readerStr);
+        Assert.assertEquals(str, "\t\nbob");
     }
 
     @Test
@@ -121,36 +107,36 @@ public class JsonLexerTest {
         JsonLexer lexer0 = new JsonLexer("-0");
         Token token0 = lexer0.nextToken();
         Assert.assertNotNull(token0);
-        Assert.assertEquals(Token.NUMBER, token0.getType());
+        Assert.assertEquals(TokenType.NUMBER, token0.getType());
 
         JsonLexer lexer1 = new JsonLexer("12");
         Token token1 = lexer1.nextToken();
         Assert.assertNotNull(token1);
-        Assert.assertEquals(Token.NUMBER, token1.getType());
+        Assert.assertEquals(TokenType.NUMBER, token1.getType());
 
         JsonLexer lexer2 = new JsonLexer("-12");
         Token token2 = lexer2.nextToken();
         Assert.assertNotNull(token2);
-        Assert.assertEquals(Token.NUMBER, token2.getType());
+        Assert.assertEquals(TokenType.NUMBER, token2.getType());
 
         JsonLexer lexer3 = new JsonLexer("-12.345");
         Token token3 = lexer3.nextToken();
         Assert.assertNotNull(token3);
-        Assert.assertEquals(Token.NUMBER, token3.getType());
+        Assert.assertEquals(TokenType.NUMBER, token3.getType());
 
         JsonLexer lexer4 = new JsonLexer("-12.345e+2");
         Token token4 = lexer4.nextToken();
         Assert.assertNotNull(token4);
-        Assert.assertEquals(Token.NUMBER, token4.getType());
+        Assert.assertEquals(TokenType.NUMBER, token4.getType());
 
         JsonLexer lexer5 = new JsonLexer("1.0e-2");
         Token token5 = lexer5.nextToken();
         Assert.assertNotNull(token5);
-        Assert.assertEquals(Token.NUMBER, token5.getType());
+        Assert.assertEquals(TokenType.NUMBER, token5.getType());
 
         JsonLexer lexer6 = new JsonLexer("0");
         Token token6 = lexer6.nextToken();
         Assert.assertNotNull(token6);
-        Assert.assertEquals(Token.NUMBER, token6.getType());
+        Assert.assertEquals(TokenType.NUMBER, token6.getType());
     }
 }
