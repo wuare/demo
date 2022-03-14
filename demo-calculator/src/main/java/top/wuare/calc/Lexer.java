@@ -2,7 +2,7 @@ package top.wuare.calc;
 
 /**
  * @author wuare
- * @date 2021/7/8
+ * @since 2021/7/8
  */
 public class Lexer {
     private final String text;
