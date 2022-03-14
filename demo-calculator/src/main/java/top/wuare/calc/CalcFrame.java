@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 /**
  * @author wuare
- * @date 2021/7/8
+ * @since 2021/7/8
  */
 public class CalcFrame {
 
@@ -33,12 +33,12 @@ public class CalcFrame {
         panel.setBounds(0, 0, frameWidth, frameHeight);
         frame.add(panel);
 
-        placeComponents(panel, frameWidth, frameHeight);
+        placeComponents(panel, frameWidth);
 
         frame.setVisible(true);
     }
 
-    private void placeComponents(JPanel panel, int width, int height) {
+    private void placeComponents(JPanel panel, int width) {
         // 显示
         int textPaneHeight = 100;
         JTextPane textPane = new JTextPane();
