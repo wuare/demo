@@ -164,7 +164,7 @@ public class JsonConvert {
         throw new JsonConvertException(type.getTypeName() + "不支持反序列化");
     }
 
-    public String toJson(Object obj) {
+    public String toJson(Object obj, boolean escape) {
         if (obj == null) {
             return "null";
         }
@@ -179,14 +179,19 @@ public class JsonConvert {
             return ((Boolean) obj).toString();
         }
         if (obj instanceof String) {
-            // TODO escape character handle
-            return "\"" + obj + "\"";
+            String s = (String) obj;
+            if (escape) {
+                s = s.replaceAll("\n", "\\\\n")
+                        .replaceAll("\t", "\\\\t")
+                        .replaceAll("\"", "\\\\\"");
+            }
+            return "\"" + s + "\"";
         }
         if (obj.getClass().isArray()) {
             StringBuilder s0 = new StringBuilder("[");
             int length = Array.getLength(obj);
             for (int i = 0; i < length; i++) {
-                s0.append(toJson(Array.get(obj, i))).append(",");
+                s0.append(toJson(Array.get(obj, i), escape)).append(",");
             }
             if (s0.length() > 1) {
                 s0.setLength(s0.length() - 1);
@@ -197,7 +202,7 @@ public class JsonConvert {
             StringBuilder s0 = new StringBuilder("[");
             List<?> list = (List<?>) obj;
             for (Object o : list) {
-                s0.append(toJson(o)).append(",");
+                s0.append(toJson(o, escape)).append(",");
             }
             if (s0.length() > 1) {
                 s0.setLength(s0.length() - 1);
@@ -209,7 +214,7 @@ public class JsonConvert {
             Map<?, ?> map = (Map<?, ?>) obj;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 s0.append("\"").append(entry.getKey().toString()).append("\"")
-                        .append(":").append(toJson(entry.getValue())).append(",");
+                        .append(":").append(toJson(entry.getValue(), escape)).append(",");
             }
             if (s0.length() > 1) {
                 s0.setLength(s0.length() - 1);
@@ -224,7 +229,7 @@ public class JsonConvert {
                 PropertyDescriptor descriptor = new PropertyDescriptor((String) f.getName(), obj.getClass());
                 Method readMethod = descriptor.getReadMethod();
                 s0.append("\"").append(descriptor.getName()).append("\"")
-                        .append(":").append(toJson(readMethod.invoke(obj))).append(",");
+                        .append(":").append(toJson(readMethod.invoke(obj), escape)).append(",");
             } catch (IntrospectionException | ReflectiveOperationException e) {
                 if (e instanceof ReflectiveOperationException) {
                     System.out.println(e.getMessage());

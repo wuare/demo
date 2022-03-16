@@ -41,6 +41,6 @@ public class JsonConvertTest {
         map.put("a", 1L);
         map.put("b", 2L);
         data.setMap(map);
-        System.out.println(convert.toJson(data));
+        System.out.println(convert.toJson(data, false));
     }
 }

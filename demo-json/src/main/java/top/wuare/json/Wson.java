@@ -16,6 +16,6 @@ public class Wson {
     }
 
     public String toJson(Object obj) {
-        return convert.toJson(obj);
+        return convert.toJson(obj, true);
     }
 }
