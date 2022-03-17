@@ -30,9 +30,11 @@ public class JavaGen implements Gen {
             if (token.getType() == Token.CHAR_LITERAL) {
                 String charText;
                 if (token.getValue().charAt(0) == '\n') {
-                    charText = "\\\\n";
+                    charText = "\\n";
                 } else if (token.getValue().charAt(0) == '\r') {
-                    charText = "\\\\r";
+                    charText = "\\r";
+                } else if (token.getValue().charAt(0) == '\t') {
+                    charText = "\\t";
                 } else {
                     charText = token.getValue();
                 }
