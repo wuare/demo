@@ -10,16 +10,17 @@ public class JavaGen implements Gen {
     public String gen(String text) {
         Lexer lexer = new Lexer(text);
         StringBuilder builder = new StringBuilder();
-//        builder.append("<!DOCTYPE html>\n");
-//        builder.append("<head></head>\n");
-//        builder.append("<body>\n");
         builder.append("<pre style=\"background-color: #2B2B2B; color: white; padding: 20px 20px;" +
                 "font-family: 'Consolas','Arial','Microsoft YaHei','黑体',sans-serif;\">\n");
         Token token;
         while ((token = lexer.nextToken()) != null) {
             // #698652
             if (token.getType() == Token.STRING_LITERAL) {
-                String newText = "<span style=\"color: #698652;\">\"" + token.getValue() + "\"</span>";
+                String s = token.getValue().replaceAll("\n", "\\\\n")
+                        .replaceAll("\t", "\\\\t")
+                        .replaceAll("\r", "\\\\r")
+                        .replaceAll("\"", "\\\\\"");
+                String newText = "<span style=\"color: #698652;\">\"" + s + "\"</span>";
                 builder.append(newText);
                 continue;
             }
@@ -27,9 +28,9 @@ public class JavaGen implements Gen {
             if (token.getType() == Token.CHAR_LITERAL) {
                 String charText;
                 if (token.getValue().charAt(0) == '\n') {
-                    charText = "\\ n";
+                    charText = "\\\\n";
                 } else if (token.getValue().charAt(0) == '\r') {
-                    charText = "\\ r";
+                    charText = "\\\\r";
                 } else {
                     charText = token.getValue();
                 }
@@ -123,7 +124,6 @@ public class JavaGen implements Gen {
         }
 
         builder.append("\n</pre>\n");
-//        builder.append("</body>");
         return builder.toString();
     }
 }

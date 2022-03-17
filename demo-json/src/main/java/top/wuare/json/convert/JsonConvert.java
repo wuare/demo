@@ -182,6 +182,7 @@ public class JsonConvert {
             String s = (String) obj;
             if (escape) {
                 s = s.replaceAll("\n", "\\\\n")
+                        .replaceAll("\r", "\\\\r")
                         .replaceAll("\t", "\\\\t")
                         .replaceAll("\"", "\\\\\"");
             }
