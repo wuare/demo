@@ -39,7 +39,7 @@ public class Lexer {
             }
             spaceToken.setType(Token.WHITE_SPACE);
             spaceToken.setValue(spaceBuilder.toString());
-            // 特定场景，高亮需保存空白符，如果是编译构造语法数，空白符不保留
+            // 特定场景，高亮需保存空白符，如果是编译构造语法树，空白符不保留
             return spaceToken;
         }
 
