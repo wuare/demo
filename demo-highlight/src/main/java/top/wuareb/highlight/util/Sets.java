@@ -9,7 +9,7 @@ public class Sets {
     private Sets() {
     }
 
-    public static  <E> Set<E> of(E... e) {
+    public static <E> Set<E> of(E... e) {
         return new HashSet<>(Arrays.asList(e));
     }
 }
