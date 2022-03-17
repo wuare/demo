@@ -16,10 +16,12 @@ public class JavaGen implements Gen {
         while ((token = lexer.nextToken()) != null) {
             // #698652
             if (token.getType() == Token.STRING_LITERAL) {
-                String s = token.getValue().replaceAll("\n", "\\\\n")
+                String s = token.getValue()
+                        .replaceAll("\n", "\\\\n")
                         .replaceAll("\t", "\\\\t")
                         .replaceAll("\r", "\\\\r")
-                        .replaceAll("\"", "\\\\\"");
+                        .replaceAll("\"", "\\\\\"")
+                        .replaceAll("<", "&lt;");
                 String newText = "<span style=\"color: #698652;\">\"" + s + "\"</span>";
                 builder.append(newText);
                 continue;
