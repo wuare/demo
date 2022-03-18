@@ -18,4 +18,8 @@ public class Wson {
     public String toJson(Object obj) {
         return convert.toJson(obj, true);
     }
+
+    public String toString(Object obj) {
+        return convert.toJson(obj, false);
+    }
 }
