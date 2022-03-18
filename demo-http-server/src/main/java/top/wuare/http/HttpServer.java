@@ -25,6 +25,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,6 +60,9 @@ public class HttpServer {
     private Properties properties = new Properties();
     // config
     private final Config config = new Config();
+
+    // consumer
+    private Consumer<HttpServer> afterInitConsumer;
 
     public HttpServer(int port) {
         this.port = port;
@@ -135,7 +139,7 @@ public class HttpServer {
 
     public void start() {
         init();
-        initAndStartTasks();
+        afterInit();
         logger.info("server started, listen port at " + port);
         while (isRunning()) {
             try {
@@ -148,8 +152,14 @@ public class HttpServer {
         }
     }
 
-    private void initAndStartTasks() {
+    public void afterInit() {
+        if (afterInitConsumer != null) {
+            afterInitConsumer.accept(this);
+        }
+    }
 
+    public void setAfterInitConsumer(Consumer<HttpServer> consumer) {
+        this.afterInitConsumer = consumer;
     }
 
     public HttpServer addHandler(RequestHandler handler) {
