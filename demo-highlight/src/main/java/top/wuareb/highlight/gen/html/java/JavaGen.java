@@ -10,8 +10,6 @@ public class JavaGen implements Gen {
     public String gen(String text) {
         Lexer lexer = new Lexer(text);
         StringBuilder builder = new StringBuilder();
-        builder.append("<pre style=\"background-color: #2B2B2B; color: white; padding: 20px 20px;" +
-                "font-family: 'Consolas','Arial','Microsoft YaHei','黑体',sans-serif;\">\n");
         Token token;
         while ((token = lexer.nextToken()) != null) {
             // #698652
@@ -22,7 +20,7 @@ public class JavaGen implements Gen {
                         .replaceAll("\r", "\\\\r")
                         .replaceAll("\"", "\\\\\"")
                         .replaceAll("<", "&lt;");
-                String newText = "<span style=\"color: #698652;\">\"" + s + "\"</span>";
+                String newText = "<span class='hl-str'>\"" + s + "\"</span>";
                 builder.append(newText);
                 continue;
             }
@@ -38,37 +36,37 @@ public class JavaGen implements Gen {
                 } else {
                     charText = token.getValue();
                 }
-                String newText = "<span style=\"color: #698652;\">'" + charText + "'</span>";
+                String newText = "<span class='hl-char'>'" + charText + "'</span>";
                 builder.append(newText);
                 continue;
             }
             // #698652
             if (token.getType() == Token.COMMENT) {
-                String newText = "<span style=\"color: #698652;\">" + token.getValue() + "</span>";
+                String newText = "<span class='hl-cmt'>" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #808080
             if (token.getType() == Token.LINE_COMMENT) {
-                String newText = "<span style=\"color: #808080;\">" + token.getValue() + "</span>";
+                String newText = "<span class='hl-line-cmt'>" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #CC7832
             if (token.getType() == Token.KEY_WORD) {
-                String newText = "<span style=\"color: #CC7832;\">" + token.getValue() + "</span>";
+                String newText = "<span class='hl-key'>" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #5596BA
             if (token.getType() == Token.NUMBER) {
-                String newText = "<span style=\"color: #5596BA;\">" + token.getValue() + "</span>";
+                String newText = "<span class='hl-num'>" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #FFEF28
             if (token.getType() == Token.LBRACE || token.getType() == Token.RBRACE) {
-                String newText = "<span style=\"color: #FFEF28;\">" + token.getValue() + "</span>";
+                String newText = "<span class='hl-brace'>" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
@@ -76,13 +74,13 @@ public class JavaGen implements Gen {
             if (token.getType() == Token.AT) {
                 Token nextToken = lexer.nextToken();
                 if (nextToken != null && nextToken.getType() == Token.IDENTIFIER) {
-                    String newText = "<span style=\"color: #BBB529;\">" + token.getValue() + nextToken.getValue() + "</span>";
+                    String newText = "<span class='hl-anno'>" + token.getValue() + nextToken.getValue() + "</span>";
                     builder.append(newText);
                 } else {
-                    String newText = "<span style=\"color: #BBB529;\">" + token.getValue() + "</span>";
+                    String newText = "<span class='hl-anno'>" + token.getValue() + "</span>";
                     builder.append(newText);
                     if (nextToken != null) {
-                        builder.append("<span style=\"color: #BBB529;\">").append(nextToken.getValue()).append("</span>");
+                        builder.append("<span class='hl-anno'>").append(nextToken.getValue()).append("</span>");
                     }
                 }
 
@@ -126,8 +124,6 @@ public class JavaGen implements Gen {
             }
             builder.append(token.getValue());
         }
-
-        builder.append("\n</pre>\n");
         return builder.toString();
     }
 }
