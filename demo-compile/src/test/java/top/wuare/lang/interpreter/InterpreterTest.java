@@ -167,4 +167,47 @@ public class InterpreterTest {
         interpreter.eval();
         System.out.println(interpreter.getConsole().toString());
     }
+
+    @Test
+    public void someTest() {
+        String code = "\n" +
+                "func 乘算口訣() {\n" +
+                "  var 甲 = 1;\n" +
+                "  while (true) {\n" +
+                "    if (甲 >= 10) {\n" +
+                "      break;\n" +
+                "    }\n" +
+                "    var 乙 = 1;\n" +
+                "    var _ans1 = 甲 + 乙;\n" +
+                "    var 丙 = _ans1;\n" +
+                "    while (true) {\n" +
+                "      if (乙 >= 丙) {\n" +
+                "        break;\n" +
+                "      }\n" +
+                "      var _ans2 = 甲 * 乙;\n" +
+                "      var 果 = _ans2;\n" +
+                "      if (果 >= 10) {\n" +
+                "        var _ans3 = 乙;\n" +
+                "        var _ans4 = 甲;\n" +
+                "        var _ans5 = 果;\n" +
+                "        print(_ans3,_ans4,_ans5);\n" +
+                "      } else {\n" +
+                "        var _ans6 = 乙;\n" +
+                "        var _ans7 = 甲;\n" +
+                "        var _ans8 = \"得\";\n" +
+                "        var _ans9 = 果;\n" +
+                "        print(_ans6, _ans7, _ans8, _ans9);\n" +
+                "      }\n" +
+                "      var _ans10 = 乙 + 1;\n" +
+                "      乙 = _ans10;\n" +
+                "    }\n" +
+                "    var _ans11 = 甲 + 1;\n" +
+                "    甲 = _ans11;\n" +
+                "  }\n" +
+                "}\n" +
+                "乘算口訣();";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
 }

@@ -370,19 +370,16 @@ public class Interpreter {
     }
 
     private Object evalWhileStmt(WhileStmt ast) {
-        try {
-            enterNewScopeSymbolTable();
-            Object exprVal;
-
-            while ((exprVal = evalExpr(ast.getExpr())) instanceof Boolean && (boolean) exprVal) {
-                try {
-                    evalBlock(ast.getBlock());
-                } catch (BreakVal ignored) {
-                    break;
-                }
+        Object exprVal;
+        while ((exprVal = evalExpr(ast.getExpr())) instanceof Boolean && (boolean) exprVal) {
+            try {
+                enterNewScopeSymbolTable();
+                evalBlock(ast.getBlock());
+            } catch (BreakVal ignored) {
+                break;
+            } finally {
+                exitCurScopeSymbolTable();
             }
-        } finally {
-            exitCurScopeSymbolTable();
         }
         return null;
     }
