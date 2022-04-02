@@ -8,6 +8,7 @@ public enum TokenType {
     WHILE("WHILE", "while"),
     RETURN("RETURN", "return"),
     ELSE("ELSE", "else"),
+    BREAK("BREAK", "break"),
 
     NIL("NIL", "nil"),
 

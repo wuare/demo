@@ -143,19 +143,20 @@ public class InterpreterTest {
     }
 
     @Test
-    public void testFileWriteFunc() {
-//        String code = "var a = write(\"/data/aaa.txt\", \"a123\"); print(a);";
-//        Interpreter interpreter = new Interpreter(code);
-//        interpreter.eval();
-//        System.out.println(interpreter.getConsole().toString());
+    public void testBreak() {
+        String code = "var i = 0;\n" +
+                "func a() {\n" +
+                "    while(true) {\n" +
+                "        i = i + 1;\n" +
+                "        if (i > 2) {\n" +
+                "            break;\n" +
+                "        }\n" +
+                "    }\n" +
+                "    print(i);\n" +
+                "}\n" +
+                "a();";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
     }
-
-    @Test
-    public void testFileReadFunc() {
-//        String code = "var a = read(\"/data/aaa.txt\"); print(a);";
-//        Interpreter interpreter = new Interpreter(code);
-//        interpreter.eval();
-//        System.out.println(interpreter.getConsole().toString());
-    }
-
 }

@@ -17,6 +17,7 @@ public class Lexer {
         RESERVED_KEYWORDS.put(TokenType.FUNC.getText(), TokenType.FUNC);
         RESERVED_KEYWORDS.put(TokenType.IF.getText(), TokenType.IF);
         RESERVED_KEYWORDS.put(TokenType.WHILE.getText(), TokenType.WHILE);
+        RESERVED_KEYWORDS.put(TokenType.BREAK.getText(), TokenType.BREAK);
         RESERVED_KEYWORDS.put(TokenType.RETURN.getText(), TokenType.RETURN);
         RESERVED_KEYWORDS.put(TokenType.ELSE.getText(), TokenType.ELSE);
         RESERVED_KEYWORDS.put(TokenType.TRUE.getText(), TokenType.TRUE);

@@ -9,6 +9,7 @@ import top.wuare.lang.env.buildin.*;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
+import top.wuare.lang.type.BreakVal;
 import top.wuare.lang.type.ReturnVal;
 
 import java.math.BigDecimal;
@@ -84,7 +85,7 @@ public class Interpreter {
         if (!scopeSymbolTable.containsKey(token.getText())) {
             throw new RuntimeException("变量[" + token.getText() + "]未定义");
         }
-        scopeSymbolTable.put(token.getText(), evalExpr(ast.getExpr()));
+        scopeSymbolTable.assign(token.getText(), evalExpr(ast.getExpr()));
         return null;
     }
 
@@ -319,6 +320,9 @@ public class Interpreter {
         if (ast instanceof ExprStmt) {
             return evalExprStmt((ExprStmt) ast);
         }
+        if (ast instanceof BreakStmt) {
+            return evalBreakStmt((BreakStmt) ast);
+        }
         return null;
     }
 
@@ -371,7 +375,11 @@ public class Interpreter {
             Object exprVal;
 
             while ((exprVal = evalExpr(ast.getExpr())) instanceof Boolean && (boolean) exprVal) {
-                evalBlock(ast.getBlock());
+                try {
+                    evalBlock(ast.getBlock());
+                } catch (BreakVal ignored) {
+                    break;
+                }
             }
         } finally {
             exitCurScopeSymbolTable();
@@ -381,6 +389,10 @@ public class Interpreter {
 
     private Object evalExprStmt(ExprStmt ast) {
         return evalExpr(ast.getExpr());
+    }
+
+    private Object evalBreakStmt(BreakStmt ast) {
+        throw new BreakVal();
     }
 
     public void checkNumberType(Object val, Token token) {

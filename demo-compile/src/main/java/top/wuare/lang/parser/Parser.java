@@ -61,6 +61,8 @@ public class Parser {
                 return parseWhileStmt();
             case RETURN:
                 return parseReturnStmt();
+            case BREAK:
+                return parseBreakStmt();
             case IDENT:
             case STRING:
             case NUMBER:
@@ -170,6 +172,14 @@ public class Parser {
         stmt.setExpr(parseExp(0));
         eat(TokenType.SEMICOLON);
         return stmt;
+    }
+
+    // BreakStmt: BREAK ';'
+    private Stmt parseBreakStmt() {
+        Token t = curToken;
+        eat(TokenType.BREAK);
+        eat(TokenType.SEMICOLON);
+        return new BreakStmt(t);
     }
 
     // ExprStmt: expr ';'

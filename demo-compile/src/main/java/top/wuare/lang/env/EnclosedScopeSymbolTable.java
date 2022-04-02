@@ -32,6 +32,16 @@ public class EnclosedScopeSymbolTable {
         table.put(text, val);
     }
 
+    public void assign(String text, Object val) {
+        if (table.containsKey(text)) {
+            table.put(text, val);
+        } else {
+            if (parent != null) {
+                parent.assign(text, val);
+            }
+        }
+    }
+
     public Object get(String text) {
         if (table.containsKey(text)) {
             return table.get(text);
