@@ -159,4 +159,12 @@ public class InterpreterTest {
         interpreter.eval();
         System.out.println(interpreter.getConsole().toString());
     }
+
+    @Test
+    public void callMultipleArgs() {
+        String code = "print(1,2,3);";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
 }

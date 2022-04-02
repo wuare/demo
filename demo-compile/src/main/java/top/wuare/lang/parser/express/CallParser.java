@@ -35,7 +35,7 @@ public class CallParser implements InfixParser {
         List<Expr> argsList = new ArrayList<>();
         argsList.add(expr);
         Token cur;
-        if ((cur = parser.getCurToken()) != null && cur.getType() == TokenType.COMMA) {
+        while ((cur = parser.getCurToken()) != null && cur.getType() == TokenType.COMMA) {
             parser.consume();
             argsList.add(parser.parseExp(0));
         }
