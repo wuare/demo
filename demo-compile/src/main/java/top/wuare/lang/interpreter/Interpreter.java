@@ -6,6 +6,8 @@ import top.wuare.lang.ast.statement.*;
 import top.wuare.lang.env.Console;
 import top.wuare.lang.env.EnclosedScopeSymbolTable;
 import top.wuare.lang.env.buildin.*;
+import top.wuare.lang.env.buildin.array.ArrAddBuildInFunc;
+import top.wuare.lang.env.buildin.array.ArrLenBuildInFunc;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
@@ -31,6 +33,8 @@ public class Interpreter {
         buildInFuncTable.put("fileRead", new FileReadBuildInFunc());
         buildInFuncTable.put("fileWrite", new FileWriteBuildInFunc());
         buildInFuncTable.put("fileAppend", new FileAppendBuildInFunc());
+        buildInFuncTable.put("arrAdd", new ArrAddBuildInFunc());
+        buildInFuncTable.put("arrLen", new ArrLenBuildInFunc());
     }
 
     private final Parser parser;
@@ -115,7 +119,7 @@ public class Interpreter {
             }
             Object indexVal = evalExpr(aExpr.getIndexExpr());
             List<Object> list = (List<Object>) arr;
-            checkArray(indexVal, list, token);
+            checkArray(indexVal, list, token, false);
             BigDecimal index = (BigDecimal) indexVal;
             list.set(index.intValue(), evalExpr(ast.getExpr()));
         }
@@ -340,12 +344,12 @@ public class Interpreter {
         }
         Object io = evalExpr(ast.getIndexExpr());
         List<?> list = (List<?>) arr;
-        checkArray(io, list, token);
+        checkArray(io, list, token, true);
         BigDecimal index = (BigDecimal) io;
         return list.get(index.intValue());
     }
 
-    private void checkArray(Object indexVal, List<?> list, Token token) {
+    private void checkArray(Object indexVal, List<?> list, Token token, boolean border) {
         if (!(indexVal instanceof BigDecimal)) {
             throw new RuntimeException("数组下标错误，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
         }
@@ -356,7 +360,7 @@ public class Interpreter {
         if (index.intValue() < 0) {
             throw new RuntimeException("数组下标不能小于0，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
         }
-        if (index.intValue() > list.size() - 1) {
+        if (border && index.intValue() > list.size() - 1) {
             throw new RuntimeException("数组下标超出范围，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
         }
     }
