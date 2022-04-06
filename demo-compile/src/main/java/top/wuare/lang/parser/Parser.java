@@ -163,6 +163,7 @@ public class Parser {
         return stmt;
     }
 
+    // ForStmt: FOR '(' InitStmt? Expr? ';' UpdateExpr? ')' '{' Block '}'
     private Stmt parseForStmt() {
         ForStmt stmt = new ForStmt();
         eat(TokenType.FOR);
@@ -276,6 +277,7 @@ public class Parser {
 
     static {
         register(TokenType.NUMBER, new IdentParser());
+        register(TokenType.LBRACKET, new ArrayParser());
         register(TokenType.STRING, new IdentParser());
         register(TokenType.TRUE, new IdentParser());
         register(TokenType.FALSE, new IdentParser());
@@ -286,7 +288,7 @@ public class Parser {
         register(TokenType.LPAREN, new ParenParser());
 
         // infix
-
+        register(TokenType.LBRACKET, new ArrayIndexParser(12));
         register(TokenType.LPAREN, new CallParser(12));
         register(TokenType.MUL, new BinOperatorParser(11));
         register(TokenType.DIV, new BinOperatorParser(11));

@@ -77,15 +77,49 @@ public class Interpreter {
         if (ast instanceof PrefixExpr) {
             return evalPrefixExpr((PrefixExpr) ast);
         }
+        if (ast instanceof ArrayExpr) {
+            return evalArrayExpr((ArrayExpr) ast);
+        }
+        if (ast instanceof ArrayIndexExpr) {
+            return evalArrayIndexExpr((ArrayIndexExpr) ast);
+        }
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private Object evalAssignExpr(AssignExpr ast) {
-        Token token = ast.getToken();
-        if (!scopeSymbolTable.containsKey(token.getText())) {
-            throw new RuntimeException("变量[" + token.getText() + "]未定义");
+        Expr identExpr = ast.getIdentExpr();
+        if (identExpr instanceof IdentExpr) {
+            Token token = ((IdentExpr) identExpr).getToken();
+            if (!scopeSymbolTable.containsKey(token.getText())) {
+                throw new RuntimeException("变量[" + token.getText() + "]未定义");
+            }
+            scopeSymbolTable.assign(token.getText(), evalExpr(ast.getExpr()));
+            return null;
         }
-        scopeSymbolTable.assign(token.getText(), evalExpr(ast.getExpr()));
+        // 数组赋值
+        if (identExpr instanceof ArrayIndexExpr) {
+            ArrayIndexExpr aExpr = (ArrayIndexExpr) identExpr;
+            Expr left = aExpr.getExpr();
+            if (!(left instanceof IdentExpr)) {
+                throw new RuntimeException("数组赋值标识符错误，在第" + aExpr.getToken().getLine() + "行，第"
+                        + aExpr.getToken().getColumn() + "列+号左侧");
+            }
+            Token token = ((IdentExpr) left).getToken();
+            if (!scopeSymbolTable.containsKey(token.getText())) {
+                throw new RuntimeException("数组变量[" + token.getText() + "]未定义");
+            }
+            Object arr = scopeSymbolTable.get(token.getText());
+            if (!(arr instanceof List)) {
+                throw new RuntimeException("变量[" + token.getText() + "]不是数组类型");
+            }
+            Object indexVal = evalExpr(aExpr.getIndexExpr());
+            List<Object> list = (List<Object>) arr;
+            checkArray(indexVal, list, token);
+            BigDecimal index = (BigDecimal) indexVal;
+            list.set(index.intValue(), evalExpr(ast.getExpr()));
+        }
+
         return null;
     }
 
@@ -206,8 +240,8 @@ public class Interpreter {
 
         }
         return null;
-    }
 
+    }
     private Object evalNotEqualOperatorExpr(Token token, Object leftVal, Object rightVal) {
         Object left = findVal(leftVal, token);
         Object right = findVal(rightVal, token);
@@ -287,6 +321,44 @@ public class Interpreter {
                 return exprVal;
         }
         return null;
+    }
+
+    private Object evalArrayExpr(ArrayExpr ast) {
+        List<Object> list = new ArrayList<>();
+        List<Expr> items = ast.getItems();
+        for (Expr item : items) {
+            list.add(evalExpr(item));
+        }
+        return list;
+    }
+
+    private Object evalArrayIndexExpr(ArrayIndexExpr ast) {
+        Token token = ast.getToken();
+        Object arr = evalExpr(ast.getExpr());
+        if (!(arr instanceof List)) {
+            throw new RuntimeException("数组标识错误，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
+        }
+        Object io = evalExpr(ast.getIndexExpr());
+        List<?> list = (List<?>) arr;
+        checkArray(io, list, token);
+        BigDecimal index = (BigDecimal) io;
+        return list.get(index.intValue());
+    }
+
+    private void checkArray(Object indexVal, List<?> list, Token token) {
+        if (!(indexVal instanceof BigDecimal)) {
+            throw new RuntimeException("数组下标错误，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
+        }
+        BigDecimal index = (BigDecimal) indexVal;
+        if (new BigDecimal(index.intValue()).compareTo(index) != 0) {
+            throw new RuntimeException("数组下标必须为整数，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
+        }
+        if (index.intValue() < 0) {
+            throw new RuntimeException("数组下标不能小于0，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
+        }
+        if (index.intValue() > list.size() - 1) {
+            throw new RuntimeException("数组下标超出范围，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
+        }
     }
 
     private Object evalBlock(Block ast) {

@@ -2,15 +2,16 @@ package top.wuare.lang.ast.expr;
 
 import top.wuare.lang.lexer.Token;
 
-public class AssignExpr implements Expr {
-    private Token token;
-    private Expr identExpr;
-    private Expr expr;
+public class ArrayIndexExpr implements Expr {
 
-    public AssignExpr(Token token, Expr identExpr, Expr expr) {
+    private Token token;
+    private Expr expr;
+    private Expr indexExpr;
+
+    public ArrayIndexExpr(Token token, Expr expr, Expr indexExpr) {
         this.token = token;
-        this.identExpr = identExpr;
         this.expr = expr;
+        this.indexExpr = indexExpr;
     }
 
     public Token getToken() {
@@ -21,19 +22,19 @@ public class AssignExpr implements Expr {
         this.token = token;
     }
 
-    public Expr getIdentExpr() {
-        return identExpr;
-    }
-
-    public void setIdentExpr(Expr identExpr) {
-        this.identExpr = identExpr;
-    }
-
     public Expr getExpr() {
         return expr;
     }
 
     public void setExpr(Expr expr) {
         this.expr = expr;
+    }
+
+    public Expr getIndexExpr() {
+        return indexExpr;
+    }
+
+    public void setIndexExpr(Expr indexExpr) {
+        this.indexExpr = indexExpr;
     }
 }

@@ -78,4 +78,20 @@ public class ParserTest {
         AST ast = parser.parse();
         System.out.println(ast);
     }
+
+    @Test
+    public void testArray() {
+        String code = "[1, 2, 3]";
+        Parser parser = new Parser(code);
+        AST ast = parser.parseExp(0);
+        System.out.println(ast);
+    }
+
+    @Test
+    public void testArrayIndex() {
+        String code = "a[1]";
+        Parser parser = new Parser(code);
+        AST ast = parser.parseExp(0);
+        System.out.println(ast);
+    }
 }

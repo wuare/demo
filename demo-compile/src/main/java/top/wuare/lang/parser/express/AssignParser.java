@@ -14,9 +14,8 @@ public class AssignParser implements InfixParser {
     }
     @Override
     public Expr parse(Parser parser, Expr left, Token token) {
-        IdentExpr ident = (IdentExpr) left;
         Expr expr = parser.parseExp(precedence);
-        return new AssignExpr(ident.getToken(), expr);
+        return new AssignExpr(token, left, expr);
     }
 
     @Override

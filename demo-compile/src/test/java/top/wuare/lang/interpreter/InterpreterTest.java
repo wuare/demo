@@ -218,4 +218,28 @@ public class InterpreterTest {
         interpreter.eval();
         System.out.println(interpreter.getConsole().toString());
     }
+
+    @Test
+    public void testArrayIndex() {
+        String code = "print([1,2][0]);";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
+    @Test
+    public void tstArrayIndex0() {
+        String code = "var a = [1,2]; print(a[0]);";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
+    @Test
+    public void testArrayAssign() {
+        String code = "var a = [1,2,3]; a[0] = 2; print(a);";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
 }
