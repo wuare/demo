@@ -71,6 +71,7 @@ public class Parser {
             case SUB:
             case BANG:
             case LPAREN:
+            case LBRACKET:
                 return parseExprStmt();
             default:
                 return null;

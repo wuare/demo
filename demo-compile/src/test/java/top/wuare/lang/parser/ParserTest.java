@@ -94,4 +94,11 @@ public class ParserTest {
         AST ast = parser.parseExp(0);
         System.out.println(ast);
     }
+    @Test
+    public void testArrayAssign() {
+        String code = "[1][0] = 1;";
+        Parser parser = new Parser(code);
+        AST ast = parser.parse();
+        System.out.println(ast);
+    }
 }
