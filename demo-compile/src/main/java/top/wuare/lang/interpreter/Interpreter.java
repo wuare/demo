@@ -103,7 +103,7 @@ public class Interpreter {
             Expr left = aExpr.getExpr();
             if (!(left instanceof IdentExpr)) {
                 throw new RuntimeException("数组赋值标识符错误，在第" + aExpr.getToken().getLine() + "行，第"
-                        + aExpr.getToken().getColumn() + "列+号左侧");
+                        + aExpr.getToken().getColumn() + "列");
             }
             Token token = ((IdentExpr) left).getToken();
             if (!scopeSymbolTable.containsKey(token.getText())) {
