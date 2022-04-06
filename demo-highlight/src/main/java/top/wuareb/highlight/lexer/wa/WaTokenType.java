@@ -6,6 +6,7 @@ public enum WaTokenType {
     FUNC("FUNC", "func"),
     IF("IF", "if"),
     WHILE("WHILE", "while"),
+    FOR("FOR", "for"),
     BREAK("BREAK", "break"),
     RETURN("RETURN", "return"),
     ELSE("ELSE", "else"),
