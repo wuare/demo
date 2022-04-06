@@ -59,6 +59,8 @@ public class Parser {
                 return parseIfStmt();
             case WHILE:
                 return parseWhileStmt();
+            case FOR:
+                return parseForStmt();
             case RETURN:
                 return parseReturnStmt();
             case BREAK:
@@ -156,6 +158,29 @@ public class Parser {
             consume();
             return stmt;
         }
+        stmt.setBlock(parseBlock());
+        eat(TokenType.RBRACE);
+        return stmt;
+    }
+
+    private Stmt parseForStmt() {
+        ForStmt stmt = new ForStmt();
+        eat(TokenType.FOR);
+        eat(TokenType.LPAREN);
+        if (curToken != null && curToken.getType() != TokenType.SEMICOLON) {
+            stmt.setInitStmt(parseStmt());
+        } else {
+            eat(TokenType.SEMICOLON);
+        }
+        if (curToken != null && curToken.getType() != TokenType.SEMICOLON) {
+            stmt.setExpr(parseExp(0));
+        }
+        eat(TokenType.SEMICOLON);
+        if (curToken != null && curToken.getType() != TokenType.RPAREN) {
+            stmt.setUpdateExpr(parseExp(0));
+        }
+        eat(TokenType.RPAREN);
+        eat(TokenType.LBRACE);
         stmt.setBlock(parseBlock());
         eat(TokenType.RBRACE);
         return stmt;

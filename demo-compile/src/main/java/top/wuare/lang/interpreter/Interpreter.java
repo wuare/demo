@@ -314,6 +314,9 @@ public class Interpreter {
         if (ast instanceof WhileStmt) {
             return evalWhileStmt((WhileStmt) ast);
         }
+        if (ast instanceof ForStmt) {
+            return evalForStmt((ForStmt) ast);
+        }
         if (ast instanceof ReturnStmt) {
             return evalReturnStmt((ReturnStmt) ast);
         }
@@ -382,6 +385,43 @@ public class Interpreter {
             }
         }
         return null;
+    }
+
+    private Object evalForStmt(ForStmt ast) {
+        enterNewScopeSymbolTable();
+        try {
+            Stmt initStmt = ast.getInitStmt();
+            if (initStmt != null) {
+                evalStmt(initStmt);
+            }
+            Expr expr = ast.getExpr();
+            while (evalForExpr(expr)) {
+                try {
+                    enterNewScopeSymbolTable();
+                    evalBlock(ast.getBlock());
+                } finally {
+                    exitCurScopeSymbolTable();
+                }
+                Expr updateExpr = ast.getUpdateExpr();
+                if (updateExpr != null) {
+                    evalExpr(updateExpr);
+                }
+            }
+
+        } catch (BreakVal ignored) {
+            // pass
+        } finally {
+            exitCurScopeSymbolTable();
+        }
+        return null;
+    }
+
+    private boolean evalForExpr(Expr expr) {
+        if (expr == null) {
+            return true;
+        }
+        Object res = evalExpr(expr);
+        return res instanceof Boolean && ((Boolean) res);
     }
 
     private Object evalExprStmt(ExprStmt ast) {

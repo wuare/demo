@@ -54,6 +54,14 @@ public class InterpreterTest {
     }
 
     @Test
+    public void testFor() {
+        String code = "for (var i = 1; i < 10; i = i + 1) {print(i);}";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
+    @Test
     public void testAssign() {
         String code = "var a; a = 1;";
         Interpreter interpreter = new Interpreter(code);

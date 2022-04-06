@@ -39,6 +39,14 @@ public class ParserTest {
     }
 
     @Test
+    public void testForStmt() {
+        String forText = "for (a = 2; a < 3; a = a + 1) { print(a);}";
+        Parser parser = new Parser(forText);
+        AST ast = parser.parse();
+        System.out.println(ast);
+    }
+
+    @Test
     public void testCallExpr() {
         String whileText = "a(b,c);";
         Parser parser = new Parser(whileText);

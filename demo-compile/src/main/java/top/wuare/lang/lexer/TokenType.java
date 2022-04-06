@@ -9,6 +9,7 @@ public enum TokenType {
     RETURN("RETURN", "return"),
     ELSE("ELSE", "else"),
     BREAK("BREAK", "break"),
+    FOR("FOR", "for"),
 
     NIL("NIL", "nil"),
 
