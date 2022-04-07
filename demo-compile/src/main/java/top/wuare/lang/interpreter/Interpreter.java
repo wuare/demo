@@ -119,7 +119,7 @@ public class Interpreter {
             }
             Object indexVal = evalExpr(aExpr.getIndexExpr());
             List<Object> list = (List<Object>) arr;
-            checkArray(indexVal, list, token, false);
+            checkArray(indexVal, list, token);
             BigDecimal index = (BigDecimal) indexVal;
             list.set(index.intValue(), evalExpr(ast.getExpr()));
         }
@@ -344,12 +344,12 @@ public class Interpreter {
         }
         Object io = evalExpr(ast.getIndexExpr());
         List<?> list = (List<?>) arr;
-        checkArray(io, list, token, true);
+        checkArray(io, list, token);
         BigDecimal index = (BigDecimal) io;
         return list.get(index.intValue());
     }
 
-    private void checkArray(Object indexVal, List<?> list, Token token, boolean border) {
+    private void checkArray(Object indexVal, List<?> list, Token token) {
         if (!(indexVal instanceof BigDecimal)) {
             throw new RuntimeException("数组下标错误，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
         }
@@ -360,7 +360,7 @@ public class Interpreter {
         if (index.intValue() < 0) {
             throw new RuntimeException("数组下标不能小于0，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
         }
-        if (border && index.intValue() > list.size() - 1) {
+        if (index.intValue() > list.size() - 1) {
             throw new RuntimeException("数组下标超出范围，在第" + token.getLine() + "行，第" + token.getColumn() + "列附近");
         }
     }
