@@ -6,10 +6,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * json convert to java object
@@ -18,6 +15,9 @@ import java.util.Map;
  * @since 2021/6/18
  */
 public class JsonConvert {
+
+    // 用于处理循环依赖
+    private final Set<Object> toJsonObjSet = new HashSet<>();
 
     @SuppressWarnings("unchecked")
     public <T> T fromJson(Object obj, Type type) {
@@ -224,7 +224,10 @@ public class JsonConvert {
             }
             return s0.append("}").toString();
         }
-
+        if (toJsonObjSet.contains(obj)) {
+            throw new JsonConvertException("检测到类" + obj.getClass().getName() + "循环依赖");
+        }
+        toJsonObjSet.add(obj);
         Field[] fields = obj.getClass().getDeclaredFields();
         StringBuilder s0 = new StringBuilder("{");
         for (Field f : fields) {

@@ -138,4 +138,15 @@ public class WsonTest {
         data.setUsers(new User[]{user0, user1});
         return new Wson().toJson(data);
     }
+
+    @Test(expected = JsonConvertException.class)
+    public void CyclicDependence() {
+        User user = new User();
+        user.setId(1);
+        UserAttach attach = new UserAttach();
+        attach.setUser(user);
+        user.setAttach(attach);
+        String s = new Wson().toJson(user);
+        System.out.println(s);
+    }
 }

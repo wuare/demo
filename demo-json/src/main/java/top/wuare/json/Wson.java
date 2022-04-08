@@ -5,21 +5,20 @@ import top.wuare.json.parser.JsonParser;
 
 public class Wson {
 
-    private final JsonConvert convert = new JsonConvert();
 
     public Object fromJson(String text) {
         return new JsonParser().parse(text);
     }
 
     public <T> T fromJson(String text, Class<T> tClass) {
-        return convert.fromJson(new JsonParser().parse(text), tClass);
+        return new JsonConvert().fromJson(new JsonParser().parse(text), tClass);
     }
 
     public String toJson(Object obj) {
-        return convert.toJson(obj, true);
+        return new JsonConvert().toJson(obj, true);
     }
 
     public String toString(Object obj) {
-        return convert.toJson(obj, false);
+        return new JsonConvert().toJson(obj, false);
     }
 }
