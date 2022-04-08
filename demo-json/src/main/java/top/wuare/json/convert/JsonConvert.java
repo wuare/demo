@@ -156,6 +156,8 @@ public class JsonConvert {
                         System.out.println(e.getMessage());
                     } catch (ReflectiveOperationException e) {
                         System.out.println("设置值错误" + e.getMessage());
+                    } catch (JsonConvertException e) {
+                        throw new JsonConvertException("字段[" + f.getName() + "]设置值错误，" + e.getMessage());
                     }
                 }
                 return (T) instance;
