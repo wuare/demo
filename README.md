@@ -5,7 +5,6 @@ for learn something
 - [x] [Lexer](https://github.com/wuare/demo/blob/master/demo-compile/src/main/java/top/wuare/lang/lexer/Lexer.java)
 - [x] [Parser](https://github.com/wuare/demo/blob/master/demo-compile/src/main/java/top/wuare/lang/parser/Parser.java)
 - [x] [Compiler](https://github.com/wuare/demo/tree/master/demo-compile)
-- [x] [maven plugin](https://github.com/wuare/demo/tree/master/demo-maven-plugin)  
 - [x] [JSON Parser](https://github.com/wuare/demo/tree/master/demo-json)
 - [x] [Http Server](https://github.com/wuare/demo/tree/master/demo-http-server)
 - [x] [Simple Calculator](https://github.com/wuare/demo/tree/master/demo-calculator)
