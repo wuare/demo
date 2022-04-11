@@ -29,7 +29,7 @@ public enum TokenType {
     SUB("SUB", "-"),
     ASSIGN("ASSIGN", "="),
     EQUAL("EQUAL", "=="),
-    NOTEQUAL("NOTEQUAL", "!=="),
+    NOTEQUAL("NOTEQUAL", "!="),
     GE("GE", ">="),
     LE("LE", "<="),
     GT("GT", ">"),
