@@ -9,6 +9,8 @@ import top.wuare.lang.env.buildin.*;
 import top.wuare.lang.env.buildin.arr.ArrAddBuildInFunc;
 import top.wuare.lang.env.buildin.arr.ArrNewBuildInFunc;
 import top.wuare.lang.env.buildin.cmm.LenBuildInFunc;
+import top.wuare.lang.env.buildin.cmm.PrintBuildInFunc;
+import top.wuare.lang.env.buildin.cmm.TimeBuildInFunc;
 import top.wuare.lang.env.buildin.file.FileAppendBuildInFunc;
 import top.wuare.lang.env.buildin.file.FileReadBuildInFunc;
 import top.wuare.lang.env.buildin.file.FileWriteBuildInFunc;

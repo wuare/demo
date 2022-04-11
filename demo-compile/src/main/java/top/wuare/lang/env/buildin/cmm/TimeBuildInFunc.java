@@ -1,6 +1,7 @@
-package top.wuare.lang.env.buildin;
+package top.wuare.lang.env.buildin.cmm;
 
 import top.wuare.lang.env.Console;
+import top.wuare.lang.env.buildin.BuildInFunc;
 
 import java.math.BigDecimal;
 import java.util.List;
