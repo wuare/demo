@@ -18,6 +18,10 @@ var、func、if、else、while、for、break、return、true、false、nil
 * `arrAdd(?, ?)` 数组添加元素函数，第一个参数为数组，第二个参数为添加的元素
 * `arrLen(?)` 获取数组长度方法，参数为数组
 #### 语法
+注释
+```
+// 这是注释，只支持单行注释
+```
 变量声明
 ```
 var a = 1;
