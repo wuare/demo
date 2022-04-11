@@ -1,6 +1,7 @@
-package top.wuare.lang.env.buildin;
+package top.wuare.lang.env.buildin.file;
 
 import top.wuare.lang.env.Console;
+import top.wuare.lang.env.buildin.BuildInFunc;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

@@ -6,8 +6,13 @@ import top.wuare.lang.ast.statement.*;
 import top.wuare.lang.env.Console;
 import top.wuare.lang.env.EnclosedScopeSymbolTable;
 import top.wuare.lang.env.buildin.*;
-import top.wuare.lang.env.buildin.array.ArrAddBuildInFunc;
-import top.wuare.lang.env.buildin.array.ArrLenBuildInFunc;
+import top.wuare.lang.env.buildin.arr.ArrAddBuildInFunc;
+import top.wuare.lang.env.buildin.arr.ArrNewBuildInFunc;
+import top.wuare.lang.env.buildin.cmm.LenBuildInFunc;
+import top.wuare.lang.env.buildin.file.FileAppendBuildInFunc;
+import top.wuare.lang.env.buildin.file.FileReadBuildInFunc;
+import top.wuare.lang.env.buildin.file.FileWriteBuildInFunc;
+import top.wuare.lang.env.buildin.str.StrAtBuildInFunc;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
@@ -30,11 +35,16 @@ public class Interpreter {
     static {
         buildInFuncTable.put("print", new PrintBuildInFunc());
         buildInFuncTable.put("time", new TimeBuildInFunc());
+        buildInFuncTable.put("len", new LenBuildInFunc());
+
         buildInFuncTable.put("fileRead", new FileReadBuildInFunc());
         buildInFuncTable.put("fileWrite", new FileWriteBuildInFunc());
         buildInFuncTable.put("fileAppend", new FileAppendBuildInFunc());
+
         buildInFuncTable.put("arrAdd", new ArrAddBuildInFunc());
-        buildInFuncTable.put("arrLen", new ArrLenBuildInFunc());
+        buildInFuncTable.put("arrNew", new ArrNewBuildInFunc());
+
+        buildInFuncTable.put("strAt", new StrAtBuildInFunc());
     }
 
     private final Parser parser;

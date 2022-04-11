@@ -1,4 +1,4 @@
-package top.wuare.lang.env.buildin.array;
+package top.wuare.lang.env.buildin.arr;
 
 import top.wuare.lang.env.Console;
 import top.wuare.lang.env.buildin.BuildInFunc;
