@@ -2,9 +2,9 @@ package top.wuare.lang.env.buildin.arr;
 
 import top.wuare.lang.env.Console;
 import top.wuare.lang.env.buildin.BuildInFunc;
+import top.wuare.lang.type.Arr;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class ArrNewBuildInFunc implements BuildInFunc {
         if (numVal > 65535) {
             throw new RuntimeException("执行内置函数[arrNew]错误，参数不能大于65535");
         }
-        return new ArrayList<>(Arrays.asList(new Object[numVal]));
+        return new Arr<>(Arrays.asList(new Object[numVal]));
     }
 
     @Override

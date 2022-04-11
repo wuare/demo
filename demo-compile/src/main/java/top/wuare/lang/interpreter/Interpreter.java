@@ -16,6 +16,7 @@ import top.wuare.lang.env.buildin.str.StrAtBuildInFunc;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
+import top.wuare.lang.type.Arr;
 import top.wuare.lang.type.BreakVal;
 import top.wuare.lang.type.ReturnVal;
 
@@ -338,7 +339,7 @@ public class Interpreter {
     }
 
     private Object evalArrayExpr(ArrayExpr ast) {
-        List<Object> list = new ArrayList<>();
+        Arr<Object> list = new Arr<>();
         List<Expr> items = ast.getItems();
         for (Expr item : items) {
             list.add(evalExpr(item));
