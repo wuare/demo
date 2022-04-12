@@ -289,8 +289,8 @@ public class Parser {
         register(TokenType.LPAREN, new ParenParser());
 
         // infix
-        register(TokenType.LBRACKET, new ArrayIndexParser(12));
-        register(TokenType.LPAREN, new CallParser(12));
+        register(TokenType.LBRACKET, new ArrayIndexParser(14));
+        register(TokenType.LPAREN, new CallParser(14));
         register(TokenType.MUL, new BinOperatorParser(11));
         register(TokenType.DIV, new BinOperatorParser(11));
         register(TokenType.MOD, new BinOperatorParser(11));
