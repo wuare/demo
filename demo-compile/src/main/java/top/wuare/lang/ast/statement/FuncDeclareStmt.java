@@ -34,4 +34,9 @@ public class FuncDeclareStmt implements Stmt {
     public void setBlock(Block block) {
         this.block = block;
     }
+
+    @Override
+    public String toString() {
+        return "func[" + name.getText() + "]";
+    }
 }
