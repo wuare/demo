@@ -517,6 +517,7 @@ public class Interpreter {
         return evalExpr(ast.getExpr());
     }
 
+    @SuppressWarnings("unused")
     private Object evalBreakStmt(BreakStmt ast) {
         throw new BreakVal();
     }
