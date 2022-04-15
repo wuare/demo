@@ -4,13 +4,17 @@ import top.wuareb.highlight.gen.Gen;
 import top.wuareb.highlight.lexer.wa.WaLexer;
 import top.wuareb.highlight.lexer.wa.WaToken;
 import top.wuareb.highlight.lexer.wa.WaTokenType;
+import top.wuareb.highlight.util.Sets;
 
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WaGen implements Gen {
 
     private static final Logger logger = Logger.getLogger(WaGen.class.getName());
+
+    private final Set<String> buildInFuncSet = Sets.of("print", "time", "len", "arrNew", "arrAdd", "strAt");
 
     @Override
     public String gen(String text) {
@@ -44,7 +48,14 @@ public class WaGen implements Gen {
                     builder.append("<span class='hl-cmt'>").append(token.getText()).append("</span>");
                     break;
                 case IDENT:
-                    builder.append("<span class='hl-idt'>").append(token.getText()).append("</span>");
+                    String identName = token.getText();
+                    WaToken t = lexer.nextToken();
+                    if (buildInFuncSet.contains(identName) && t.getType() == WaTokenType.LPAREN) {
+                        builder.append("<span class='hl-in-func'>").append(identName).append("</span>");
+                    } else {
+                        builder.append("<span class='hl-idt'>").append(identName).append("</span>");
+                    }
+                    builder.append(t.getText());
                     break;
                 default:
                     builder.append(token.getText());

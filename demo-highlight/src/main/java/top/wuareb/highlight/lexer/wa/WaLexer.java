@@ -18,6 +18,8 @@ public class WaLexer {
         RESERVED_KEYWORDS.put(WaTokenType.IF.getText(), WaTokenType.IF);
         RESERVED_KEYWORDS.put(WaTokenType.WHILE.getText(), WaTokenType.WHILE);
         RESERVED_KEYWORDS.put(WaTokenType.FOR.getText(), WaTokenType.FOR);
+        RESERVED_KEYWORDS.put(WaTokenType.FOREACH.getText(), WaTokenType.FOREACH);
+        RESERVED_KEYWORDS.put(WaTokenType.IN.getText(), WaTokenType.IN);
         RESERVED_KEYWORDS.put(WaTokenType.BREAK.getText(), WaTokenType.BREAK);
         RESERVED_KEYWORDS.put(WaTokenType.RETURN.getText(), WaTokenType.RETURN);
         RESERVED_KEYWORDS.put(WaTokenType.ELSE.getText(), WaTokenType.ELSE);

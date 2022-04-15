@@ -10,6 +10,8 @@ public enum WaTokenType {
     BREAK("BREAK", "break"),
     RETURN("RETURN", "return"),
     ELSE("ELSE", "else"),
+    FOREACH("FOREACH", "foreach"),
+    IN("IN", "in"),
 
     TRUE("TRUE", "true"),
     FALSE("FALSE", "false"),
