@@ -36,6 +36,8 @@ public class WaGen implements Gen {
                 case IF:
                 case WHILE:
                 case FOR:
+                case FOREACH:
+                case IN:
                 case BREAK:
                 case RETURN:
                 case ELSE:
