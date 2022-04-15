@@ -274,4 +274,18 @@ public class InterpreterTest {
         interpreter.eval();
         System.out.println(interpreter.getConsole().toString());
     }
+
+    @Test
+    public void testForEachBreak() {
+        String code = "var a = 2;\n" +
+                "foreach(i in a) {\n" +
+                "    print(i);     " +
+                "    if (i == 0) {\n" +
+                "        break;\n" +
+                "    }\n" +
+                "}";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
 }

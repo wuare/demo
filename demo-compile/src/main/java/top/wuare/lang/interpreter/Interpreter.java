@@ -549,7 +549,7 @@ public class Interpreter {
         for (int i = 0; i < intVal; i++) {
             try {
                 enterNewScopeSymbolTable();
-                scopeSymbolTable.put(ast.getToken().getText(), i);
+                scopeSymbolTable.put(ast.getToken().getText(), new BigDecimal(i));
                 evalBlock(ast.getBlock());
             } finally {
                 exitCurScopeSymbolTable();
