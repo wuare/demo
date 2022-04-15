@@ -242,4 +242,36 @@ public class InterpreterTest {
         interpreter.eval();
         System.out.println(interpreter.getConsole().toString());
     }
+
+    @Test
+    public void testForEachNumber() {
+        String code = "foreach(a in 1){print(a);}";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
+    @Test
+    public void testForEachString() {
+        String code = "foreach(a in \"你好\"){print(a);}";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
+    @Test
+    public void testForEachArray() {
+        String code = "foreach(a in [1,2]){print(a);}";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
+
+    @Test
+    public void testForEachArrayArray() {
+        String code = "foreach(a in [[1,2], [3,4]]){print(a);}";
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.eval();
+        System.out.println(interpreter.getConsole().toString());
+    }
 }

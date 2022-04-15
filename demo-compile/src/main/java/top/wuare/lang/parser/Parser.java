@@ -61,6 +61,8 @@ public class Parser {
                 return parseWhileStmt();
             case FOR:
                 return parseForStmt();
+            case FOREACH:
+                return parseForEachStmt();
             case RETURN:
                 return parseReturnStmt();
             case BREAK:
@@ -185,6 +187,26 @@ public class Parser {
         eat(TokenType.LBRACE);
         stmt.setBlock(parseBlock());
         eat(TokenType.RBRACE);
+        return stmt;
+    }
+
+    // ForeachStmt: FOREACH '(' Ident IN Expr ')' '{' Block '}'
+    private Stmt parseForEachStmt() {
+        ForEachStmt stmt = new ForEachStmt();
+        eat(TokenType.FOREACH);
+        eat(TokenType.LPAREN);
+        Token t = this.curToken;
+        eat(TokenType.IDENT);
+        eat(TokenType.IN);
+        Expr expr = parseExp(0);
+        eat(TokenType.RPAREN);
+        eat(TokenType.LBRACE);
+        Block block = parseBlock();
+        eat(TokenType.RBRACE);
+
+        stmt.setToken(t);
+        stmt.setExpr(expr);
+        stmt.setBlock(block);
         return stmt;
     }
 

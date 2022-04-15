@@ -10,6 +10,8 @@ public enum TokenType {
     ELSE("ELSE", "else"),
     BREAK("BREAK", "break"),
     FOR("FOR", "for"),
+    FOREACH("FOREACH", "foreach"),
+    IN("IN", "in"),
 
     NIL("NIL", "nil"),
 

@@ -406,6 +406,9 @@ public class Interpreter {
         if (ast instanceof ForStmt) {
             return evalForStmt((ForStmt) ast);
         }
+        if (ast instanceof ForEachStmt) {
+            return evalForEachStmt((ForEachStmt) ast);
+        }
         if (ast instanceof ReturnStmt) {
             return evalReturnStmt((ReturnStmt) ast);
         }
@@ -501,6 +504,69 @@ public class Interpreter {
             // pass
         } finally {
             exitCurScopeSymbolTable();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object evalForEachStmt(ForEachStmt ast) {
+        try {
+            Object val = evalExpr(ast.getExpr());
+            if (val instanceof String) {
+                return evalForEachStringStmt(ast, (String) val);
+            }
+            if (val instanceof BigDecimal) {
+                return evalForEachNumberStmt(ast, (BigDecimal) val);
+            }
+            if (val instanceof List) {
+                return evalForEachListStmt(ast, (List<Object>) val);
+            }
+            throw new RuntimeException("执行foreach语句错误，主体必须是字符串、数字或数组类型，在第" + ast.getToken().getLine() + "行");
+        } catch (BreakVal ignored) {
+            // pass
+        }
+        return null;
+    }
+
+    private Object evalForEachStringStmt(ForEachStmt ast, String val) {
+        for (int i = 0; i < val.length(); i++) {
+            try {
+                enterNewScopeSymbolTable();
+                scopeSymbolTable.put(ast.getToken().getText(), String.valueOf(val.charAt(i)));
+                evalBlock(ast.getBlock());
+            } finally {
+                exitCurScopeSymbolTable();
+            }
+        }
+        return null;
+    }
+
+    private Object evalForEachNumberStmt(ForEachStmt ast, BigDecimal val) {
+        int intVal = val.intValue();
+        if (intVal < 0) {
+            throw new RuntimeException("执行foreach语句错误，数值不能小于0，在第" + ast.getToken().getLine() + "行");
+        }
+        for (int i = 0; i < intVal; i++) {
+            try {
+                enterNewScopeSymbolTable();
+                scopeSymbolTable.put(ast.getToken().getText(), i);
+                evalBlock(ast.getBlock());
+            } finally {
+                exitCurScopeSymbolTable();
+            }
+        }
+        return null;
+    }
+
+    private Object evalForEachListStmt(ForEachStmt ast, List<Object> val) {
+        for (Object e : val) {
+            try {
+                enterNewScopeSymbolTable();
+                scopeSymbolTable.put(ast.getToken().getText(), e);
+                evalBlock(ast.getBlock());
+            } finally {
+                exitCurScopeSymbolTable();
+            }
         }
         return null;
     }

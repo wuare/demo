@@ -101,4 +101,12 @@ public class ParserTest {
         AST ast = parser.parse();
         System.out.println(ast);
     }
+
+    @Test
+    public void testForEach() {
+        String code = "foreach(a in [1,2]){}";
+        Parser parser = new Parser(code);
+        AST ast = parser.parse();
+        System.out.println(ast);
+    }
 }
