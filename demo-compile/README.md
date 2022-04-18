@@ -4,7 +4,7 @@
 实现了一个简单的解释性编程语言  
 ### 语法规则
 #### 关键字
-var、func、if、else、while、for、break、return、true、false、nil
+var、func、if、else、while、for、foreach、break、return、true、false、nil
 ### 类型
 * `字符串` 由英文双引号引起来的文本，如："abc"
 * `数字` 数字类型，如：123
@@ -13,7 +13,7 @@ var、func、if、else、while、for、break、return、true、false、nil
 * `false` 布尔类型，表示假
 * `nil` 空类型
 #### 内置函数
-* `print()` 打印函数，参数个数不固定
+* `print(...)` 打印函数，参数个数不固定
 * `time()` 获取当前毫秒数
 * `len(?)` 获取数组或字符串长度方法，参数为数组或字符串
 * `arrAdd(?, ?)` 数组添加元素函数，第一个参数为数组，第二个参数为添加的元素
@@ -53,6 +53,12 @@ while (true) {
 for语句
 ```
 for (var i = 0; i < 2; i = i + 1) {
+    // do something
+}
+```
+foreach语句
+```
+foreach (x in 3) {
     // do something
 }
 ```
