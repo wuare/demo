@@ -1,7 +1,7 @@
-package top.wuare.lang.env.buildin.file;
+package top.wuare.lang.env.builtin.file;
 
 import top.wuare.lang.env.Console;
-import top.wuare.lang.env.buildin.BuildInFunc;
+import top.wuare.lang.env.builtin.BuiltInFunc;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,9 +10,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class FileWriteBuildInFunc implements BuildInFunc {
+public class FileWriteBuiltInFunc implements BuiltInFunc {
 
-    private final Logger logger = Logger.getLogger(FileWriteBuildInFunc.class.getName());
+    private final Logger logger = Logger.getLogger(FileWriteBuiltInFunc.class.getName());
 
     @Override
     public Object execute(List<Object> args, Console console) {

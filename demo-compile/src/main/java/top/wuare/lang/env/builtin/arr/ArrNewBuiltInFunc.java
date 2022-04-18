@@ -1,14 +1,14 @@
-package top.wuare.lang.env.buildin.arr;
+package top.wuare.lang.env.builtin.arr;
 
 import top.wuare.lang.env.Console;
-import top.wuare.lang.env.buildin.BuildInFunc;
+import top.wuare.lang.env.builtin.BuiltInFunc;
 import top.wuare.lang.type.Arr;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-public class ArrNewBuildInFunc implements BuildInFunc {
+public class ArrNewBuiltInFunc implements BuiltInFunc {
 
     @Override
     public Object execute(List<Object> args, Console console) {

@@ -5,16 +5,16 @@ import top.wuare.lang.ast.expr.*;
 import top.wuare.lang.ast.statement.*;
 import top.wuare.lang.env.Console;
 import top.wuare.lang.env.EnclosedScopeSymbolTable;
-import top.wuare.lang.env.buildin.*;
-import top.wuare.lang.env.buildin.arr.ArrAddBuildInFunc;
-import top.wuare.lang.env.buildin.arr.ArrNewBuildInFunc;
-import top.wuare.lang.env.buildin.cmm.LenBuildInFunc;
-import top.wuare.lang.env.buildin.cmm.PrintBuildInFunc;
-import top.wuare.lang.env.buildin.cmm.TimeBuildInFunc;
-import top.wuare.lang.env.buildin.file.FileAppendBuildInFunc;
-import top.wuare.lang.env.buildin.file.FileReadBuildInFunc;
-import top.wuare.lang.env.buildin.file.FileWriteBuildInFunc;
-import top.wuare.lang.env.buildin.str.StrAtBuildInFunc;
+import top.wuare.lang.env.builtin.*;
+import top.wuare.lang.env.builtin.arr.ArrAddBuiltInFunc;
+import top.wuare.lang.env.builtin.arr.ArrNewBuiltInFunc;
+import top.wuare.lang.env.builtin.cmm.LenBuiltInFunc;
+import top.wuare.lang.env.builtin.cmm.PrintBuiltInFunc;
+import top.wuare.lang.env.builtin.cmm.TimeBuiltInFunc;
+import top.wuare.lang.env.builtin.file.FileAppendBuiltInFunc;
+import top.wuare.lang.env.builtin.file.FileReadBuiltInFunc;
+import top.wuare.lang.env.builtin.file.FileWriteBuiltInFunc;
+import top.wuare.lang.env.builtin.str.StrAtBuiltInFunc;
 import top.wuare.lang.lexer.Token;
 import top.wuare.lang.lexer.TokenType;
 import top.wuare.lang.parser.Parser;
@@ -32,22 +32,22 @@ import java.util.Map;
 public class Interpreter {
 
     private EnclosedScopeSymbolTable scopeSymbolTable = new EnclosedScopeSymbolTable();
-    private static final Map<String, BuildInFunc> buildInFuncTable = new HashMap<>();
+    private static final Map<String, BuiltInFunc> buildInFuncTable = new HashMap<>();
     private final Console console = new Console();
 
     static {
-        buildInFuncTable.put("print", new PrintBuildInFunc());
-        buildInFuncTable.put("time", new TimeBuildInFunc());
-        buildInFuncTable.put("len", new LenBuildInFunc());
+        buildInFuncTable.put("print", new PrintBuiltInFunc());
+        buildInFuncTable.put("time", new TimeBuiltInFunc());
+        buildInFuncTable.put("len", new LenBuiltInFunc());
 
-        buildInFuncTable.put("fileRead", new FileReadBuildInFunc());
-        buildInFuncTable.put("fileWrite", new FileWriteBuildInFunc());
-        buildInFuncTable.put("fileAppend", new FileAppendBuildInFunc());
+        buildInFuncTable.put("fileRead", new FileReadBuiltInFunc());
+        buildInFuncTable.put("fileWrite", new FileWriteBuiltInFunc());
+        buildInFuncTable.put("fileAppend", new FileAppendBuiltInFunc());
 
-        buildInFuncTable.put("arrAdd", new ArrAddBuildInFunc());
-        buildInFuncTable.put("arrNew", new ArrNewBuildInFunc());
+        buildInFuncTable.put("arrAdd", new ArrAddBuiltInFunc());
+        buildInFuncTable.put("arrNew", new ArrNewBuiltInFunc());
 
-        buildInFuncTable.put("strAt", new StrAtBuildInFunc());
+        buildInFuncTable.put("strAt", new StrAtBuiltInFunc());
     }
 
     private final Parser parser;
@@ -143,7 +143,7 @@ public class Interpreter {
     private Object evalCallExpr(CallExpr ast) {
         enterNewScopeSymbolTable();
         Token nameToken = ast.getName();
-        BuildInFunc buildInFunc = buildInFuncTable.get(nameToken.getText());
+        BuiltInFunc buildInFunc = buildInFuncTable.get(nameToken.getText());
         if (buildInFunc != null) {
             int argSize = buildInFunc.args();
             if (argSize != -1 && argSize != ast.getArgs().size()) {

@@ -1,11 +1,11 @@
-package top.wuare.lang.env.buildin.arr;
+package top.wuare.lang.env.builtin.arr;
 
 import top.wuare.lang.env.Console;
-import top.wuare.lang.env.buildin.BuildInFunc;
+import top.wuare.lang.env.builtin.BuiltInFunc;
 
 import java.util.List;
 
-public class ArrAddBuildInFunc implements BuildInFunc {
+public class ArrAddBuiltInFunc implements BuiltInFunc {
 
     @SuppressWarnings("unchecked")
     @Override

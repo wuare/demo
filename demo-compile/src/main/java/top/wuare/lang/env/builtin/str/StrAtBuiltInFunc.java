@@ -1,12 +1,12 @@
-package top.wuare.lang.env.buildin.str;
+package top.wuare.lang.env.builtin.str;
 
 import top.wuare.lang.env.Console;
-import top.wuare.lang.env.buildin.BuildInFunc;
+import top.wuare.lang.env.builtin.BuiltInFunc;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class StrAtBuildInFunc implements BuildInFunc {
+public class StrAtBuiltInFunc implements BuiltInFunc {
 
     @Override
     public Object execute(List<Object> args, Console console) {
