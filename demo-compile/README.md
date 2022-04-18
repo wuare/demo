@@ -4,7 +4,7 @@
 实现了一个简单的解释性编程语言  
 ### 语法规则
 #### 关键字
-var、func、if、else、while、for、foreach、break、return、true、false、nil
+var、func、if、else、while、for、foreach、in、break、return、true、false、nil
 ### 类型
 * `字符串` 由英文双引号引起来的文本，如："abc"
 * `数字` 数字类型，如：123
