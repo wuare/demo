@@ -51,7 +51,7 @@ public class WaGen implements Gen {
                     break;
                 case IDENT:
                     String identName = token.getText();
-                    WaToken t = lexer.nextToken();
+                    WaToken t = lexer.peek();
                     if (t.getType() == WaTokenType.LPAREN) {
                         if (buildInFuncSet.contains(identName)) {
                             builder.append("<span class='hl-in-func'>").append(identName).append("</span>");
@@ -61,9 +61,9 @@ public class WaGen implements Gen {
                     } else {
                         builder.append("<span class='hl-idt'>").append(identName).append("</span>");
                     }
-                    builder.append(t.getText());
                     break;
                 default:
+                    // builder.append("<span class='hl-txt'>").append(token.getText()).append("</span>");
                     builder.append(token.getText());
             }
         }

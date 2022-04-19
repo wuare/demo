@@ -9,6 +9,7 @@ public class WaLexer {
     private int ch;
     private int line = 1;
     private int column;
+    private WaToken token;
 
     private static final Map<String, WaTokenType> RESERVED_KEYWORDS = new HashMap<>();
 
@@ -38,7 +39,19 @@ public class WaLexer {
         advance();
     }
 
+    public WaToken peek() {
+        if (token == null) {
+            token = nextToken();
+        }
+        return token;
+    }
+
     public WaToken nextToken() {
+        if (token != null) {
+            WaToken t = token;
+            token = null;
+            return t;
+        }
         if (Character.isWhitespace(ch)) {
             WaToken token = new WaToken(WaTokenType.WHITE_SPACE, String.valueOf((char) ch));
             advance();
