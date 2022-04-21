@@ -507,7 +507,7 @@ public class Lexer {
 //            }
 //        }
         StringBuilder builder = new StringBuilder();
-        while (Character.isDigit(ch)) {
+        while (Character.isDigit(ch) || ch == '.') {
             builder.append((char) ch);
             advance();
         }
