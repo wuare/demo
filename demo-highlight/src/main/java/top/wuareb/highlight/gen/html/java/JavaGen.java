@@ -27,11 +27,12 @@ public class JavaGen implements Gen {
             // #698652
             if (token.getType() == Token.CHAR_LITERAL) {
                 String charText;
-                if (token.getValue().charAt(0) == '\n') {
+                char tmp = token.getValue().length() > 0 ? token.getValue().charAt(0) : ' ';
+                if (tmp == '\n') {
                     charText = "\\n";
-                } else if (token.getValue().charAt(0) == '\r') {
+                } else if (tmp == '\r') {
                     charText = "\\r";
-                } else if (token.getValue().charAt(0) == '\t') {
+                } else if (tmp == '\t') {
                     charText = "\\t";
                 } else {
                     charText = token.getValue();

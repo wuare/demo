@@ -333,6 +333,12 @@ public class Lexer {
         StringBuilder builder = new StringBuilder();
         Token token = new Token(line, column);
         advance();
+        if (ch == '\'') {
+            token.setType(Token.CHAR_LITERAL);
+            token.setValue(builder.toString());
+            advance();
+            return token;
+        }
         if (ch == '\r' || ch == '\n') {
             throw new LexerException("syntax error at line: " + line + ", column " + column + ", unexpect character: '\\r' or '\\n'");
         }
