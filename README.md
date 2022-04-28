@@ -8,7 +8,6 @@ for learn something
 - [x] [JSON Parser](https://github.com/wuare/demo/tree/master/demo-json)
 - [x] [Http Server](https://github.com/wuare/demo/tree/master/demo-http-server)
 - [x] [Simple Calculator](https://github.com/wuare/demo/tree/master/demo-calculator)
-- [ ] Cache
 
 ### 说明
 本仓库为一系列简单的Java库，包括实现了
