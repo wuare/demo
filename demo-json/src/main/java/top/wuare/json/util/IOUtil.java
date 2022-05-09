@@ -9,17 +9,17 @@ package top.wuare.json.util;
 public class IOUtil {
 
     public static void close(AutoCloseable... acs) {
-        if (acs != null) {
-            for (AutoCloseable ac : acs) {
-                try {
-                    if (ac != null) {
-                        ac.close();
-                    }
-                } catch (Exception ignored) {
+        if (acs == null) {
+            return;
+        }
+        for (AutoCloseable ac : acs) {
+            try {
+                if (ac != null) {
+                    ac.close();
                 }
+            } catch (Exception ignored) {
             }
         }
-
     }
 
 }
