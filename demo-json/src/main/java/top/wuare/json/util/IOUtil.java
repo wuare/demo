@@ -1,8 +1,5 @@
 package top.wuare.json.util;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 /**
  * util for io
  *
@@ -11,13 +8,18 @@ import java.io.IOException;
  */
 public class IOUtil {
 
-    public static void close(Closeable closeable) {
-        try {
-            if (closeable != null) {
-                closeable.close();
+    public static void close(AutoCloseable... acs) {
+        if (acs != null) {
+            for (AutoCloseable ac : acs) {
+                try {
+                    if (ac != null) {
+                        ac.close();
+                    }
+                } catch (Exception ignored) {
+                }
             }
-        } catch (IOException ignored) {
         }
+
     }
 
 }
