@@ -32,22 +32,22 @@ import java.util.Map;
 public class Interpreter {
 
     private EnclosedScopeSymbolTable scopeSymbolTable = new EnclosedScopeSymbolTable();
-    private static final Map<String, BuiltInFunc> buildInFuncTable = new HashMap<>();
+    private static final Map<String, BuiltInFunc> builtInFuncTable = new HashMap<>();
     private final Console console = new Console();
 
     static {
-        buildInFuncTable.put("print", new PrintBuiltInFunc());
-        buildInFuncTable.put("time", new TimeBuiltInFunc());
-        buildInFuncTable.put("len", new LenBuiltInFunc());
+        builtInFuncTable.put("print", new PrintBuiltInFunc());
+        builtInFuncTable.put("time", new TimeBuiltInFunc());
+        builtInFuncTable.put("len", new LenBuiltInFunc());
 
-        buildInFuncTable.put("fileRead", new FileReadBuiltInFunc());
-        buildInFuncTable.put("fileWrite", new FileWriteBuiltInFunc());
-        buildInFuncTable.put("fileAppend", new FileAppendBuiltInFunc());
+        builtInFuncTable.put("fileRead", new FileReadBuiltInFunc());
+        builtInFuncTable.put("fileWrite", new FileWriteBuiltInFunc());
+        builtInFuncTable.put("fileAppend", new FileAppendBuiltInFunc());
 
-        buildInFuncTable.put("arrAdd", new ArrAddBuiltInFunc());
-        buildInFuncTable.put("arrNew", new ArrNewBuiltInFunc());
+        builtInFuncTable.put("arrAdd", new ArrAddBuiltInFunc());
+        builtInFuncTable.put("arrNew", new ArrNewBuiltInFunc());
 
-        buildInFuncTable.put("strAt", new StrAtBuiltInFunc());
+        builtInFuncTable.put("strAt", new StrAtBuiltInFunc());
     }
 
     private final Parser parser;
@@ -143,9 +143,9 @@ public class Interpreter {
     private Object evalCallExpr(CallExpr ast) {
         enterNewScopeSymbolTable();
         Token nameToken = ast.getName();
-        BuiltInFunc buildInFunc = buildInFuncTable.get(nameToken.getText());
-        if (buildInFunc != null) {
-            int argSize = buildInFunc.args();
+        BuiltInFunc builtInFunc = builtInFuncTable.get(nameToken.getText());
+        if (builtInFunc != null) {
+            int argSize = builtInFunc.args();
             if (argSize != -1 && argSize != ast.getArgs().size()) {
                 throw new RuntimeException("函数[" + nameToken.getText() + "]参数个数不匹配，应该传入" + argSize + "个参数");
             }
@@ -153,9 +153,9 @@ public class Interpreter {
             for (Expr expr : ast.getArgs()) {
                 args.add(eval(expr));
             }
-            Object buildInRes = buildInFunc.execute(args, console);
+            Object builtInRes = builtInFunc.execute(args, console);
             exitCurScopeSymbolTable();
-            return buildInRes;
+            return builtInRes;
         }
 
         Object funcDeclare = scopeSymbolTable.get(nameToken.getText());
@@ -439,7 +439,7 @@ public class Interpreter {
 
     private Object evalFuncDeclareStmt(FuncDeclareStmt ast) {
         Token token = ast.getName();
-        if (buildInFuncTable.containsKey(token.getText())) {
+        if (builtInFuncTable.containsKey(token.getText())) {
             throw new RuntimeException("函数名称[" + token.getText() + "]是内置函数，不能进行定义");
         }
         if (scopeSymbolTable.containsKey(token.getText())) {
