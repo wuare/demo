@@ -94,4 +94,8 @@ public class HttpRequest {
     public String getUrl() {
         return ((HttpRequestLine) httpMessage.getHttpLine()).getUrl();
     }
+
+    public String getQueryParam() {
+        return ((HttpRequestLine) httpMessage.getHttpLine()).getQueryParam();
+    }
 }
