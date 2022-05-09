@@ -467,8 +467,11 @@ public class Interpreter {
     private Object evalWhileStmt(WhileStmt ast) {
         Object exprVal;
         while ((exprVal = evalExpr(ast.getExpr())) instanceof Boolean && (boolean) exprVal) {
+            enterNewScopeSymbolTable();
             try {
-                enterNewScopeSymbolTable();
+                if (Thread.interrupted()) {
+                    throw new RuntimeException("Thread interrupted");
+                }
                 evalBlock(ast.getBlock());
             } catch (BreakVal ignored) {
                 break;
@@ -488,8 +491,11 @@ public class Interpreter {
             }
             Expr expr = ast.getExpr();
             while (evalForExpr(expr)) {
+                enterNewScopeSymbolTable();
                 try {
-                    enterNewScopeSymbolTable();
+                    if (Thread.interrupted()) {
+                        throw new RuntimeException("Thread interrupted");
+                    }
                     evalBlock(ast.getBlock());
                 } finally {
                     exitCurScopeSymbolTable();
