@@ -2,16 +2,28 @@ package top.wuareb.highlight.lexer.json;
 
 public class JsonToken {
     
-    private int type;
+    private JsonTokenType type;
     private String value;
     private int line;
     private int column;
 
-    public int getType() {
+    public JsonToken(JsonTokenType type, String value, int line, int column) {
+        this.type = type;
+        this.value = value;
+        this.line = line;
+        this.column = column;
+    }
+
+    public JsonToken(int line, int column) {
+        this.line = line;
+        this.column = column;
+    }
+
+    public JsonTokenType getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(JsonTokenType type) {
         this.type = type;
     }
 
