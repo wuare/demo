@@ -68,7 +68,7 @@ public class JsonLexer {
                 advance();
                 return t4;
             case ',':
-                JsonToken t5 = new JsonToken(JsonTokenType.COMMA, ":", line, col);
+                JsonToken t5 = new JsonToken(JsonTokenType.COMMA, ",", line, col);
                 advance();
                 return t5;
             case '"':
