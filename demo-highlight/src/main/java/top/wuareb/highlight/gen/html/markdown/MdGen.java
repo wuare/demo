@@ -18,7 +18,6 @@ public class MdGen implements Gen {
         StringBuilder builder = new StringBuilder();
         MdToken token;
         while ((token = lexer.nextToken()).getType() != MdTokenType.EOF) {
-            System.out.println(token);
             logger.log(Level.FINE, token.toString());
             switch (token.getType()) {
                 case H1:
