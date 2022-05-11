@@ -1,8 +1,8 @@
 package top.wuareb.highlight;
 
 import org.junit.Test;
-import top.wuareb.highlight.lexer.java.Lexer;
-import top.wuareb.highlight.lexer.java.Token;
+import top.wuareb.highlight.lexer.java.JavaLexer;
+import top.wuareb.highlight.lexer.java.JavaToken;
 
 import java.io.*;
 
@@ -61,22 +61,22 @@ public class TestLexer {
     }
 
     private void genHtml(String text) {
-        Lexer lexer = new Lexer(text);
+        JavaLexer lexer = new JavaLexer(text);
         StringBuilder builder = new StringBuilder();
         builder.append("<!DOCTYPE html>\n");
         builder.append("<head></head>\n");
         builder.append("<body>\n");
         builder.append("<pre style=\"background-color: #2B2B2B; color: white; padding: 20px 20px;\">\n");
-        Token token;
+        JavaToken token;
         while ((token = lexer.nextToken()) != null) {
             // #698652
-            if (token.getType() == Token.STRING_LITERAL) {
+            if (token.getType() == JavaToken.STRING_LITERAL) {
                 String newText = "<span style=\"color: #698652;\">\"" + token.getValue() + "\"</span>";
                 builder.append(newText);
                 continue;
             }
             // #698652
-            if (token.getType() == Token.CHAR_LITERAL) {
+            if (token.getType() == JavaToken.CHAR_LITERAL) {
                 String charText;
                 if (token.getValue().charAt(0) == '\n') {
                     charText = "\\ n";
@@ -90,37 +90,37 @@ public class TestLexer {
                 continue;
             }
             // #698652
-            if (token.getType() == Token.COMMENT) {
+            if (token.getType() == JavaToken.COMMENT) {
                 String newText = "<span style=\"color: #698652;\">" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #808080
-            if (token.getType() == Token.LINE_COMMENT) {
+            if (token.getType() == JavaToken.LINE_COMMENT) {
                 String newText = "<span style=\"color: #808080;\">" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #CC7832
-            if (token.getType() == Token.KEY_WORD) {
+            if (token.getType() == JavaToken.KEY_WORD) {
                 String newText = "<span style=\"color: #CC7832;\">" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #5596BA
-            if (token.getType() == Token.NUMBER) {
+            if (token.getType() == JavaToken.NUMBER) {
                 String newText = "<span style=\"color: #5596BA;\">" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #FFEF28
-            if (token.getType() == Token.LBRACE || token.getType() == Token.RBRACE) {
+            if (token.getType() == JavaToken.LBRACE || token.getType() == JavaToken.RBRACE) {
                 String newText = "<span style=\"color: #FFEF28;\">" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;
             }
             // #BBB529
-            if (token.getType() == Token.AT) {
+            if (token.getType() == JavaToken.AT) {
                 String newText = "<span style=\"color: #BBB529;\">" + token.getValue() + "</span>";
                 builder.append(newText);
                 continue;

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Set;
 
-public class Lexer {
+public class JavaLexer {
     private int ch;
     private int line = 1;
     private int column;
@@ -20,24 +20,24 @@ public class Lexer {
             "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws",
             "transient", "try", "void", "volatile", "while", "null", "true", "false");
 
-    public Lexer(String text) {
+    public JavaLexer(String text) {
         reader = new StringReader(text);
         advance();
     }
 
-    public Token nextToken() {
+    public JavaToken nextToken() {
         if (ch == -1) {
             return null;
         }
         // skip while space
         if (Character.isWhitespace(ch)) {
             StringBuilder spaceBuilder = new StringBuilder();
-            Token spaceToken = new Token(line, column);
+            JavaToken spaceToken = new JavaToken(line, column);
             while (Character.isWhitespace(ch)) {
                 spaceBuilder.append((char) ch);
                 advance();
             }
-            spaceToken.setType(Token.WHITE_SPACE);
+            spaceToken.setType(JavaToken.WHITE_SPACE);
             spaceToken.setValue(spaceBuilder.toString());
             // 特定场景，高亮需保存空白符，如果是编译构造语法树，空白符不保留
             return spaceToken;
@@ -61,50 +61,50 @@ public class Lexer {
             case '/':
                 return comment();
             case '(':
-                Token token3 = new Token(Token.LPAREN, "(", line, column);
+                JavaToken token3 = new JavaToken(JavaToken.LPAREN, "(", line, column);
                 advance();
                 return token3;
             case ')':
-                Token token4 = new Token(Token.RPAREN, ")", line, column);
+                JavaToken token4 = new JavaToken(JavaToken.RPAREN, ")", line, column);
                 advance();
                 return token4;
             case '{':
-                Token token5 = new Token(Token.LBRACE, "{", line, column);
+                JavaToken token5 = new JavaToken(JavaToken.LBRACE, "{", line, column);
                 advance();
                 return token5;
             case '}':
-                Token token6 = new Token(Token.RBRACE, "}", line, column);
+                JavaToken token6 = new JavaToken(JavaToken.RBRACE, "}", line, column);
                 advance();
                 return token6;
             case '[':
-                Token token7 = new Token(Token.LBRACKET, "[", line, column);
+                JavaToken token7 = new JavaToken(JavaToken.LBRACKET, "[", line, column);
                 advance();
                 return token7;
             case ']':
-                Token token8 = new Token(Token.RBRACKET, "]", line, column);
+                JavaToken token8 = new JavaToken(JavaToken.RBRACKET, "]", line, column);
                 advance();
                 return token8;
             case ';':
-                Token token9 = new Token(Token.SEMI, ";", line, column);
+                JavaToken token9 = new JavaToken(JavaToken.SEMI, ";", line, column);
                 advance();
                 return token9;
             case ',':
-                Token token10 = new Token(Token.COMMA, ",", line, column);
+                JavaToken token10 = new JavaToken(JavaToken.COMMA, ",", line, column);
                 advance();
                 return token10;
             case '.':
-                Token token11 = new Token(Token.DOT, ".", line, column);
+                JavaToken token11 = new JavaToken(JavaToken.DOT, ".", line, column);
                 advance();
                 return token11;
             case '=':
                 // '=', '=='
-                return assign_2('=', Token.ASSIGN, Token.EQUAL);
+                return assign_2('=', JavaToken.ASSIGN, JavaToken.EQUAL);
             case '>':
-                Token token12 = new Token(line, column);
+                JavaToken token12 = new JavaToken(line, column);
                 advance();
                 if (ch == '=') {
                     advance();
-                    token12.setType(Token.GE);
+                    token12.setType(JavaToken.GE);
                     token12.setValue(">=");
                     return token12;
                 }
@@ -114,33 +114,33 @@ public class Lexer {
                         advance();
                         if (ch == '=') {
                             advance();
-                            token12.setType(Token.U_R_SHIFT_ASSIGN);
+                            token12.setType(JavaToken.U_R_SHIFT_ASSIGN);
                             token12.setValue(">>>=");
                             return token12;
                         }
-                        token12.setType(Token.U_R_SHIFT);
+                        token12.setType(JavaToken.U_R_SHIFT);
                         token12.setValue(">>>");
                         return token12;
                     }
                     if (ch == '=') {
                         advance();
-                        token12.setType(Token.R_SHIFT_ASSIGN);
+                        token12.setType(JavaToken.R_SHIFT_ASSIGN);
                         token12.setValue(">>=");
                         return token12;
                     }
-                    token12.setType(Token.R_SHIFT);
+                    token12.setType(JavaToken.R_SHIFT);
                     token12.setValue(">>");
                     return token12;
                 }
-                token12.setType(Token.GT);
+                token12.setType(JavaToken.GT);
                 token12.setValue(">");
                 return token12;
             case '<':
-                Token token13 = new Token(line, column);
+                JavaToken token13 = new JavaToken(line, column);
                 advance();
                 if (ch == '=') {
                     advance();
-                    token13.setType(Token.LE);
+                    token13.setType(JavaToken.LE);
                     token13.setValue("<=");
                     return token13;
                 }
@@ -148,126 +148,126 @@ public class Lexer {
                     advance();
                     if (ch == '=') {
                         advance();
-                        token13.setType(Token.L_SHIFT_ASSIGN);
+                        token13.setType(JavaToken.L_SHIFT_ASSIGN);
                         token13.setValue("<<=");
                         return token13;
                     }
-                    token13.setType(Token.L_SHIFT);
+                    token13.setType(JavaToken.L_SHIFT);
                     token13.setValue("<<");
                     return token13;
                 }
-                token13.setType(Token.LT);
+                token13.setType(JavaToken.LT);
                 token13.setValue("<");
                 return token13;
             case '!':
-                Token token14 = new Token(line, column);
+                JavaToken token14 = new JavaToken(line, column);
                 advance();
                 if (ch == '=') {
                     advance();
-                    token14.setType(Token.NOTEQUAL);
+                    token14.setType(JavaToken.NOTEQUAL);
                     token14.setValue("!=");
                     return token14;
                 }
-                token14.setType(Token.BANG);
+                token14.setType(JavaToken.BANG);
                 token14.setValue("!");
                 return token14;
             case '~':
-                Token token15 = new Token(Token.TILDE, "~", line, column);
+                JavaToken token15 = new JavaToken(JavaToken.TILDE, "~", line, column);
                 advance();
                 return token15;
             case '?':
-                Token token16 = new Token(Token.QUESTION, "?", line, column);
+                JavaToken token16 = new JavaToken(JavaToken.QUESTION, "?", line, column);
                 advance();
                 return token16;
             case ':':
-                Token token17 = new Token(Token.COLON, ":", line, column);
+                JavaToken token17 = new JavaToken(JavaToken.COLON, ":", line, column);
                 advance();
                 return token17;
             case '&':
-                Token token18 = new Token(line, column);
+                JavaToken token18 = new JavaToken(line, column);
                 advance();
                 if (ch == '&') {
                     advance();
-                    token18.setType(Token.AND);
+                    token18.setType(JavaToken.AND);
                     token18.setValue("&&");
                     return token18;
                 }
                 if (ch == '=') {
                     advance();
-                    token18.setType(Token.AND_ASSIGN);
+                    token18.setType(JavaToken.AND_ASSIGN);
                     token18.setValue("&=");
                     return token18;
                 }
-                token18.setType(Token.BIT_AND);
+                token18.setType(JavaToken.BIT_AND);
                 token18.setValue("&");
                 return token18;
             case '|':
-                Token token19 = new Token(line, column);
+                JavaToken token19 = new JavaToken(line, column);
                 advance();
                 if (ch == '|') {
                     advance();
-                    token19.setType(Token.OR);
+                    token19.setType(JavaToken.OR);
                     token19.setValue("||");
                     return token19;
                 }
                 if (ch == '=') {
                     advance();
-                    token19.setType(Token.OR_ASSIGN);
+                    token19.setType(JavaToken.OR_ASSIGN);
                     token19.setValue("|=");
                     return token19;
                 }
-                token19.setType(Token.BIT_OR);
+                token19.setType(JavaToken.BIT_OR);
                 token19.setValue("|");
                 return token19;
             case '+':
-                Token token20 = new Token(line, column);
+                JavaToken token20 = new JavaToken(line, column);
                 advance();
                 if (ch == '+') {
                     advance();
-                    token20.setType(Token.INC);
+                    token20.setType(JavaToken.INC);
                     token20.setValue("++");
                     return token20;
                 }
                 if (ch == '=') {
                     advance();
-                    token20.setType(Token.ADD_ASSIGN);
+                    token20.setType(JavaToken.ADD_ASSIGN);
                     token20.setValue("+=");
                     return token20;
                 }
-                token20.setType(Token.ADD);
+                token20.setType(JavaToken.ADD);
                 token20.setValue("+");
                 return token20;
             case '-':
-                Token token21 = new Token(line, column);
+                JavaToken token21 = new JavaToken(line, column);
                 advance();
                 if (ch == '-') {
                     advance();
-                    token21.setType(Token.DEC);
+                    token21.setType(JavaToken.DEC);
                     token21.setValue("--");
                     return token21;
                 }
                 if (ch == '=') {
                     advance();
-                    token21.setType(Token.SUB_ASSIGN);
+                    token21.setType(JavaToken.SUB_ASSIGN);
                     token21.setValue("-=");
                     return token21;
                 }
-                token21.setType(Token.SUB);
+                token21.setType(JavaToken.SUB);
                 token21.setValue("-");
                 return token21;
             case '*':
-                return assign_2('=', Token.MUL, Token.MUL_ASSIGN);
+                return assign_2('=', JavaToken.MUL, JavaToken.MUL_ASSIGN);
             case '^':
-                return assign_2('=', Token.CARET, Token.XOR_ASSIGN);
+                return assign_2('=', JavaToken.CARET, JavaToken.XOR_ASSIGN);
             case '%':
-                return assign_2('=', Token.MOD, Token.MOD_ASSIGN);
+                return assign_2('=', JavaToken.MOD, JavaToken.MOD_ASSIGN);
             case '@':
-                Token token22 = new Token(Token.AT, "@", line, column);
+                JavaToken token22 = new JavaToken(JavaToken.AT, "@", line, column);
                 advance();
                 return token22;
             default:
 //                throw new LexerException("syntax error at line: " + line + ", column " + column + ", unexpect character: '" + (char) ch + "'");
-                Token token23 = new Token(Token.UN_KNOW, String.valueOf((char) ch), line, column);
+                JavaToken token23 = new JavaToken(JavaToken.UN_KNOW, String.valueOf((char) ch), line, column);
                 advance();
                 return token23;
         }
@@ -275,9 +275,9 @@ public class Lexer {
 
     // COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
     // LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
-    private Token comment() {
+    private JavaToken comment() {
         StringBuilder builder = new StringBuilder();
-        Token token = new Token(line, column);
+        JavaToken token = new JavaToken(line, column);
         advance();
         if (ch == '*') {
             builder.append("/*");
@@ -297,7 +297,7 @@ public class Lexer {
                 lastCh = ch;
             }
             advance();
-            token.setType(Token.COMMENT);
+            token.setType(JavaToken.COMMENT);
             token.setValue(builder.toString());
             return token;
         }
@@ -308,16 +308,16 @@ public class Lexer {
                 builder.append((char) ch);
                 advance();
             }
-            token.setType(Token.LINE_COMMENT);
+            token.setType(JavaToken.LINE_COMMENT);
             token.setValue(builder.toString());
             return token;
         }
         if (ch == '=') {
-            token.setType(Token.DIV_ASSIGN);
+            token.setType(JavaToken.DIV_ASSIGN);
             token.setValue("/=");
             return token;
         }
-        token.setType(Token.DIV);
+        token.setType(JavaToken.DIV);
         token.setValue("/");
         return token;
     }
@@ -329,12 +329,12 @@ public class Lexer {
     //    ;
 
     // CHAR_LITERAL:       '\'' (~['\\\r\n] | EscapeSequence) '\'';
-    private Token charLiteral() {
+    private JavaToken charLiteral() {
         StringBuilder builder = new StringBuilder();
-        Token token = new Token(line, column);
+        JavaToken token = new JavaToken(line, column);
         advance();
         if (ch == '\'') {
-            token.setType(Token.CHAR_LITERAL);
+            token.setType(JavaToken.CHAR_LITERAL);
             token.setValue(builder.toString());
             advance();
             return token;
@@ -352,16 +352,16 @@ public class Lexer {
             throw new LexerException("syntax error at line: " + line + ", column " + column
                     + ", expect character: ''', but get: '" + (char) ch + "'");
         }
-        token.setType(Token.CHAR_LITERAL);
+        token.setType(JavaToken.CHAR_LITERAL);
         token.setValue(builder.toString());
         advance();
         return token;
     }
 
     // STRING_LITERAL:     '"' (~["\\\r\n] | EscapeSequence)* '"';
-    private Token stringLiteral() {
+    private JavaToken stringLiteral() {
         StringBuilder builder = new StringBuilder();
-        Token token = new Token(line, column);
+        JavaToken token = new JavaToken(line, column);
         advance();
         while (ch != '"' && ch != '\r' && ch != '\n' && ch != -1) {
             if (ch == '\\') {
@@ -375,7 +375,7 @@ public class Lexer {
             throw new LexerException("syntax error at line: " + line + ", column " + column
                     + ", expect character: '\"', but get: '" + (char) ch + "'");
         }
-        token.setType(Token.STRING_LITERAL);
+        token.setType(JavaToken.STRING_LITERAL);
         token.setValue(builder.toString());
         advance();
         return token;
@@ -439,8 +439,8 @@ public class Lexer {
         }
     }
 
-    private Token assign_2(int nextCh, int curType, int nextType) {
-        Token token = new Token(line, column);
+    private JavaToken assign_2(int nextCh, int curType, int nextType) {
+        JavaToken token = new JavaToken(line, column);
         String val = (char) ch + "";
         token.setType(curType);
         advance();
@@ -459,8 +459,8 @@ public class Lexer {
     //    : Letter
     //    | [0-9]
     //    ;
-    private Token identifier() {
-        Token token = new Token(line, column);
+    private JavaToken identifier() {
+        JavaToken token = new JavaToken(line, column);
         StringBuilder builder = new StringBuilder();
         builder.append((char) ch);
         advance();
@@ -470,9 +470,9 @@ public class Lexer {
         }
 
         String val = builder.toString();
-        token.setType(Token.IDENTIFIER);
+        token.setType(JavaToken.IDENTIFIER);
         if (keywords.contains(val)) {
-            token.setType(Token.KEY_WORD);
+            token.setType(JavaToken.KEY_WORD);
         }
         token.setValue(val);
         return token;
@@ -494,8 +494,8 @@ public class Lexer {
     // fragment ExponentPart
     //    : [eE] [+-]? Digits
     //    ;
-    private Token number() {
-        Token token = new Token(line, column);
+    private JavaToken number() {
+        JavaToken token = new JavaToken(line, column);
 //        if (ch == '0') {
 //            advance();
 //            if (ch == 'x' || ch == 'X') {
@@ -511,7 +511,7 @@ public class Lexer {
             builder.append((char) ch);
             advance();
         }
-        token.setType(Token.NUMBER);
+        token.setType(JavaToken.NUMBER);
         token.setValue(builder.toString());
         return token;
     }

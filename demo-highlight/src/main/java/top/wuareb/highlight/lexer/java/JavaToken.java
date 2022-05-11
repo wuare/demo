@@ -1,6 +1,6 @@
 package top.wuareb.highlight.lexer.java;
 
-public class Token {
+public class JavaToken {
 
     public static final int IDENTIFIER = 1;
     public static final int NUMBER = 2;
@@ -69,12 +69,12 @@ public class Token {
     private int line;
     private int column;
 
-    public Token(int line, int column) {
+    public JavaToken(int line, int column) {
         this.line = line;
         this.column = column;
     }
 
-    public Token(int type, String value, int line, int column) {
+    public JavaToken(int type, String value, int line, int column) {
         this.type = type;
         this.value = value;
         this.line = line;
