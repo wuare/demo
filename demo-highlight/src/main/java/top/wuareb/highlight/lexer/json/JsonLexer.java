@@ -177,8 +177,11 @@ public class JsonLexer {
                 //   ;
                 if (ch == 'u') {
                     StringBuilder hexBuilder = new StringBuilder();
+                    StringBuilder nonHexBuilder = new StringBuilder("\\u");
+                    boolean b = true;
                     advance();
                     for (int i = 0; i < 4; i++) {
+                        nonHexBuilder.append((char) ch);
                         if ((ch >= '0' && ch <= '9')
                                 || (ch >= 'a' && ch <= 'f')
                                 || (ch >= 'A' && ch <= 'F')) {
@@ -186,12 +189,16 @@ public class JsonLexer {
                             advance();
                             continue;
                         }
-                        // TODO
-                        throw new LexerException("unicode转义字符处理错误");
+                        b = false;
+                        advance();
                     }
-                    int codePoint = Integer.parseInt(hexBuilder.toString(), 16);
-                    char[] chars = Character.toChars(codePoint);
-                    builder.append(new String(chars));
+                    if (b) {
+                        int codePoint = Integer.parseInt(hexBuilder.toString(), 16);
+                        char[] chars = Character.toChars(codePoint);
+                        builder.append(new String(chars));
+                    } else {
+                        builder.append(nonHexBuilder);
+                    }
                     continue;
                 }
             }

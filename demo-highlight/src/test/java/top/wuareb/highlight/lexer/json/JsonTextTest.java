@@ -46,4 +46,17 @@ public class JsonTextTest {
             System.out.println(t);
         }
     }
+
+    @Test
+    public void testUnicode() {
+        String c = "\"\\u-e2d\"";
+        JsonLexer lexer = new JsonLexer(c);
+        JsonToken t = lexer.nextToken();
+        Assert.assertEquals("\\u-e2d", t.getValue());
+
+        String c1 = "\"\\u4e2d\"";
+        JsonLexer lexer1 = new JsonLexer(c1);
+        JsonToken t1 = lexer1.nextToken();
+        Assert.assertEquals("中", t1.getValue());
+    }
 }
