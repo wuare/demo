@@ -51,6 +51,11 @@ public class DefaultRequestHandler implements RequestHandler {
         FILE_CONTENT_TYPE_MAP.put(".svg", "image/svg+xml");
         FILE_CONTENT_TYPE_MAP.put(".xml", "text/xml;charset=utf-8");
         FILE_CONTENT_TYPE_MAP.put(".txt", "text/plain;charset=utf-8");
+
+        FILE_CONTENT_TYPE_MAP.put(".tiff", "image/tiff");
+        FILE_CONTENT_TYPE_MAP.put(".tif", "image/tiff");
+        
+        FILE_CONTENT_TYPE_MAP.put(".json", "application/json");
     }
 
     @Override
