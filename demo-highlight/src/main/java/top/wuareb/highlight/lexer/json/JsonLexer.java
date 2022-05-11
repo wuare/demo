@@ -24,6 +24,10 @@ public class JsonLexer {
         return token;
     }
 
+    public void setPeekToken(JsonToken token) {
+        this.token = token;
+    }
+
     public JsonToken nextToken() {
         if (token != null) {
             JsonToken t = token;

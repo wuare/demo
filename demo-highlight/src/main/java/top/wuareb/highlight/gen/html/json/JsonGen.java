@@ -15,12 +15,19 @@ public class JsonGen implements Gen {
         while ((token = lexer.nextToken()).getType() != JsonTokenType.EOF) {
             switch (token.getType()) {
                 case STRING:
-                    JsonToken t = lexer.peek();
+                    JsonToken t = lexer.nextToken();
+                    StringBuilder b0 = new StringBuilder();
+                    while (t.getType() == JsonTokenType.WHITE_SPACE) {
+                        b0.append(t.getValue());
+                        t = lexer.nextToken();
+                    }
+                    lexer.setPeekToken(t);
                     if (t.getType() == JsonTokenType.COLON) {
                         builder.append("<span class='hl-key'>").append("\"").append(token.getValue()).append("\"").append("</span>");
                     } else {
                         builder.append("<span class='hl-str'>").append("\"").append(token.getValue()).append("\"").append("</span>");
                     }
+                    builder.append(b0);
                     break;
                 case NUMBER:
                     builder.append("<span class='hl-num'>").append(token.getValue()).append("</span>");
