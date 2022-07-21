@@ -11,6 +11,7 @@ import top.wuare.lang.env.builtin.arr.ArrNewBuiltInFunc;
 import top.wuare.lang.env.builtin.cmm.LenBuiltInFunc;
 import top.wuare.lang.env.builtin.cmm.PrintBuiltInFunc;
 import top.wuare.lang.env.builtin.cmm.TimeBuiltInFunc;
+import top.wuare.lang.env.builtin.cmm.TypeBuiltInFunc;
 import top.wuare.lang.env.builtin.file.FileAppendBuiltInFunc;
 import top.wuare.lang.env.builtin.file.FileReadBuiltInFunc;
 import top.wuare.lang.env.builtin.file.FileWriteBuiltInFunc;
@@ -39,6 +40,7 @@ public class Interpreter {
         builtInFuncTable.put("print", new PrintBuiltInFunc());
         builtInFuncTable.put("time", new TimeBuiltInFunc());
         builtInFuncTable.put("len", new LenBuiltInFunc());
+        builtInFuncTable.put("type", new TypeBuiltInFunc());
 
         builtInFuncTable.put("fileRead", new FileReadBuiltInFunc());
         builtInFuncTable.put("fileWrite", new FileWriteBuiltInFunc());
