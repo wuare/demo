@@ -14,7 +14,7 @@ public class WaGen implements Gen {
 
     private static final Logger logger = Logger.getLogger(WaGen.class.getName());
 
-    private final Set<String> buildInFuncSet = Sets.of("print", "time", "len", "arrNew", "arrAdd", "strAt");
+    private final Set<String> buildInFuncSet = Sets.of("print", "time", "len", "type", "arrNew", "arrAdd", "strAt");
 
     @Override
     public String gen(String text) {
