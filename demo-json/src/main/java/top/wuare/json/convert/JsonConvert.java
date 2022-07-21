@@ -51,6 +51,9 @@ public class JsonConvert {
             if (type == BigDecimal.class) {
                 return (T) obj;
             }
+            if (type == String.class) {
+                return (T) ((BigDecimal) obj).toPlainString();
+            }
         }
         if (obj instanceof List) {
             List<?> objList = (List<?>) obj;
