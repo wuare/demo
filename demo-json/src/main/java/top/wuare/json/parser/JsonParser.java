@@ -46,7 +46,7 @@ public class JsonParser {
         curToken = lexer.nextToken();
         Object o = parseValue();
         if (curToken != null) {
-            throw new CommonException("unexpected token: " + curToken);
+            throw new CommonException(errMsg(curToken));
         }
         return o;
     }
@@ -68,7 +68,7 @@ public class JsonParser {
         while (curToken.getType() == TokenType.COMMA) {
             eat(TokenType.COMMA);
             if (curToken.getType() != TokenType.STRING) {
-                throw new CommonException("parse object error");
+                throw new CommonException("parse object error, " + errMsg(curToken));
             }
             String key = curToken.getVal();
             eat(TokenType.STRING);
@@ -132,7 +132,7 @@ public class JsonParser {
                 next();
                 break;
             default:
-                throw new CommonException("unexpected token: " + curToken);
+                throw new CommonException(errMsg(curToken));
         }
         return obj;
     }
@@ -146,8 +146,12 @@ public class JsonParser {
             next();
             return;
         }
-        throw new CommonException("expect token type: " + type + ", but get type: "
-                + curToken.getType() + ", current token information: " + curToken);
+        throw new CommonException(errMsg(curToken) + ", except get type: "
+                + type.getText() + ", but get: " + curToken.getType().getText());
     }
 
+    private String errMsg(Token t) {
+        return "unexpected token: '" + t.getVal() + "', at line: "
+                + t.getLine() + ", column: " + t.getColumn();
+    }
 }
