@@ -223,8 +223,7 @@ public class JsonLexer {
         int li = this.line;
         int co = this.column;
         StringBuilder builder = new StringBuilder();
-        builder.append((char) ch);
-        nextCh();
+        nextCh(); // consume first double quotation mark
         // '\u001F'十进制是31，缩写'US'，为单元分隔符
         // 32是空格
         // while ((ch == '\\' || ch > '\u001F') && ch != '"') {
@@ -315,7 +314,6 @@ public class JsonLexer {
             // throw new CommonException("Invalid String, unexpect character '" + (char) ch + "'");
         }
         if (ch == '"') {
-            builder.append((char) ch);
             nextCh();
             return new Token(TokenType.STRING, builder.toString(), li, co);
         }

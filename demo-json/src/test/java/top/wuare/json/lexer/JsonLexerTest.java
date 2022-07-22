@@ -83,7 +83,6 @@ public class JsonLexerTest {
         lexer.nextToken(); // :
         Token token = lexer.nextToken(); // expect value
         String str = token.getVal();
-        str = str.substring(1, str.length() - 1); // delete double quote
 
         Assert.assertEquals(str, "\t\nbob");
     }
@@ -97,7 +96,6 @@ public class JsonLexerTest {
         lexer.nextToken(); // :
         Token token = lexer.nextToken(); // expect value
         String str = token.getVal();
-        str = str.substring(1, str.length() - 1); // delete double quote
 
         Assert.assertEquals(str, "\t\nbob");
     }

@@ -59,7 +59,7 @@ public class JsonParser {
         Map<String, Object> map = new LinkedHashMap<>();
         eat(TokenType.LBRACE);
         if (curToken.getType() == TokenType.STRING) {
-            String key = curToken.getVal().substring(1, curToken.getVal().length() - 1);
+            String key = curToken.getVal();
             eat(TokenType.STRING);
             eat(TokenType.COLON);
             Object value = parseValue();
@@ -70,7 +70,7 @@ public class JsonParser {
             if (curToken.getType() != TokenType.STRING) {
                 throw new CommonException("parse object error");
             }
-            String key = curToken.getVal().substring(1, curToken.getVal().length() - 1);
+            String key = curToken.getVal();
             eat(TokenType.STRING);
             eat(TokenType.COLON);
             Object value = parseValue();
@@ -112,7 +112,7 @@ public class JsonParser {
                 obj = parseArray();
                 break;
             case STRING:
-                obj = curToken.getVal().substring(1, curToken.getVal().length() - 1);
+                obj = curToken.getVal();
                 next();
                 break;
             case NUMBER:
