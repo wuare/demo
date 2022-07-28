@@ -173,9 +173,6 @@ public class JsonLexer {
             if (ch == -1) {
                 return builder.toString();
             }
-            if (ch != ',' && ch != '.' && ch != 'E' && ch != 'e' && ch != '}') {
-                throw new CommonException("Invalid number at line: " + line + ", column: " + column + ", should not have character behind '0'");
-            }
             return builder.toString();
         }
         if (Character.isDigit(ch) && ch != '0') {
