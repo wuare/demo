@@ -27,7 +27,7 @@ public class Arr<E> extends ArrayList<E> {
         sb.append('[');
         for (;;) {
             E e = it.next();
-            sb.append(e == this ? "(this Collection)" : (e == null ? "nil" : e));
+            sb.append(e == this ? "(this Array)" : (e == null ? "nil" : e));
             if (! it.hasNext())
                 return sb.append(']').toString();
             sb.append(',').append(' ');
